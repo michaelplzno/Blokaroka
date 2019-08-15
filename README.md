@@ -13,3 +13,5 @@ Known Windows 10 Issues:
 3) The game does not create a large enough virtual window for a large 4k monitor. (Moniters were a lot smaller when this code was written.)
 
 This is intended to give a bit of a sense of how I coded back in the day. If you would like to update the code to work better for Windows 10 and update the projects to work in the current visual studio, just let me know!
+
+*We are discussing licencing for this code due to some interest of collaboration, as of now it is proprietary but we are looking into various options so check back soon!*
