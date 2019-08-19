@@ -8,10 +8,13 @@ Hit the ESC key to terminate the program, it is designed to appear on top of the
 When the program is working correctly it will spawn a bunch of little bricks on the desktop you can play with virtually by dragging them and connecting them. Also it will save the layout of the bricks into a gamestate so if you run it again your setup will be reloaded. 
 
 Known Windows 10 Issues: 
-1) The sound code does not seem to work in windows 10.
-2) The mouse code seems to have an offset that makes your click register in the wrong place.
+1) The brick sounds have to be in the right directory to play otherwise you get a ding instead.
+2) The mouse code seems to have an offset that makes your click register in the wrong place. (This may be due to the window scaling that happens on high res monitors.)
 3) The game does not create a large enough virtual window for a large 4k monitor. (Moniters were a lot smaller when this code was written.)
 
 This is intended to give a bit of a sense of how I coded back in the day. If you would like to update the code to work better for Windows 10 and update the projects to work in the current visual studio, just let me know!
 
-*We are discussing licencing for this code due to some interest of collaboration, as of now it is proprietary but we are looking into various options so check back soon!*
+This project is now officially Open Source under GPL V2.0, It is my hope that we can build this up into something bigger, maybe even an open source engine for games played on top of the operating system UI. 
+
+"Let this be a kiss to the whole world!"
+
