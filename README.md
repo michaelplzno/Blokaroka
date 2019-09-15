@@ -7,7 +7,7 @@ Hit the ESC key to terminate the program, it is designed to appear on top of the
 
 When the program is working correctly it will spawn a bunch of little bricks on the desktop you can play with virtually by dragging them and connecting them. Also it will save the layout of the bricks into a gamestate so if you run it again your setup will be reloaded. 
 
-Check the issues section for a list of current known issues, and let me know if you would like to fix them. The first reall issue is updating the .vcproj for the current Visual Studio so we can start building it again. That would be a good "dive right in" issue for a new contributer.
+Check the issues section for a list of current known issues, and let me know if you would like to fix them. Thanks to our first contributor the game compiles on Visual Studio 2019, but there are more issues on the list!
 
 If you would like to contribute, just let me know!
 
