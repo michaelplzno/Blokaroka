@@ -1,12 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////
-//  LEGO.h                                                                //
-//    A demo of fractal graphics techniques.                              //
+//  DesktopBricks.h                                                       //
+//    A way to render interactive bricks you can play with on your        //
+//    windows desktop.                                                    //
 //                                                                        //
-//  Michael Silverman, 2007                                               //
+//  Michael Silverman, 2007 - Open Source in 2019                         //
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef __LEGO_H__
-#define __LEGO_H__
+#ifndef __DESKTOPBRICKS_H__
+#define __DESKTOPBRICKS_H__
 
 #include <time.h>
 #include <vector>

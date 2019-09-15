@@ -1,7 +1,7 @@
 #ifndef __GameState_H__
 #define __GameState_H__
 
-#include "Brick.h"
+#include "DesktopBricks.h"
 #include <map>
 
 #define BRICK_WIDTH 15
