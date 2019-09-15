@@ -1,13 +1,13 @@
 #ifndef __GameState_H__
 #define __GameState_H__
 
-#include "LEGO.h"
+#include "Brick.h"
 #include <map>
 
-#define LEGO_WIDTH 15
-#define LEGO_HEIGHT 18
+#define BRICK_WIDTH 15
+#define BRICK_HEIGHT 18
 
-#define LEGO_MATE_LENGTH 15
+#define BRICK_MATE_LENGTH 15
 
 class GameState
 {
@@ -20,55 +20,57 @@ public:
         GS_Drag_Splitting
     };
 
-    class Lego 
+    class Brick 
     {
     public:
-        Lego(COLORREF color, int x, int y) :
-          m_wColor(color),
-          m_iX(x),
-          m_iY(y),
-          m_iRenderX(x),
-          m_iRenderY(y),
-          m_iMark(0),
-          m_poLeft(NULL),
-          m_poRight(NULL),
-          m_poTop(NULL),
-          m_poBottom(NULL),
-          m_fBottomWeightHeld(-1.0f),
-          m_fTopWeightHeld(-1.0f),
-          m_iDistance(-1),
-          m_iRenderState(LRS_SOLID)
-
+        Brick(COLORREF color, int x, int y) :
+			m_wColor(color),
+			m_iX(x),
+			m_iY(y),
+			m_iRenderX(x),
+			m_iRenderY(y),
+			m_iMark(0),
+			m_poLeft(NULL),
+			m_poRight(NULL),
+			m_poTop(NULL),
+			m_poBottom(NULL),
+			m_fBottomWeightHeld(-1.0f),
+			m_fTopWeightHeld(-1.0f),
+			m_iDistance(-1),
+			m_iRenderState(LRS_SOLID),
+			m_fBlockWeight(0),
+			m_poTopDesiredMate(NULL),
+			m_poBottomDesiredMate(NULL)
         { };
 
 
         COLORREF m_wColor;
 
-        void ClearLego(HDC hdc);
-        void DrawLego(HDC hdc);
+        void ClearBrick(HDC hdc);
+        void DrawBrick(HDC hdc);
         bool IntersectsPoint(int x, int y);
-        bool IntersectsLego(Lego* poOther);
-        bool IntersectsAnyLego();
+        bool IntersectsBrick(Brick* poOther);
+        bool IntersectsAnyBrick();
 
-        bool CanMateWithLego(Lego* poOther);
-        Lego* FindMate();
+        bool CanMateWithBrick(Brick* poOther);
+        Brick* FindMate();
         void Mate();
 
-        bool CanDetachLegoUp();
-        void DetachLegoUp();
+        bool CanDetachBrickUp();
+        void DetachBrickUp();
 
-        bool CanDetachLegoDown();
-        void DetachLegoDown();
+        bool CanDetachBrickDown();
+        void DetachBrickDown();
        
 
-        void SetLegoPosition(int x, int y);
-        void SetLegoRenderPosition(int x, int y);
+        void SetBrickPosition(int x, int y);
+        void SetBrickRenderPosition(int x, int y);
 
-        void AttachLeft(Lego * poLeft, bool bMoveOther = true);
-        void AttachRight(Lego * poRight, bool bMoveOther = true);
+        void AttachLeft(Brick * poLeft, bool bMoveOther = true);
+        void AttachRight(Brick * poRight, bool bMoveOther = true);
 
-        void AttachTop(Lego * poTop, bool bMoveOther = true);
-        void AttachBottom(Lego * poBottom, bool bMoveOther = true);
+        void AttachTop(Brick * poTop, bool bMoveOther = true);
+        void AttachBottom(Brick * poBottom, bool bMoveOther = true);
 
         void CalculateDistances();
         void CalculateWeights();
@@ -80,10 +82,10 @@ public:
         int GetY() const { return m_iY; };
         COLORREF GetColor() const {return m_wColor;};
 
-        const Lego* GetLeft() const {return m_poLeft;};
-        const Lego* GetRight() const {return m_poRight;};
-        const Lego* GetTop() const {return m_poTop;};
-        const Lego* GetBottom() const {return m_poBottom;};
+        const Brick* GetLeft() const {return m_poLeft;};
+        const Brick* GetRight() const {return m_poRight;};
+        const Brick* GetTop() const {return m_poTop;};
+        const Brick* GetBottom() const {return m_poBottom;};
 
         bool HasLeft() const {return m_poLeft != NULL;};
         bool HasRight() const {return m_poRight != NULL;};
@@ -105,15 +107,15 @@ public:
     private:
 
         void RecursiveFixNeighbors(int x, int y);
-        bool RecursiveIntersectsAnyLego();
+        bool RecursiveIntersectsAnyBrick();
         void ClearMates();
-        GameState::Lego* RecursiveFindMate();
+        GameState::Brick* RecursiveFindMate();
         void RecursiveMakeMatches();
         void RecursiveMate();
         void RecursiveFixRenderNeighbors(int x, int y);
 
-        bool RecursiveCanDetachLegoUp(int mark);
-        bool RecursiveCanDetachLegoDown(int mark);
+        bool RecursiveCanDetachBrickUp(int mark);
+        bool RecursiveCanDetachBrickDown(int mark);
 
         void RecursiveClearHoldWeights();
 
@@ -121,7 +123,7 @@ public:
         void RecursiveCalculateDistances(int distance=0);
         float GetWeight();
 
-        int GetNumConnections(Lego* poOther);
+        int GetNumConnections(Brick* poOther);
         void RecursiveBreakStressedConnections(float fThreshold);
 
         void RecursiveSetRenderState(int iNewState);
@@ -140,48 +142,61 @@ public:
         float m_fBottomWeightHeld;
         float m_fBlockWeight;
 
-        Lego * m_poLeft;
-        Lego * m_poRight;
-        Lego * m_poTop;
-        Lego * m_poBottom;
+        Brick * m_poLeft;
+        Brick * m_poRight;
+        Brick * m_poTop;
+        Brick * m_poBottom;
 
-        Lego * m_poTopDesiredMate;
-        Lego * m_poBottomDesiredMate;
+        Brick * m_poTopDesiredMate;
+        Brick * m_poBottomDesiredMate;
     };
 
-    GameState();
+    GameState() :
+		m_iAttach1(0),
+		m_iLastX(0),
+		m_iLastY(0),
+		m_iState(0),
+		m_iYOffset(0),
+		m_iXOffset(0),
+		m_poMovingMate(NULL),
+		m_poStaticMate(NULL),
+		m_poSelectedBrick(NULL),
+		m_vpoBricks(NULL)
+	{
 
-    void GenerateLegos();
+	}
+
+    void GenerateBricks();
     void Shutdown();
     void Update();
 
     void SetState(int iNewState);
     int GetState();
 
-    void SetDragging(Lego* poDragged, int x, int y);
+    void SetDragging(Brick* poDragged, int x, int y);
 
     void MoveSelected(int x, int y);
 
-    Lego* GetLegoAt(int x, int y);
+    Brick* GetBrickAt(int x, int y);
 
     void PlayAttach();
     void PlayDetach();
 
     void DumpGamestate(char * cstrName);
     bool ReadGamestate(char * cstrName);
-    void SetSplitDragging(GameState::Lego* poDragged, int x, int y);
+    void SetSplitDragging(GameState::Brick* poDragged, int x, int y);
 
 
     int m_iXOffset, m_iYOffset;
 
-    std::vector<Lego*> m_vpoLegos;
+    std::vector<Brick*> m_vpoBricks;
 
-    Lego * m_poMovingMate;
-    Lego * m_poStaticMate;
+    Brick * m_poMovingMate;
+    Brick * m_poStaticMate;
 
 private:
 
-    Lego * m_poSelectedLego;
+    Brick * m_poSelectedBrick;
     int m_iState;
 
     int m_iLastX;

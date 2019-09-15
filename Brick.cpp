@@ -1,4 +1,4 @@
-#include "LEGO.h"
+#include "Brick.h"
 
 // -- EXTERN DECLARATIONS ----------------------------------------------- //
 volatile bool g_bIsAppAlive = true;
@@ -20,7 +20,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     if( !GAMESTATE.ReadGamestate("gamestate.db") )
     {
-        GAMESTATE.GenerateLegos();
+        GAMESTATE.GenerateBricks();
     }
 
 

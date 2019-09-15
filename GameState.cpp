@@ -2,14 +2,14 @@
 
 GameState GAMESTATE;
 
-void GameState::Lego::DrawLego(HDC hdc)
+void GameState::Brick::DrawBrick(HDC hdc)
 {
     float fDarkerMod = .4f;
     float fBrighterMod = 1.6f;
     float fMyMod = 1.0f;
     float fAlpha = 1.0f;
 
-    if(m_iRenderState == Lego::LRS_GLOW)
+    if(m_iRenderState == Brick::LRS_GLOW)
     {
         fDarkerMod *= 1.5f;
         fBrighterMod *= 1.5f;
@@ -17,7 +17,7 @@ void GameState::Lego::DrawLego(HDC hdc)
 
     }
 
-    if(m_iRenderState == Lego::LRS_NO_ATTACH)
+    if(m_iRenderState == Brick::LRS_NO_ATTACH)
     {
         fAlpha = .5f;
         //fDarkerMod *= .5f;
@@ -96,43 +96,43 @@ void GameState::Lego::DrawLego(HDC hdc)
 
 
     unsigned int depth = (RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX;
-    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT,normal, depth,fAlpha);
+    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT,normal, depth,fAlpha);
 
     
 
 
-    for(int i = 0; i < LEGO_WIDTH/2; i++)
+    for(int i = 0; i < BRICK_WIDTH/2; i++)
     {
-        if( i+1 >= LEGO_WIDTH/2 )
+        if( i+1 >= BRICK_WIDTH/2 )
         {
 //             i++;
 //             RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+LEGO_HEIGHT-i,m_iRenderX-i, 0, depth,.5f);
 //             RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+LEGO_WIDTH-i, m_iRenderY-i, 0, depth,.5f);
 
-            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+LEGO_HEIGHT-i,m_iRenderX-i, 0, depth,fAlpha);
-            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+LEGO_WIDTH-i, m_iRenderY-i, 0, depth,fAlpha);
+            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BRICK_HEIGHT-i,m_iRenderX-i, 0, depth,fAlpha);
+            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BRICK_WIDTH-i, m_iRenderY-i, 0, depth,fAlpha);
         }
         else
         {
 
-            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+LEGO_HEIGHT-i,m_iRenderX-i,darker, depth,fAlpha);
-            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+LEGO_WIDTH-i, m_iRenderY-i, brighter, depth,fAlpha);
+            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BRICK_HEIGHT-i,m_iRenderX-i,darker, depth,fAlpha);
+            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BRICK_WIDTH-i, m_iRenderY-i, brighter, depth,fAlpha);
         }
 
 
         //RENDER.SetPixel(m_iRenderX-i,m_iRenderY-i,0, depth);
-        RENDER.SetPixel(m_iRenderX-i,m_iRenderY+LEGO_HEIGHT-i,0, depth,fAlpha);
+        RENDER.SetPixel(m_iRenderX-i,m_iRenderY+BRICK_HEIGHT-i,0, depth,fAlpha);
 /*        RENDER.SetPixel(m_iRenderX-i-1,m_iRenderY+LEGO_HEIGHT-i,0, depth,.5f);*/
 
         if(m_poRight == NULL)
         {
-            RENDER.SetPixel(m_iRenderX+LEGO_WIDTH-i,m_iRenderY-i,0, depth,fAlpha);
+            RENDER.SetPixel(m_iRenderX+BRICK_WIDTH-i,m_iRenderY-i,0, depth,fAlpha);
 /*            RENDER.SetPixel(m_iRenderX+LEGO_WIDTH-i+1,m_iRenderY-i,0, depth,.5f);*/
         }
     }
 
     //RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY, 0, depth);
-    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT, 0, depth,fAlpha);
+    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT, 0, depth,fAlpha);
 /*    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT+1, 0, depth,.5f);*/
 
     if(m_poLeft == NULL)
@@ -142,7 +142,7 @@ void GameState::Lego::DrawLego(HDC hdc)
 
     if(m_poRight == NULL)
     {
-        RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX+LEGO_WIDTH, 0, depth,fAlpha);
+        RENDER.VerticalLine(m_iRenderY, m_iRenderY+BRICK_HEIGHT, m_iRenderX+BRICK_WIDTH, 0, depth,fAlpha);
 /*        RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX+LEGO_WIDTH+1, 0, depth, .5f);*/
     }
 
@@ -153,17 +153,17 @@ void GameState::Lego::DrawLego(HDC hdc)
 
         //RENDER.Circle((m_iRenderX + LEGO_WIDTH * .5f)-2, m_iRenderY - LEGO_WIDTH/4.0f, LEGO_WIDTH * .3f, darker, depth);
 
-        int start = (int)(m_iRenderX + LEGO_WIDTH * .15f);
-        int end = (int)(m_iRenderX + LEGO_WIDTH * .85f);
-        int mid = (int)(m_iRenderX + LEGO_WIDTH * .5f);
+        int start = (int)(m_iRenderX + BRICK_WIDTH * .15f);
+        int end = (int)(m_iRenderX + BRICK_WIDTH * .85f);
+        int mid = (int)(m_iRenderX + BRICK_WIDTH * .5f);
 
-        int height = LEGO_HEIGHT * .25f;
-        int radius = (int)(LEGO_WIDTH * .35f);
+        int height = (int)(BRICK_HEIGHT * .25f);
+        int radius = (int)(BRICK_WIDTH * .35f);
 
         for(int i = start; i <= end; i++)
         {
-            int baseY = m_iRenderY - LEGO_WIDTH/4;
-            int baseX = i - LEGO_WIDTH/4;
+            int baseY = m_iRenderY - BRICK_WIDTH/4;
+            int baseX = i - BRICK_WIDTH/4;
             
             float realHeight = (.5f*sqrt((float)(radius * radius) - (float)((i-mid)*(i-mid))));
             float chopped = realHeight - ((int)realHeight);
@@ -212,7 +212,7 @@ void GameState::Lego::DrawLego(HDC hdc)
 
             if(i != start && i != end)
             {
-                RENDER.VerticalLine(baseY - 2*(baseY - (m_iRenderY - LEGO_WIDTH/4)) - height , baseY - height, baseX, brighter, depth);
+                RENDER.VerticalLine(baseY - 2*(baseY - (m_iRenderY - BRICK_WIDTH/4)) - height , baseY - height, baseX, brighter, depth);
             }
 
             float AA = 1.0f - abs(chopped);
@@ -226,8 +226,8 @@ void GameState::Lego::DrawLego(HDC hdc)
                 RENDER.SetPixel(baseX, baseY-height,AACol,depth,fAlpha);
 
 
-            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - LEGO_WIDTH/4)) - height,RGB(newR*(1.0f-AA),newG*(1.0f-AA),newB*(1.0f-AA)) ,depth,fAlpha);
-            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - LEGO_WIDTH/4)) - height-1,0 ,depth,(1.0f-AA)*fAlpha);
+            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BRICK_WIDTH/4)) - height,RGB(newR*(1.0f-AA),newG*(1.0f-AA),newB*(1.0f-AA)) ,depth,fAlpha);
+            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BRICK_WIDTH/4)) - height-1,0 ,depth,(1.0f-AA)*fAlpha);
             }
             newR = GetRValue(myColor) * (1.0f - AA) + GetRValue(brighter) * AA;
             newG = GetGValue(myColor) * (1.0f - AA) + GetGValue(brighter) * AA;
@@ -249,7 +249,7 @@ void GameState::Lego::DrawLego(HDC hdc)
 
 }
 
-void GameState::Lego::ClearLego(HDC hdc)
+void GameState::Brick::ClearBrick(HDC hdc)
 {
 
     HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
@@ -258,24 +258,24 @@ void GameState::Lego::ClearLego(HDC hdc)
     SelectObject(hdc, NewBrush);
     SelectObject(hdc, NewPen);
 
-    Rectangle(hdc, m_iRenderX, m_iRenderY, m_iRenderX + LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT); 
+    Rectangle(hdc, m_iRenderX, m_iRenderY, m_iRenderX + BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT); 
 
     DeleteObject(NewBrush);
     DeleteObject(NewPen);
 }
 
-bool GameState::Lego::IntersectsPoint(int x, int y)
+bool GameState::Brick::IntersectsPoint(int x, int y)
 {
     if(x < m_iX)
     {
         return false;
     }
-    if(x > m_iX + LEGO_WIDTH)
+    if(x > m_iX + BRICK_WIDTH)
     {
         return false;
     }
 
-    if(y > m_iY + LEGO_HEIGHT)
+    if(y > m_iY + BRICK_HEIGHT)
     {
         return false;
     }
@@ -288,24 +288,24 @@ bool GameState::Lego::IntersectsPoint(int x, int y)
     return true;
 }
 
-bool GameState::Lego::IntersectsLego( Lego* poOther )
+bool GameState::Brick::IntersectsBrick( Brick* poOther )
 {
     if (IntersectsPoint(poOther->m_iX, poOther->m_iY))
     {
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX + LEGO_WIDTH, poOther->m_iY))
+    if (IntersectsPoint(poOther->m_iX + BRICK_WIDTH, poOther->m_iY))
     {
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX, poOther->m_iY + LEGO_HEIGHT))
+    if (IntersectsPoint(poOther->m_iX, poOther->m_iY + BRICK_HEIGHT))
     {
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX + LEGO_WIDTH, poOther->m_iY + LEGO_HEIGHT))
+    if (IntersectsPoint(poOther->m_iX + BRICK_WIDTH, poOther->m_iY + BRICK_HEIGHT))
     {
         return true;
     }
@@ -315,24 +315,24 @@ bool GameState::Lego::IntersectsLego( Lego* poOther )
 }
 
 
-bool GameState::Lego::IntersectsAnyLego()
+bool GameState::Brick::IntersectsAnyBrick()
 {
     SetMarks(1);
 
-    bool ret = RecursiveIntersectsAnyLego();
+    bool ret = RecursiveIntersectsAnyBrick();
     SetMarks(0);
 
     return ret;
 }
 
-bool GameState::Lego::CanMateWithLego( Lego* poOther )
+bool GameState::Brick::CanMateWithBrick( Brick* poOther )
 {
     if( m_poBottom == NULL )
     {
-        if( m_iY + LEGO_HEIGHT + (LEGO_MATE_LENGTH) > poOther->m_iY && 
-            m_iY + LEGO_HEIGHT < poOther->m_iY &&
-            m_iX > poOther->m_iX-LEGO_WIDTH/2.0f &&
-            m_iX < poOther->m_iX+LEGO_WIDTH/2.0f )
+        if( m_iY + BRICK_HEIGHT + (BRICK_MATE_LENGTH) > poOther->m_iY && 
+            m_iY + BRICK_HEIGHT < poOther->m_iY &&
+            m_iX > poOther->m_iX-BRICK_WIDTH/2.0f &&
+            m_iX < poOther->m_iX+BRICK_WIDTH/2.0f )
         {
             return true;
         }
@@ -340,10 +340,10 @@ bool GameState::Lego::CanMateWithLego( Lego* poOther )
 
     if( m_poTop == NULL )
     {
-        if( m_iY - LEGO_MATE_LENGTH < poOther->m_iY + LEGO_HEIGHT && 
-            m_iY > poOther->m_iY + LEGO_HEIGHT && 
-            m_iX > poOther->m_iX-LEGO_WIDTH/2.0f &&
-            m_iX < poOther->m_iX+LEGO_WIDTH/2.0f )
+        if( m_iY - BRICK_MATE_LENGTH < poOther->m_iY + BRICK_HEIGHT && 
+            m_iY > poOther->m_iY + BRICK_HEIGHT && 
+            m_iX > poOther->m_iX-BRICK_WIDTH/2.0f &&
+            m_iX < poOther->m_iX+BRICK_WIDTH/2.0f )
         {
             return true;
         }
@@ -352,10 +352,10 @@ bool GameState::Lego::CanMateWithLego( Lego* poOther )
     return false;
 }
 
-GameState::Lego* GameState::Lego::FindMate()
+GameState::Brick* GameState::Brick::FindMate()
 {
     SetMarks(1);
-    Lego* ret = RecursiveFindMate();
+    Brick* ret = RecursiveFindMate();
     SetMarks(1);
 
     if(ret == NULL)
@@ -373,30 +373,30 @@ GameState::Lego* GameState::Lego::FindMate()
 
     if(GAMESTATE.m_poMovingMate->m_iY < GAMESTATE.m_poStaticMate->m_iY )
     {
-        GAMESTATE.m_poMovingMate->SetLegoRenderPosition(GAMESTATE.m_poStaticMate->m_iX,
+        GAMESTATE.m_poMovingMate->SetBrickRenderPosition(GAMESTATE.m_poStaticMate->m_iX,
                                                         GAMESTATE.m_poStaticMate->m_iY 
-                                                           - (LEGO_HEIGHT + LEGO_MATE_LENGTH/4.0f));
+                                                           - (int)(BRICK_HEIGHT + BRICK_MATE_LENGTH/4.0f));
     }
     else
     {
-        GAMESTATE.m_poMovingMate->SetLegoRenderPosition(GAMESTATE.m_poStaticMate->m_iX, 
-                                                        GAMESTATE.m_poStaticMate->m_iY + (LEGO_HEIGHT + LEGO_MATE_LENGTH/4.0f));
+        GAMESTATE.m_poMovingMate->SetBrickRenderPosition(GAMESTATE.m_poStaticMate->m_iX, 
+                                                        GAMESTATE.m_poStaticMate->m_iY + (int)(BRICK_HEIGHT + BRICK_MATE_LENGTH/4.0f));
     }
     return ret;
 }
 
-GameState::Lego* GameState::Lego::RecursiveFindMate()
+GameState::Brick* GameState::Brick::RecursiveFindMate()
 {
     m_iMark = 2;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoLegos[i]->m_iMark == 0 && CanMateWithLego(GAMESTATE.m_vpoLegos[i]))
+        if (GAMESTATE.m_vpoBricks[i]->m_iMark == 0 && CanMateWithBrick(GAMESTATE.m_vpoBricks[i]))
         {
             GAMESTATE.m_poMovingMate = this;
-            GAMESTATE.m_poStaticMate = GAMESTATE.m_vpoLegos[i];
+            GAMESTATE.m_poStaticMate = GAMESTATE.m_vpoBricks[i];
 
-            return GAMESTATE.m_vpoLegos[i];
+            return GAMESTATE.m_vpoBricks[i];
         }
     }
 
@@ -404,7 +404,7 @@ GameState::Lego* GameState::Lego::RecursiveFindMate()
     {
         if(m_poLeft->m_iMark == 1 )
         {
-            Lego *found = m_poLeft->RecursiveFindMate();
+            Brick *found = m_poLeft->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -415,7 +415,7 @@ GameState::Lego* GameState::Lego::RecursiveFindMate()
     {
         if(m_poRight->m_iMark == 1 )
         {
-            Lego *found = m_poRight->RecursiveFindMate();
+            Brick *found = m_poRight->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -426,7 +426,7 @@ GameState::Lego* GameState::Lego::RecursiveFindMate()
     {
         if(m_poTop->m_iMark == 1 )
         {
-            Lego *found = m_poTop->RecursiveFindMate();
+            Brick *found = m_poTop->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -437,7 +437,7 @@ GameState::Lego* GameState::Lego::RecursiveFindMate()
     {
         if(m_poBottom->m_iMark == 1 )
         {
-            Lego *found = m_poBottom->RecursiveFindMate();
+            Brick *found = m_poBottom->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -447,25 +447,25 @@ GameState::Lego* GameState::Lego::RecursiveFindMate()
     return NULL;
 }
 
-void GameState::Lego::RecursiveMakeMatches()
+void GameState::Brick::RecursiveMakeMatches()
 {
     m_iMark = 2;
 
     m_poTopDesiredMate = NULL;
     m_poBottomDesiredMate = NULL;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoLegos[i]->m_iMark == 3 && CanMateWithLego(GAMESTATE.m_vpoLegos[i]))
+        if (GAMESTATE.m_vpoBricks[i]->m_iMark == 3 && CanMateWithBrick(GAMESTATE.m_vpoBricks[i]))
         {
-            GAMESTATE.m_vpoLegos[i]->m_iMark = 4;
-            if (GAMESTATE.m_vpoLegos[i]->m_iY < m_iY)
+            GAMESTATE.m_vpoBricks[i]->m_iMark = 4;
+            if (GAMESTATE.m_vpoBricks[i]->m_iY < m_iY)
             {
-                m_poTopDesiredMate = GAMESTATE.m_vpoLegos[i];
+                m_poTopDesiredMate = GAMESTATE.m_vpoBricks[i];
             }
             else
             {
-                m_poBottomDesiredMate = GAMESTATE.m_vpoLegos[i];
+                m_poBottomDesiredMate = GAMESTATE.m_vpoBricks[i];
             }
         }
     }
@@ -503,61 +503,61 @@ void GameState::Lego::RecursiveMakeMatches()
     }
 }
 
-void GameState::Lego::SetLegoPosition(int x, int y)
+void GameState::Brick::SetBrickPosition(int x, int y)
 {
     RecursiveFixNeighbors(x, y);
     SetMarks(0);
 }
 
-void GameState::Lego::SetLegoRenderPosition( int x, int y )
+void GameState::Brick::SetBrickRenderPosition( int x, int y )
 {
     RecursiveFixRenderNeighbors(x, y);
     SetMarks(0);
 }
 
 
-void GameState::Lego::AttachLeft( Lego * poLeft, bool bMoveOther )
+void GameState::Brick::AttachLeft( Brick * poLeft, bool bMoveOther )
 {
     m_poLeft = poLeft;
     if(bMoveOther)
-        m_poLeft->SetLegoPosition(m_iX - LEGO_WIDTH, m_iY);
+        m_poLeft->SetBrickPosition(m_iX - BRICK_WIDTH, m_iY);
     if(bMoveOther)
-        m_poLeft->SetLegoRenderPosition(m_iRenderX - LEGO_WIDTH, m_iRenderY);
+        m_poLeft->SetBrickRenderPosition(m_iRenderX - BRICK_WIDTH, m_iRenderY);
 
     m_poLeft->m_poRight = this;
 }
 
-void GameState::Lego::AttachRight( Lego * poRight, bool bMoveOther )
+void GameState::Brick::AttachRight( Brick * poRight, bool bMoveOther )
 {
     m_poRight = poRight;
     if(bMoveOther)
-        m_poRight->SetLegoPosition(m_iX - LEGO_WIDTH, m_iY);
+        m_poRight->SetBrickPosition(m_iX - BRICK_WIDTH, m_iY);
     if(bMoveOther)
-        m_poRight->SetLegoRenderPosition(m_iRenderX - LEGO_WIDTH, m_iRenderY);
+        m_poRight->SetBrickRenderPosition(m_iRenderX - BRICK_WIDTH, m_iRenderY);
 
     m_poRight->m_poLeft = this;
 }
 
-void GameState::Lego::AttachTop( Lego * poTop, bool bMoveOther )
+void GameState::Brick::AttachTop( Brick * poTop, bool bMoveOther )
 {
     m_poTop = poTop;
     if(bMoveOther)
-        m_poTop->SetLegoPosition(m_iX, m_iY - LEGO_HEIGHT);
+        m_poTop->SetBrickPosition(m_iX, m_iY - BRICK_HEIGHT);
 
     m_poTop->m_poBottom = this;
 }
 
-void GameState::Lego::AttachBottom( Lego * poBottom, bool bMoveOther )
+void GameState::Brick::AttachBottom( Brick * poBottom, bool bMoveOther )
 {
     m_poBottom = poBottom;
 
     if(bMoveOther)
-        m_poBottom->SetLegoPosition(m_iX, m_iY + LEGO_HEIGHT);
+        m_poBottom->SetBrickPosition(m_iX, m_iY + BRICK_HEIGHT);
 
     m_poBottom->m_poTop = this;
 }
 
-void GameState::Lego::SetMarks( int mark )
+void GameState::Brick::SetMarks( int mark )
 {
     if( m_iMark == mark )
     {
@@ -587,7 +587,7 @@ void GameState::Lego::SetMarks( int mark )
     }
 }
 
-void GameState::Lego::RecursiveFixNeighbors(int x, int y)
+void GameState::Brick::RecursiveFixNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
@@ -601,26 +601,26 @@ void GameState::Lego::RecursiveFixNeighbors(int x, int y)
 
     if(m_poLeft != NULL)
     {
-        m_poLeft->RecursiveFixNeighbors(x - LEGO_WIDTH, y);
+        m_poLeft->RecursiveFixNeighbors(x - BRICK_WIDTH, y);
     }
 
     if(m_poRight != NULL)
     {
-        m_poRight->RecursiveFixNeighbors(x + LEGO_WIDTH, y);
+        m_poRight->RecursiveFixNeighbors(x + BRICK_WIDTH, y);
     }
 
     if(m_poTop != NULL)
     {
-        m_poTop->RecursiveFixNeighbors(x, y - LEGO_HEIGHT);
+        m_poTop->RecursiveFixNeighbors(x, y - BRICK_HEIGHT);
     }
 
     if(m_poBottom != NULL)
     {
-        m_poBottom->RecursiveFixNeighbors(x, y + LEGO_HEIGHT);
+        m_poBottom->RecursiveFixNeighbors(x, y + BRICK_HEIGHT);
     }
 }
 
-void GameState::Lego::RecursiveFixRenderNeighbors(int x, int y)
+void GameState::Brick::RecursiveFixRenderNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
@@ -634,32 +634,32 @@ void GameState::Lego::RecursiveFixRenderNeighbors(int x, int y)
 
     if(m_poLeft != NULL)
     {
-        m_poLeft->RecursiveFixRenderNeighbors(x - LEGO_WIDTH, y);
+        m_poLeft->RecursiveFixRenderNeighbors(x - BRICK_WIDTH, y);
     }
 
     if(m_poRight != NULL)
     {
-        m_poRight->RecursiveFixRenderNeighbors(x + LEGO_WIDTH, y);
+        m_poRight->RecursiveFixRenderNeighbors(x + BRICK_WIDTH, y);
     }
 
     if(m_poTop != NULL)
     {
-        m_poTop->RecursiveFixRenderNeighbors(x, y - LEGO_HEIGHT);
+        m_poTop->RecursiveFixRenderNeighbors(x, y - BRICK_HEIGHT);
     }
 
     if(m_poBottom != NULL)
     {
-        m_poBottom->RecursiveFixRenderNeighbors(x, y + LEGO_HEIGHT);
+        m_poBottom->RecursiveFixRenderNeighbors(x, y + BRICK_HEIGHT);
     }
 }
 
-bool GameState::Lego::RecursiveIntersectsAnyLego()
+bool GameState::Brick::RecursiveIntersectsAnyBrick()
 {
     m_iMark = 2;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoLegos[i]->m_iMark == 0 && GAMESTATE.m_vpoLegos[i]->IntersectsLego(this))
+        if (GAMESTATE.m_vpoBricks[i]->m_iMark == 0 && GAMESTATE.m_vpoBricks[i]->IntersectsBrick(this))
         {
             return true;
         }
@@ -667,32 +667,32 @@ bool GameState::Lego::RecursiveIntersectsAnyLego()
 
     if(m_poLeft != NULL)
     {
-        if(m_poLeft->m_iMark == 1 && m_poLeft->RecursiveIntersectsAnyLego())
+        if(m_poLeft->m_iMark == 1 && m_poLeft->RecursiveIntersectsAnyBrick())
             return true;
     }
 
     if(m_poRight != NULL)
     {
-        if(m_poRight->m_iMark == 1 && m_poRight->RecursiveIntersectsAnyLego())
+        if(m_poRight->m_iMark == 1 && m_poRight->RecursiveIntersectsAnyBrick())
             return true;
     }
 
     if(m_poTop != NULL)
     {
-        if(m_poTop->m_iMark == 1 && m_poTop->RecursiveIntersectsAnyLego())
+        if(m_poTop->m_iMark == 1 && m_poTop->RecursiveIntersectsAnyBrick())
             return true;
     }
 
     if(m_poBottom != NULL)
     {
-        if(m_poBottom->m_iMark == 1 && m_poBottom->RecursiveIntersectsAnyLego())
+        if(m_poBottom->m_iMark == 1 && m_poBottom->RecursiveIntersectsAnyBrick())
             return true;
     }
 
     return false;
 }
 
-void GameState::Lego::RecursiveMate()
+void GameState::Brick::RecursiveMate()
 {
     m_iMark = 1;
 
@@ -736,7 +736,7 @@ void GameState::Lego::RecursiveMate()
 
 }
 
-void GameState::Lego::Mate()
+void GameState::Brick::Mate()
 {
 
     RecursiveClearDistances();
@@ -762,7 +762,7 @@ void GameState::Lego::Mate()
     GAMESTATE.PlayAttach();
 }
 
-void GameState::Lego::ClearMates()
+void GameState::Brick::ClearMates()
 {
     m_iMark = 1;
 
@@ -794,30 +794,30 @@ void GameState::Lego::ClearMates()
     }
 }
 
-bool GameState::Lego::CanDetachLegoUp()
+bool GameState::Brick::CanDetachBrickUp()
 {
     m_iMark = 1;
     bool bIsAttached = false;
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
     }
 
-    for( Lego* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
     }
 
 
     int iNewMark = 2;
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poBottom)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poBottom->RecursiveCanDetachLegoUp(iNewMark))
+            if(!iter->m_poBottom->RecursiveCanDetachBrickUp(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -826,13 +826,13 @@ bool GameState::Lego::CanDetachLegoUp()
         
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poBottom)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poBottom->RecursiveCanDetachLegoUp(iNewMark))
+            if(!iter->m_poBottom->RecursiveCanDetachBrickUp(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -845,7 +845,7 @@ bool GameState::Lego::CanDetachLegoUp()
     return bIsAttached;
 }
 
-bool GameState::Lego::RecursiveCanDetachLegoUp(int mark)
+bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
 {
     m_iMark = mark;
 
@@ -857,7 +857,7 @@ bool GameState::Lego::RecursiveCanDetachLegoUp(int mark)
 
         if(m_poBottom->m_iMark != mark)
         {
-            if(!m_poBottom->RecursiveCanDetachLegoUp(mark))
+            if(!m_poBottom->RecursiveCanDetachBrickUp(mark))
             {
                 return false;
             }
@@ -871,7 +871,7 @@ bool GameState::Lego::RecursiveCanDetachLegoUp(int mark)
 
         if(m_poLeft->m_iMark != mark)
         {
-            if(!m_poLeft->RecursiveCanDetachLegoUp(mark))
+            if(!m_poLeft->RecursiveCanDetachBrickUp(mark))
             {
                 return false;
             }
@@ -885,7 +885,7 @@ bool GameState::Lego::RecursiveCanDetachLegoUp(int mark)
 
         if(m_poRight->m_iMark != mark)
         {
-            if(!m_poRight->RecursiveCanDetachLegoUp(mark))
+            if(!m_poRight->RecursiveCanDetachBrickUp(mark))
             {
                 return false;
             }
@@ -899,7 +899,7 @@ bool GameState::Lego::RecursiveCanDetachLegoUp(int mark)
 
         if(m_poTop->m_iMark != mark)
         {
-            if(!m_poTop->RecursiveCanDetachLegoUp(mark))
+            if(!m_poTop->RecursiveCanDetachBrickUp(mark))
             {
                 return false;
             }
@@ -909,9 +909,9 @@ bool GameState::Lego::RecursiveCanDetachLegoUp(int mark)
     return true;
 }
 
-void GameState::Lego::DetachLegoUp()
+void GameState::Brick::DetachBrickUp()
 {
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poBottom)
         {
@@ -920,7 +920,7 @@ void GameState::Lego::DetachLegoUp()
         }
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poBottom)
         {
@@ -939,30 +939,30 @@ void GameState::Lego::DetachLegoUp()
 //////////////////////////////////////////////////////////////////////////
 
 
-bool GameState::Lego::CanDetachLegoDown()
+bool GameState::Brick::CanDetachBrickDown()
 {
     m_iMark = 1;
     bool bIsAttached = false;
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
     }
 
-    for( Lego* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
     }
 
 
     int iNewMark = 2;
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poTop->RecursiveCanDetachLegoDown(iNewMark))
+            if(!iter->m_poTop->RecursiveCanDetachBrickDown(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -971,13 +971,13 @@ bool GameState::Lego::CanDetachLegoDown()
 
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poTop->RecursiveCanDetachLegoDown(iNewMark))
+            if(!iter->m_poTop->RecursiveCanDetachBrickDown(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -990,7 +990,7 @@ bool GameState::Lego::CanDetachLegoDown()
     return bIsAttached;
 }
 
-bool GameState::Lego::RecursiveCanDetachLegoDown(int mark)
+bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
 {
     m_iMark = mark;
 
@@ -1002,7 +1002,7 @@ bool GameState::Lego::RecursiveCanDetachLegoDown(int mark)
 
         if(m_poTop->m_iMark != mark)
         {
-            if(!m_poTop->RecursiveCanDetachLegoDown(mark))
+            if(!m_poTop->RecursiveCanDetachBrickDown(mark))
             {
                 return false;
             }
@@ -1016,7 +1016,7 @@ bool GameState::Lego::RecursiveCanDetachLegoDown(int mark)
 
         if(m_poLeft->m_iMark != mark)
         {
-            if(!m_poLeft->RecursiveCanDetachLegoDown(mark))
+            if(!m_poLeft->RecursiveCanDetachBrickDown(mark))
             {
                 return false;
             }
@@ -1030,7 +1030,7 @@ bool GameState::Lego::RecursiveCanDetachLegoDown(int mark)
 
         if(m_poRight->m_iMark != mark)
         {
-            if(!m_poRight->RecursiveCanDetachLegoDown(mark))
+            if(!m_poRight->RecursiveCanDetachBrickDown(mark))
             {
                 return false;
             }
@@ -1044,7 +1044,7 @@ bool GameState::Lego::RecursiveCanDetachLegoDown(int mark)
 
         if(m_poBottom->m_iMark != mark)
         {
-            if(!m_poBottom->RecursiveCanDetachLegoDown(mark))
+            if(!m_poBottom->RecursiveCanDetachBrickDown(mark))
             {
                 return false;
             }
@@ -1054,9 +1054,9 @@ bool GameState::Lego::RecursiveCanDetachLegoDown(int mark)
     return true;
 }
 
-void GameState::Lego::DetachLegoDown()
+void GameState::Brick::DetachBrickDown()
 {
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop)
         {
@@ -1065,7 +1065,7 @@ void GameState::Lego::DetachLegoDown()
         }
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop)
         {
@@ -1077,7 +1077,7 @@ void GameState::Lego::DetachLegoDown()
     GAMESTATE.PlayDetach();
 }
 
-void GameState::Lego::CalculateDistances()
+void GameState::Brick::CalculateDistances()
 {
     return;
 
@@ -1087,7 +1087,7 @@ void GameState::Lego::CalculateDistances()
     SetMarks(0);
 }
 
-void GameState::Lego::RecursiveClearDistances()
+void GameState::Brick::RecursiveClearDistances()
 {
     if(m_iMark == 1)
     {
@@ -1118,27 +1118,27 @@ void GameState::Lego::RecursiveClearDistances()
     }
 }
 
-void GameState::Lego::RecursiveCalculateDistances( int distance )
+void GameState::Brick::RecursiveCalculateDistances( int distance )
 {
     if(m_iMark == 1)
     {
         return;
     }
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
         iter->m_iDistance = distance;
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
         iter->m_iDistance = distance;
     }
 
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop)
         {
@@ -1151,7 +1151,7 @@ void GameState::Lego::RecursiveCalculateDistances( int distance )
         }
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop)
         {
@@ -1166,7 +1166,7 @@ void GameState::Lego::RecursiveCalculateDistances( int distance )
 
 }
 
-void GameState::Lego::CalculateWeights()
+void GameState::Brick::CalculateWeights()
 { 
     RecursiveClearHoldWeights();
     SetMarks(0);
@@ -1184,7 +1184,7 @@ void GameState::Lego::CalculateWeights()
 }
 
 
-float GameState::Lego::GetWeight()
+float GameState::Brick::GetWeight()
 {
     if(m_fBlockWeight >= 0)
     {
@@ -1193,7 +1193,7 @@ float GameState::Lego::GetWeight()
 
     float fMyWeight = 0;
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_iDistance != m_iDistance)
         {
@@ -1232,7 +1232,7 @@ float GameState::Lego::GetWeight()
         fMyWeight += 1.0f;
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_fTopWeightHeld < 0)
         {
@@ -1269,12 +1269,12 @@ float GameState::Lego::GetWeight()
 
 
     // Set the block weight
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_fBlockWeight = fMyWeight;
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_fBlockWeight = fMyWeight;
     }
@@ -1283,21 +1283,21 @@ float GameState::Lego::GetWeight()
 
 }
 
-int GameState::Lego::GetNumConnections( Lego* poOther )
+int GameState::Brick::GetNumConnections( Brick* poOther )
 {
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
     }
 
 
     int connections = 0;
-    for( Lego* iter = poOther->m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = poOther->m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop && iter->m_poTop->m_iMark == 1)
             connections++;
@@ -1306,7 +1306,7 @@ int GameState::Lego::GetNumConnections( Lego* poOther )
             connections++;
     }
 
-    for( Lego* iter = poOther; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = poOther; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop && iter->m_poTop->m_iMark == 1)
             connections++;
@@ -1315,12 +1315,12 @@ int GameState::Lego::GetNumConnections( Lego* poOther )
             connections++;
     }
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 0;
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 0;
     }
@@ -1328,7 +1328,7 @@ int GameState::Lego::GetNumConnections( Lego* poOther )
     return connections;
 }
 
-void GameState::Lego::RecursiveClearHoldWeights()
+void GameState::Brick::RecursiveClearHoldWeights()
 {
     if(m_iMark != 1)
     {
@@ -1360,7 +1360,7 @@ void GameState::Lego::RecursiveClearHoldWeights()
     
 }
 
-void GameState::Lego::BreakStressedConnections()
+void GameState::Brick::BreakStressedConnections()
 {
     float f = (float)rand()/(float)RAND_MAX;
     f *= 1000;
@@ -1372,7 +1372,7 @@ void GameState::Lego::BreakStressedConnections()
     CalculateWeights();
 }
 
-void GameState::Lego::RecursiveBreakStressedConnections(float fThreshold)
+void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
 {
     if(m_iMark == 1)
     {
@@ -1381,7 +1381,7 @@ void GameState::Lego::RecursiveBreakStressedConnections(float fThreshold)
 
     m_iMark = 1;
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
         if(iter->m_fBottomWeightHeld > fThreshold)
@@ -1403,7 +1403,7 @@ void GameState::Lego::RecursiveBreakStressedConnections(float fThreshold)
         }
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
         if(iter->m_fBottomWeightHeld > fThreshold)
@@ -1425,7 +1425,7 @@ void GameState::Lego::RecursiveBreakStressedConnections(float fThreshold)
         }
     }
 
-    for( Lego* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poBottom)
             iter->m_poBottom->RecursiveBreakStressedConnections(fThreshold);
@@ -1434,7 +1434,7 @@ void GameState::Lego::RecursiveBreakStressedConnections(float fThreshold)
             iter->m_poTop->RecursiveBreakStressedConnections(fThreshold);
     }
 
-    for( Lego* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poBottom)
             iter->m_poBottom->RecursiveBreakStressedConnections(fThreshold);
@@ -1445,7 +1445,7 @@ void GameState::Lego::RecursiveBreakStressedConnections(float fThreshold)
 
 }
 
-void GameState::Lego::SetRenderState(int iNewState)
+void GameState::Brick::SetRenderState(int iNewState)
 {
     RecursiveSetRenderState(iNewState);
     SetMarks(0);
@@ -1453,7 +1453,7 @@ void GameState::Lego::SetRenderState(int iNewState)
     RENDER.PresentFrame();
 }
 
-void GameState::Lego::RecursiveSetRenderState(int iNewState )
+void GameState::Brick::RecursiveSetRenderState(int iNewState )
 {
     if(m_iMark != 1)
     {
@@ -1482,16 +1482,11 @@ void GameState::Lego::RecursiveSetRenderState(int iNewState )
     }
 }
 
-GameState::GameState()
-{
-
-}
-
-void GameState::GenerateLegos()
+void GameState::GenerateBricks()
 {
     for( int i = 0; i < 100; i++ )
     {
-        COLORREF color;
+        COLORREF color = RGB(0, 0, 0);
         int colorNum = rand() % 5;
         if(colorNum == 0)
         {
@@ -1516,13 +1511,13 @@ void GameState::GenerateLegos()
 
         int width = rand()%3;
 
-        m_vpoLegos.push_back(new Lego(color, rand() % 1000, rand() % 768));
+        m_vpoBricks.push_back(new Brick(color, rand() % 1000, rand() % 768));
         
         for(int i = 0; i < pow(2.0f,width)- 1; i++)
         {
-            Lego* newLego = new Lego(color, rand() % 1000, rand() % 768);
-            m_vpoLegos.back()->AttachLeft(newLego);
-            m_vpoLegos.push_back(newLego);
+            Brick* newLego = new Brick(color, rand() % 1000, rand() % 768);
+            m_vpoBricks.back()->AttachLeft(newLego);
+            m_vpoBricks.push_back(newLego);
         }
     }
 }
@@ -1545,10 +1540,10 @@ void GameState::SetState(int iNewState)
     {
         if (m_iState == GS_Drag_Mating)
         {
-            m_poSelectedLego->Mate();
-            m_poSelectedLego->SetMarks(0);
+            m_poSelectedBrick->Mate();
+            m_poSelectedBrick->SetMarks(0);
         }
-        m_poSelectedLego->SetRenderState(Lego::LRS_SOLID);
+        m_poSelectedBrick->SetRenderState(Brick::LRS_SOLID);
     }
     else if( iNewState == GS_Drag_Free )
     {
@@ -1564,30 +1559,30 @@ int GameState::GetState()
     return m_iState;
 }
 
-void GameState::SetDragging(GameState::Lego* poDragged, int x, int y)
+void GameState::SetDragging(GameState::Brick* poDragged, int x, int y)
 {
-    m_poSelectedLego = poDragged;
-    m_iXOffset = m_poSelectedLego->GetX() - x;
-    m_iYOffset = m_poSelectedLego->GetY() - y;
+    m_poSelectedBrick = poDragged;
+    m_iXOffset = m_poSelectedBrick->GetX() - x;
+    m_iYOffset = m_poSelectedBrick->GetY() - y;
     SetState(GS_Drag_Free);
-    m_poSelectedLego->SetRenderState(Lego::LRS_GLOW);
+    m_poSelectedBrick->SetRenderState(Brick::LRS_GLOW);
     //m_poSelectedLego->CalculateWeights();
 }
 
-void GameState::SetSplitDragging(GameState::Lego* poDragged, int x, int y)
+void GameState::SetSplitDragging(GameState::Brick* poDragged, int x, int y)
 {
-    m_poSelectedLego = poDragged;
-    m_iXOffset = m_poSelectedLego->GetX() - x;
-    m_iYOffset = m_poSelectedLego->GetY() - y;
+    m_poSelectedBrick = poDragged;
+    m_iXOffset = m_poSelectedBrick->GetX() - x;
+    m_iYOffset = m_poSelectedBrick->GetY() - y;
     SetState(GS_Drag_Splitting);
-    m_poSelectedLego->SetRenderState(Lego::LRS_NO_ATTACH);
+    m_poSelectedBrick->SetRenderState(Brick::LRS_NO_ATTACH);
     //m_poSelectedLego->CalculateWeights();
 }
 
 void  GameState::MoveSelected(int x, int y)
 {
 
-    m_poSelectedLego->SetLegoPosition(m_iXOffset + x, m_iYOffset + y);
+    m_poSelectedBrick->SetBrickPosition(m_iXOffset + x, m_iYOffset + y);
     //m_poSelectedLego->BreakStressedConnections();
 
     float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) + 
@@ -1598,36 +1593,36 @@ void  GameState::MoveSelected(int x, int y)
 
     if(false)
     {
-        if(m_iState == GS_Drag_Mating && m_poSelectedLego->IntersectsAnyLego())
+        if(m_iState == GS_Drag_Mating && m_poSelectedBrick->IntersectsAnyBrick())
         {
-            m_poSelectedLego->Mate();
+            m_poSelectedBrick->Mate();
             m_iState = GS_Static;
         }
         else
         {
             SetState(GS_Drag_Free);
-            m_poSelectedLego->SetLegoRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+            m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
         }
         return;
     }
 
     if(m_iState != GS_Drag_Splitting)
     {
-        if(m_poSelectedLego->IntersectsAnyLego())
+        if(m_poSelectedBrick->IntersectsAnyBrick())
         {
             if(m_iState == GS_Drag_Mating)
             {
-                m_poSelectedLego->Mate();
+                m_poSelectedBrick->Mate();
                 m_iState = GS_Static;
             }
             else
             {
-                m_poSelectedLego->SetLegoRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
         else
         {
-            Lego *mate = m_poSelectedLego->FindMate();
+            Brick *mate = m_poSelectedBrick->FindMate();
             if(mate)
             {
                 SetState(GS_Drag_Mating);
@@ -1635,23 +1630,23 @@ void  GameState::MoveSelected(int x, int y)
             else
             {
                 SetState(GS_Drag_Free);
-                m_poSelectedLego->SetLegoRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
     }
     else
     {
-        m_poSelectedLego->SetLegoRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+        m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
     }
 }
 
-GameState::Lego* GameState::GetLegoAt(int x, int y)
+GameState::Brick* GameState::GetBrickAt(int x, int y)
 {
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoLegos[i]->IntersectsPoint(x,y))
+        if (GAMESTATE.m_vpoBricks[i]->IntersectsPoint(x,y))
         {
-            return GAMESTATE.m_vpoLegos[i];
+            return GAMESTATE.m_vpoBricks[i];
         }
     }
     
@@ -1681,46 +1676,36 @@ void GameState::DumpGamestate( char * cstrName )
     out.open(cstrName, std::ofstream::out );
 
 
-    std::map<const Lego*, int> indexMap;
+    std::map<const Brick*, int> indexMap;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        indexMap[m_vpoLegos[i]] = i;
+        indexMap[m_vpoBricks[i]] = i;
         out << i << " " 
-            << m_vpoLegos[i]->GetX() << " " 
-            << m_vpoLegos[i]->GetY() << " "
-            << m_vpoLegos[i]->GetColor() << " "
+            << m_vpoBricks[i]->GetX() << " " 
+            << m_vpoBricks[i]->GetY() << " "
+            << m_vpoBricks[i]->GetColor() << " "
             << std::endl;
     }
 
     out << "-1" << std::endl;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
         out << i << " ";
 
-        if(m_vpoLegos[i]->HasLeft())
+        if(m_vpoBricks[i]->HasLeft())
         {
-            out << indexMap[m_vpoLegos[i]->GetLeft()] << " ";
+            out << indexMap[m_vpoBricks[i]->GetLeft()] << " ";
         }
         else
         {
             out << -1 << " ";
         }
 
-        if(m_vpoLegos[i]->HasTop())
+        if(m_vpoBricks[i]->HasTop())
         {
-            out << indexMap[m_vpoLegos[i]->GetTop()] << " ";
-        }
-        else
-        {
-            out << -1 << " ";
-        }
-
-
-        if(m_vpoLegos[i]->HasRight())
-        {
-            out << indexMap[m_vpoLegos[i]->GetRight()] << " ";
+            out << indexMap[m_vpoBricks[i]->GetTop()] << " ";
         }
         else
         {
@@ -1728,9 +1713,19 @@ void GameState::DumpGamestate( char * cstrName )
         }
 
 
-        if(m_vpoLegos[i]->HasBottom())
+        if(m_vpoBricks[i]->HasRight())
         {
-            out << indexMap[m_vpoLegos[i]->GetBottom()] << std::endl;
+            out << indexMap[m_vpoBricks[i]->GetRight()] << " ";
+        }
+        else
+        {
+            out << -1 << " ";
+        }
+
+
+        if(m_vpoBricks[i]->HasBottom())
+        {
+            out << indexMap[m_vpoBricks[i]->GetBottom()] << std::endl;
         }
         else
         {
@@ -1755,13 +1750,13 @@ bool GameState::ReadGamestate( char * cstrName )
         return false;
     }
 
-    for( unsigned int ui = 0; ui < GAMESTATE.m_vpoLegos.size(); ui++ )
+    for( unsigned int ui = 0; ui < GAMESTATE.m_vpoBricks.size(); ui++ )
     {
-        delete m_vpoLegos[ui];
-        m_vpoLegos[ui] = 0;
+        delete m_vpoBricks[ui];
+        m_vpoBricks[ui] = 0;
     }
 
-    m_vpoLegos.clear();
+    m_vpoBricks.clear();
 
     int i, x, y;
     COLORREF color;
@@ -1770,9 +1765,9 @@ bool GameState::ReadGamestate( char * cstrName )
     while(i >= 0)
     {
         in >> x >> y >> color;
-        Lego* temp = new Lego(color,x,y);
+        Brick* temp = new Brick(color,x,y);
 
-        m_vpoLegos.push_back(temp);
+        m_vpoBricks.push_back(temp);
 
         in >> i;
     }
@@ -1785,22 +1780,22 @@ bool GameState::ReadGamestate( char * cstrName )
     {
         if(left >= 0)
         {
-            m_vpoLegos[i]->AttachLeft(m_vpoLegos[left], false);
+            m_vpoBricks[i]->AttachLeft(m_vpoBricks[left], false);
         }
 
         if(top >= 0)
         {
-            m_vpoLegos[i]->AttachTop(m_vpoLegos[top], false);
+            m_vpoBricks[i]->AttachTop(m_vpoBricks[top], false);
         }
 
         if(bottom >= 0)
         {
-            m_vpoLegos[i]->AttachBottom(m_vpoLegos[bottom], false);
+            m_vpoBricks[i]->AttachBottom(m_vpoBricks[bottom], false);
         }
 
         if(right >= 0)
         {
-            m_vpoLegos[i]->AttachRight(m_vpoLegos[right], false);
+            m_vpoBricks[i]->AttachRight(m_vpoBricks[right], false);
         }
     }
     in.close();

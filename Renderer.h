@@ -2,7 +2,7 @@
 #define __RENDERER_H__
 
 #define CLEAR_COLOR RGB(255,0,255)
-#include "LEGO.h"
+#include "Brick.h"
 
 /* Generic wrapper around a DIB with a 32-bit color depth. */
 typedef struct
@@ -20,7 +20,16 @@ typedef struct
 class Renderer
 {
   public:
-    Renderer();
+    Renderer() :
+		hWnd(NULL),
+		m_HDC(NULL),
+		m_bRight(false),
+		m_Width(0),
+		m_Height(0),
+		m_ausZBuffer(NULL)
+	{
+		// init singleton
+	}
 
     void InitRenderer(HINSTANCE hInstance);
 

@@ -3,18 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LEGO", "LEGO.vcproj", "{06C81936-3496-4835-A87E-490D6D6AD80E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Brick", "Brick.vcxproj", "{06C81936-3496-4835-A87E-490D6D6AD80E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{06C81936-3496-4835-A87E-490D6D6AD80E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{06C81936-3496-4835-A87E-490D6D6AD80E}.Debug|Win32.Build.0 = Debug|Win32
-		{06C81936-3496-4835-A87E-490D6D6AD80E}.Release|Win32.ActiveCfg = Release|Win32
-		{06C81936-3496-4835-A87E-490D6D6AD80E}.Release|Win32.Build.0 = Release|Win32
+		{06C81936-3496-4835-A87E-490D6D6AD80E}.Debug|x86.ActiveCfg = Debug|Win32
+		{06C81936-3496-4835-A87E-490D6D6AD80E}.Debug|x86.Build.0 = Debug|Win32
+		{06C81936-3496-4835-A87E-490D6D6AD80E}.Release|x86.ActiveCfg = Release|Win32
+		{06C81936-3496-4835-A87E-490D6D6AD80E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

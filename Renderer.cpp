@@ -50,7 +50,7 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            GameState::Lego * poClicked = GAMESTATE.GetLegoAt(xPos,yPos);
+            GameState::Brick * poClicked = GAMESTATE.GetBrickAt(xPos,yPos);
             if( poClicked )
             {
                 GAMESTATE.SetDragging(poClicked, xPos, yPos);
@@ -69,21 +69,21 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            GameState::Lego * poClicked = GAMESTATE.GetLegoAt(xPos,yPos);
-            if( poClicked && poClicked->CanDetachLegoUp())
+            GameState::Brick * poClicked = GAMESTATE.GetBrickAt(xPos,yPos);
+            if( poClicked && poClicked->CanDetachBrickUp())
             {
-                poClicked->DetachLegoUp();
+                poClicked->DetachBrickUp();
                 GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
                 //GAMESTATE.SetState(GameState::GS_Drag_Free);
-RENDER.m_bRight = true;
+				RENDER.m_bRight = true;
                 return 1;
             }
 
-            if( poClicked && poClicked->CanDetachLegoDown())
+            if( poClicked && poClicked->CanDetachBrickDown())
             {
-                poClicked->DetachLegoDown();
+                poClicked->DetachBrickDown();
                 GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
-RENDER.m_bRight = true;
+				RENDER.m_bRight = true;
                 return 1;
             }
 
@@ -249,11 +249,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
 
 Renderer RENDER;
 
-Renderer::Renderer()
-{
-    // init singleton
-}
-
 
 void Renderer::HandleWindows()
 {
@@ -329,9 +324,9 @@ void Renderer::RenderFrame(void)
     DeleteObject(NewPen);
     DeleteObject(NewBrush);
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoLegos.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        GAMESTATE.m_vpoLegos[i]->DrawLego(m_HDC);
+        GAMESTATE.m_vpoBricks[i]->DrawBrick(m_HDC);
     }
 }
 

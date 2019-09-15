@@ -45,7 +45,8 @@ class Config {
         m_bWindowedMode(true),
         m_bRenderBackgroundGradient(true),
         m_bUseAlpha(true),
-        m_bUseAA(false)
+        m_bUseAA(false),
+		m_bVSyncLock(false)
     { };
 };
 
