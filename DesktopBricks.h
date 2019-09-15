@@ -17,6 +17,8 @@
 #include <iostream>
 #include <math.h>
 
+#define WINVER 0x0600
+
 #include <windows.h>
 
 #pragma comment(lib, "Winmm.lib") 

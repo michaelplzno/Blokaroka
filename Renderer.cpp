@@ -45,8 +45,15 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
     else if( wParam == WM_LBUTTONDOWN )
     {
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
+	
         int xPos = hook.pt.x; 
         int yPos = hook.pt.y; 
+
+
+		tagPOINT result;
+		GetPhysicalCursorPos(&result);
+		xPos = result.x;
+		yPos = result.y;
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
@@ -66,6 +73,11 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
         int xPos = hook.pt.x; 
         int yPos = hook.pt.y; 
+
+		tagPOINT result;
+		GetPhysicalCursorPos(&result);
+		xPos = result.x;
+		yPos = result.y;
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
@@ -105,7 +117,13 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
            GAMESTATE.GetState() == GameState::GS_Drag_Splitting )
         {
             MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
-            GAMESTATE.MoveSelected(hook.pt.x, hook.pt.y);
+
+			tagPOINT result;
+			GetPhysicalCursorPos(&result);
+			int xPos = result.x;
+			int yPos = result.y;
+
+            GAMESTATE.MoveSelected(xPos, yPos);
 
             RENDER.RenderFrame();
             RENDER.PresentFrame();
