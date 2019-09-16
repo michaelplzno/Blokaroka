@@ -1,9 +1,9 @@
 # DesktopBricks
-One of my first projects: an attempt to make bricks appear on top of the UI in Windows. The code is over 10 years old, and was designed for an older version of windows. This is intended to give a bit of a sense of how I coded back in the day. (Sort of works on Windows 10) If the project catches on, hopefully we can work together to make it a popular app.
+One of my first projects: an attempt to make bricks appear on top of the UI in Windows. The code is over 10 years old, and was designed for an older version of windows. This is intended to give a bit of a sense of how I coded back in the day. If the project catches on, hopefully we can work together to make it a popular app.
 
 ![Screenshot on Windows 10](https://raw.githubusercontent.com/michaelplzno/DesktopBricks/master/DesktopBricks.PNG)
 
-Hit the ESC key to terminate the program, it is designed to appear on top of the Windows UI, so it has no window frame or X in the corner to close it.
+Hit the ESC key to terminate the program, it is designed to appear on top of the Windows UI, so it has no window frame or X in the corner to close it. I'm hoping we can add a taskbar icon so that you can see it in the active list of programs on the side Windows bar of icons.
 
 When the program is working correctly it will spawn a bunch of little bricks on the desktop you can play with virtually by dragging them and connecting them. Also it will save the layout of the bricks into a gamestate so if you run it again your setup will be reloaded. 
 
