@@ -95,7 +95,7 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
 
 
-    unsigned int depth = (RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX;
+	unsigned int depth = m_iGroup * RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
     RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT,normal, depth,fAlpha);
 
     
@@ -149,7 +149,7 @@ void GameState::Brick::DrawBrick(HDC hdc)
     if(m_poTop == NULL && m_iRenderState != LRS_NO_ATTACH)
     {
         // Draw Dot ////////////////////////////////////////////////////////
-        //  Draw the dot thing that connects to other legos               //
+        //  Draw the dot thing that connects to other bricks              //
 
         //RENDER.Circle((m_iRenderX + LEGO_WIDTH * .5f)-2, m_iRenderY - LEGO_WIDTH/4.0f, LEGO_WIDTH * .3f, darker, depth);
 
@@ -587,11 +587,45 @@ void GameState::Brick::SetMarks( int mark )
     }
 }
 
+int GameState::Brick::ComputeDepth()
+{
+	return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX);
+}
+
+void GameState::Brick::RecursiveSetGroup(int group)
+{
+	if (m_iGroup != group)
+	{
+		m_iGroup = group;
+
+		if (m_poLeft != NULL)
+		{
+			m_poLeft->RecursiveSetGroup(group);
+		}
+
+		if (m_poRight != NULL)
+		{
+			m_poRight->RecursiveSetGroup(group);
+		}
+
+		if (m_poTop != NULL)
+		{
+			m_poTop->RecursiveSetGroup(group);
+		}
+
+		if (m_poBottom != NULL)
+		{
+			m_poBottom->RecursiveSetGroup(group);
+		}
+	}
+}
+
+
 void GameState::Brick::RecursiveFixNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
-        return;
+		return;
     }
 
     m_iMark = 1;
@@ -606,17 +640,17 @@ void GameState::Brick::RecursiveFixNeighbors(int x, int y)
 
     if(m_poRight != NULL)
     {
-        m_poRight->RecursiveFixNeighbors(x + BRICK_WIDTH, y);
+		m_poRight->RecursiveFixNeighbors(x + BRICK_WIDTH, y);
     }
 
     if(m_poTop != NULL)
     {
-        m_poTop->RecursiveFixNeighbors(x, y - BRICK_HEIGHT);
+		m_poTop->RecursiveFixNeighbors(x, y - BRICK_HEIGHT);
     }
 
     if(m_poBottom != NULL)
     {
-        m_poBottom->RecursiveFixNeighbors(x, y + BRICK_HEIGHT);
+		m_poBottom->RecursiveFixNeighbors(x, y + BRICK_HEIGHT);
     }
 }
 
@@ -624,7 +658,7 @@ void GameState::Brick::RecursiveFixRenderNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
-        return;
+		return;
     }
 
     m_iMark = 1;

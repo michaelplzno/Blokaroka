@@ -40,7 +40,8 @@ public:
 			m_iRenderState(LRS_SOLID),
 			m_fBlockWeight(0),
 			m_poTopDesiredMate(NULL),
-			m_poBottomDesiredMate(NULL)
+			m_poBottomDesiredMate(NULL),
+			m_iGroup(0)
         { };
 
 
@@ -97,12 +98,19 @@ public:
 
         void SetRenderState(int iNewState);
 
+		int ComputeDepth();
+
+		int m_iGroup;
+		void RecursiveSetGroup(int group);
+
         enum
         {
             LRS_SOLID,
             LRS_GLOW,
             LRS_NO_ATTACH
         };
+
+		int GetRenderState() { return m_iRenderState; };
 
     private:
 

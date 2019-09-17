@@ -342,6 +342,30 @@ void Renderer::RenderFrame(void)
     DeleteObject(NewPen);
     DeleteObject(NewBrush);
 
+	for (unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++)
+	{
+		GAMESTATE.m_vpoBricks[i]->m_iGroup = -1;
+	}
+
+	int index = 1;
+	for (unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++)
+	{
+		if (GAMESTATE.m_vpoBricks[i]->GetRenderState() == GameState::Brick::LRS_SOLID && GAMESTATE.m_vpoBricks[i]->m_iGroup == -1)
+		{
+			GAMESTATE.m_vpoBricks[i]->RecursiveSetGroup(index);
+			index++;
+		}
+	}
+
+	for (unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++)
+	{
+		if (GAMESTATE.m_vpoBricks[i]->m_iGroup == -1)
+		{
+			GAMESTATE.m_vpoBricks[i]->RecursiveSetGroup(index);
+			index++;
+		}
+	}
+
     for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
         GAMESTATE.m_vpoBricks[i]->DrawBrick(m_HDC);
@@ -425,7 +449,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     wc.cbSize			= sizeof( WNDCLASSEX ); 
 
     //  The style of the window.
-    wc.style			   = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.style		    = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     // Useless information.  Just set to zero.
     wc.cbClsExtra		= 0;
     // Useless information.  Just set to zero.
@@ -437,7 +461,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     // The handle to the brush to use for the window background
     wc.hbrBackground	= CreateSolidBrush(CLEAR_COLOR);
     // A handle to the icon to use for the window
-    wc.hIcon			   = LoadIcon( hInstance, MAKEINTRESOURCE(1) );
+    wc.hIcon		    = LoadIcon( hInstance, MAKEINTRESOURCE(1) );
     // A handle to a smaller version of the apps icon
     wc.hIconSm			= LoadIcon( hInstance, MAKEINTRESOURCE(1) );
     // A handle to the cursor to use while the mouse is over our window
