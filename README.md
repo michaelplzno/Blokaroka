@@ -1,5 +1,5 @@
-# DesktopBricks
-One of my first projects: an attempt to make bricks appear on top of the UI in Windows. The code is over 10 years old, and was designed for an older version of windows. This is intended to give a bit of a sense of how I coded back in the day. If the project catches on, hopefully we can work together to make it a popular app.
+# Blokaroka
+One of my first projects: an attempt to make bricks appear on top of the UI in Windows. The code is based on a project that is over 10 years old, and was designed for an older version of windows. If the project catches on, hopefully we can work together to make it a popular app.
 
 ![Screenshot on Windows 10](https://raw.githubusercontent.com/michaelplzno/DesktopBricks/master/DesktopBricks.PNG)
 
