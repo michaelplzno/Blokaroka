@@ -2,7 +2,7 @@
 #define __RENDERER_H__
 
 #define CLEAR_COLOR RGB(255,0,255)
-#include "DesktopBricks.h"
+#include "Blokaroka.h"
 
 /* Generic wrapper around a DIB with a 32-bit color depth. */
 typedef struct

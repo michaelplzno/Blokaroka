@@ -1,4 +1,4 @@
-#include "DesktopBricks.h"
+#include "Blokaroka.h"
 
 // -- EXTERN DECLARATIONS ----------------------------------------------- //
 volatile bool g_bIsAppAlive = true;

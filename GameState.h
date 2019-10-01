@@ -1,7 +1,7 @@
 #ifndef __GameState_H__
 #define __GameState_H__
 
-#include "DesktopBricks.h"
+#include "Blokaroka.h"
 #include <map>
 
 #define BRICK_WIDTH 15

@@ -95,7 +95,7 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
 
 
-	unsigned int depth = m_iGroup * RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
+	unsigned int depth = ComputeDepth(); //RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
     RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT,normal, depth,fAlpha);
 
     

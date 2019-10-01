@@ -1,13 +1,13 @@
 ////////////////////////////////////////////////////////////////////////////
-//  DesktopBricks.h                                                       //
+//  Blokaroka.h		                                                      //
 //    A way to render interactive bricks you can play with on your        //
 //    windows desktop.                                                    //
 //                                                                        //
 //  Michael Silverman, 2007 - Open Source in 2019                         //
 ////////////////////////////////////////////////////////////////////////////
 
-#ifndef __DESKTOPBRICKS_H__
-#define __DESKTOPBRICKS_H__
+#ifndef __BLOKAROKA_H__
+#define __BLOKAROKA_H__
 
 #include <time.h>
 #include <vector>
