@@ -1,7 +1,7 @@
 # Blokaroka
 One of my first projects: an attempt to make bricks appear on top of the UI in Windows. The code is based on a project that is over 10 years old, and was designed for an older version of windows. If the project catches on, hopefully we can work together to make it a popular app.
 
-![Screenshot on Windows 10](https://raw.githubusercontent.com/michaelplzno/DesktopBricks/master/DesktopBricks.PNG)
+![Screenshot on Windows 10](https://raw.githubusercontent.com/michaelplzno/DesktopBricks/master/Blokaroka.PNG)
 
 Hit the ESC key to terminate the program, it is designed to appear on top of the Windows UI, so it has no window frame or X in the corner to close it. I'm hoping we can add a taskbar icon so that you can see it in the active list of programs on the side Windows bar of icons.
 
