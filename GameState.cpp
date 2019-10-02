@@ -589,6 +589,15 @@ void GameState::Brick::SetMarks( int mark )
 
 int GameState::Brick::ComputeDepth()
 {
+	if (HasLeft())
+	{
+		return m_poLeft->ComputeDepth();
+	}
+	/*else if (HasBottom())
+	{
+		return m_poBottom->ComputeDepth();
+	}*/
+
 	return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX);
 }
 
