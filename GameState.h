@@ -190,8 +190,8 @@ public:
     void PlayAttach();
     void PlayDetach();
 
-    void DumpGamestate(char * cstrName);
-    bool ReadGamestate(char * cstrName);
+    void DumpGamestate(std::wstring cstrName);
+    bool ReadGamestate(std::wstring cstrName);
     void SetSplitDragging(GameState::Brick* poDragged, int x, int y);
 
 

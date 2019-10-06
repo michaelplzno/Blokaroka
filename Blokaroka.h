@@ -16,18 +16,107 @@
 #include <stdio.h>
 #include <iostream>
 #include <math.h>
+#include <sstream>
 
 #define WINVER 0x0600
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+
 
 #include <windows.h>
+#include <Shlobj.h>
 
 #pragma comment(lib, "Winmm.lib") 
+
 inline void gPlaySound(char * strFilename)
 {
     char buff[400];
     sprintf_s(buff,400,"Sounds\\%s.wav", strFilename);
     PlaySound(buff, NULL, SND_FILENAME|SND_ASYNC);
 }
+
+inline std::wstring gAppDataDirectory()
+{
+	// Search for the AppData folder for this user.
+	wchar_t* knownPath = NULL;
+	HRESULT hr = SHGetKnownFolderPath(FOLDERID_AppDataProgramData, KF_FLAG_CREATE, NULL, &knownPath);
+	std::wstringstream wss;
+
+	if (SUCCEEDED(hr))
+	{
+		OutputDebugString("Got Folder Path: ");
+
+		wss << knownPath << L"\\Blokaroka\\";
+
+		OutputDebugStringW(wss.str().c_str());
+		OutputDebugString("\n");
+	}
+	else
+	{
+		wss << L".\\";
+		OutputDebugString("NO Folder Path\n");
+	}
+
+	// Free the known path info.
+	CoTaskMemFree(knownPath);
+
+	return wss.str();
+}
+
+// Returns %APPDATA%\Blokaroka\\gamestate.blok as a std::string - This is the default desired save file location.
+inline std::wstring gGetAppDataSaveFilePath()
+{
+	std::wstringstream wss;
+	wss << gAppDataDirectory() << L"gamestate.blok";
+
+	return wss.str();
+}
+
+// This function searches several locations for an existing save file and if it finds the file returns the path as a std::string.
+// These are the locations it searches in order:
+//   1) %APPDATA%\Blokaroka\\gamestate.blok
+//   2) gamestate.blok
+//   3) gamestate.db
+// If the no files can be found it will return the first path.
+inline std::wstring gGetExistingSaveFilePath()
+{
+	// ifstream to test if a file can be opened.
+	std::ifstream in;
+
+	// Test the AppData path.
+	std::wstring path1 = gGetAppDataSaveFilePath();
+
+	in.open(path1.c_str(), std::ofstream::in);
+	if (in.is_open())
+	{
+		in.close();
+		return path1;
+	}
+
+	// Test the .blok local path.
+	std::wstring path2 = L"gamestate.blok";
+
+	in.open(path2.c_str(), std::ofstream::in);
+	if (in.is_open())
+	{
+		in.close();
+		return path2;
+	}
+
+	// Test the .db legacy local path.
+	std::wstring path3 = L"gamestate.db";
+
+	in.open(path3.c_str(), std::ofstream::in);
+	if (in.is_open())
+	{
+		in.close();
+		return path3;
+	}
+
+	// return the default case since no file was found.
+	return path1;
+}
+
 
 // -- COMMAND LINE ARGUMENTS -------------------------------------------- //
 class Config {
@@ -60,7 +149,7 @@ extern Config             CONFIG;
 bool gHandleCommandLineArgs(PSTR pstrCmdLine);
 
 
-// -- Fractal Shader Classes -------------------------------------------- //
+// -- Project Classes --------------------------------------------------- //
 #include "Renderer.h"
 #include "Gamestate.h"
 

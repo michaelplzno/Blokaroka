@@ -1711,12 +1711,13 @@ void GameState::PlayDetach()
     gPlaySound(buff);
 }
 
-void GameState::DumpGamestate( char * cstrName )
+void GameState::DumpGamestate(std::wstring wstrName)
 {
+	CreateDirectoryW(gAppDataDirectory().c_str(), 0);
 
     std::ofstream out;
 
-    out.open(cstrName, std::ofstream::out );
+    out.open(wstrName.c_str(), std::ofstream::out );
 
 
     std::map<const Brick*, int> indexMap;
@@ -1781,12 +1782,12 @@ void GameState::DumpGamestate( char * cstrName )
 }
 
 
-bool GameState::ReadGamestate( char * cstrName )
+bool GameState::ReadGamestate(std::wstring wstrName )
 {
 
     std::ifstream in;
 
-    in.open(cstrName, std::ofstream::in );
+    in.open(wstrName, std::ofstream::in );
 
     if(!in.is_open())
     {

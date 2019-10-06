@@ -5,21 +5,23 @@ volatile bool g_bIsAppAlive = true;
 Config CONFIG;
 
 // -- MAIN -------------------------------------------------------------- //
-int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                    PSTR pstrCmdLine, int iCmdShow )
-{ 
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	PSTR pstrCmdLine, int iCmdShow)
+{
 
-    // - - - Command Line- - - - - - - //
-    if (gHandleCommandLineArgs(pstrCmdLine) == false)
-    {
-        return 0;
-    }
+	// - - - Command Line- - - - - - - //
+	if (gHandleCommandLineArgs(pstrCmdLine) == false)
+	{
+		return 0;
+	}
 
-    RENDER.InitRenderer(hInstance);
- 
+	RENDER.InitRenderer(hInstance);
 
-    if( !GAMESTATE.ReadGamestate("gamestate.db") )
-    {
+
+	// Try to read the gamestate from the best existing gamestate location.
+	if (!GAMESTATE.ReadGamestate(gGetExistingSaveFilePath()))
+	{
+		// Gamestate was not found or it could not be read correctly, generate a new randomized gamestate.
         GAMESTATE.GenerateBricks();
     }
 
@@ -34,7 +36,8 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
         Sleep(1);
     }
 
-    GAMESTATE.DumpGamestate("gamestate.db");
+	// Save the gamestate in the location where it exists, or the best place for it.
+    GAMESTATE.DumpGamestate(gGetExistingSaveFilePath());
 
     return 0;
 }
