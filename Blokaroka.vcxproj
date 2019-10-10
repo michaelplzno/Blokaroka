@@ -99,6 +99,7 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="blokarakaicon-32.ico" />
     <Image Include="blokarakaicon.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,44 @@
 
 GameState GAMESTATE;
 
+int GameState::Brick::GetColorID()
+{
+	if (m_wColor == COLOR_WHITE)
+	{
+		return 0;
+	}
+	else if (m_wColor == COLOR_RED ||
+		m_wColor == COLOR_AMETHYST_0 ||
+		m_wColor == COLOR_TOPAZ_0 ||
+		m_wColor == COLOR_PERIDOT_0)
+	{
+		return 1;
+	}
+	else if (m_wColor == COLOR_YELLOW ||
+		m_wColor == COLOR_AMETHYST_1 ||
+		m_wColor == COLOR_TOPAZ_1 ||
+		m_wColor == COLOR_PERIDOT_1)
+	{
+		return 2;
+	}
+	else if (m_wColor == COLOR_GREEN ||
+		m_wColor == COLOR_AMETHYST_2 ||
+		m_wColor == COLOR_TOPAZ_2 ||
+		m_wColor == COLOR_PERIDOT_2)
+	{
+		return 3;
+	}
+	else if (m_wColor == COLOR_BLUE ||
+		m_wColor == COLOR_AMETHYST_3 ||
+		m_wColor == COLOR_TOPAZ_3 ||
+		m_wColor == COLOR_PERIDOT_3)
+	{
+		return 4;
+	}
+
+	return -1;
+}
+
 void GameState::Brick::DrawBrick(HDC hdc)
 {
     float fDarkerMod = .4f;
@@ -629,6 +667,86 @@ void GameState::Brick::RecursiveSetGroup(int group)
 	}
 }
 
+void GameState::Brick::SetColorForMenu(int menu)
+{
+	int id = GetColorID();
+	if (id == 1)
+	{
+		if (menu == MENU_AMETHYST)
+		{
+			m_wColor = COLOR_AMETHYST_0;
+		}
+		else if (menu == MENU_TOPAZ)
+		{
+			m_wColor = COLOR_TOPAZ_0;
+		}
+		else if (menu == MENU_PERIDOT)
+		{
+			m_wColor = COLOR_PERIDOT_0;
+		}
+		else
+		{
+			m_wColor = COLOR_RED;
+		}	
+	}
+	else if (id == 2)
+	{
+		if (menu == MENU_AMETHYST)
+		{
+			m_wColor = COLOR_AMETHYST_1;
+		}
+		else if (menu == MENU_TOPAZ)
+		{
+			m_wColor = COLOR_TOPAZ_1;
+		}
+		else if (menu == MENU_PERIDOT)
+		{
+			m_wColor = COLOR_PERIDOT_1;
+		}
+		else
+		{
+			m_wColor = COLOR_YELLOW;
+		}
+	}
+	else if (id == 3)
+	{
+		if (menu == MENU_AMETHYST)
+		{
+			m_wColor = COLOR_AMETHYST_2;
+		}
+		else if (menu == MENU_TOPAZ)
+		{
+			m_wColor = COLOR_TOPAZ_2;
+		}
+		else if (menu == MENU_PERIDOT)
+		{
+			m_wColor = COLOR_PERIDOT_2;
+		}
+		else
+		{
+			m_wColor = COLOR_GREEN;
+		}
+	}
+	else if (id == 4)
+	{
+		if (menu == MENU_AMETHYST)
+		{
+			m_wColor = COLOR_AMETHYST_3;
+		}
+		else if (menu == MENU_TOPAZ)
+		{
+			m_wColor = COLOR_TOPAZ_3;
+		}
+		else if (menu == MENU_PERIDOT)
+		{
+			m_wColor = COLOR_PERIDOT_3;
+		}
+		else
+		{
+			m_wColor = COLOR_BLUE;
+		}
+	}
+}
 
 void GameState::Brick::RecursiveFixNeighbors(int x, int y)
 {
@@ -1533,23 +1651,23 @@ void GameState::GenerateBricks()
         int colorNum = rand() % 5;
         if(colorNum == 0)
         {
-            color = RGB(196,40,27);
+			color = COLOR_WHITE;
         } 
         else if(colorNum == 1)
         {
-            color = RGB(242,243,242);
+			color = COLOR_RED;
         } 
         else if(colorNum == 2)
         {
-            color = RGB(245,205,47);
+			color = COLOR_YELLOW;
         }
         else if(colorNum == 3)
         {
-            color = RGB(13,105,171);
+			color = COLOR_GREEN;
         }
         else if(colorNum == 4)
         {
-            color = RGB(75,151,74);
+			color = COLOR_BLUE;
         }
 
         int width = rand()%3;
@@ -1633,7 +1751,8 @@ void  GameState::MoveSelected(int x, int y)
 
     m_iLastX = x;
     m_iLastY = y;
-
+	
+	/*
     if(false)
     {
         if(m_iState == GS_Drag_Mating && m_poSelectedBrick->IntersectsAnyBrick())
@@ -1648,6 +1767,7 @@ void  GameState::MoveSelected(int x, int y)
         }
         return;
     }
+	*/
 
     if(m_iState != GS_Drag_Splitting)
     {
@@ -1656,6 +1776,8 @@ void  GameState::MoveSelected(int x, int y)
             if(m_iState == GS_Drag_Mating)
             {
                 m_poSelectedBrick->Mate();
+
+				m_poSelectedBrick->SetRenderState(Brick::LRS_SOLID);
                 m_iState = GS_Static;
             }
             else
@@ -1873,4 +1995,15 @@ bool GameState::ReadGamestate(std::wstring wstrName )
     in.close();
     return true;
 
+}
+
+void GameState::SetColorsForMenu(int menu)
+{
+	for (int i = 0; i < m_vpoBricks.size(); i++)
+	{
+		m_vpoBricks[i]->SetColorForMenu(menu);
+	}
+
+	RENDER.RenderFrame();
+	RENDER.PresentFrame();
 }

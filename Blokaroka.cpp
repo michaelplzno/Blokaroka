@@ -36,6 +36,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         Sleep(1);
     }
 
+	RENDER.Shutdown();
+
 	// Save the gamestate in the location where it exists, or the best place for it.
     GAMESTATE.DumpGamestate(gGetExistingSaveFilePath());
 

@@ -20,15 +20,25 @@
 #include <math.h>
 #include <sstream>
 
+
 #define WINVER 0x0600
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
 
+#define WM_TRAY_MESSAGE (WM_USER + 1)
 
 #include <windows.h>
+#include <windowsx.h>
 #include <Shlobj.h>
 
 #pragma comment(lib, "Winmm.lib") 
+
+#define MENU_BASIC		1000
+#define MENU_AMETHYST	1001
+#define MENU_TOPAZ		1002
+#define MENU_PERIDOT	1003
+
+#define MENU_EXIT		1004
 
 inline void gPlaySound(int resource)
 {

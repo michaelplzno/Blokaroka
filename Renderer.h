@@ -4,6 +4,11 @@
 #define CLEAR_COLOR RGB(255,0,255)
 #include "Blokaroka.h"
 
+const UINT WM_TRAY = WM_USER + 1;
+
+
+
+
 /* Generic wrapper around a DIB with a 32-bit color depth. */
 typedef struct
 {
@@ -54,8 +59,11 @@ class Renderer
 
     int m_iThing;
 
+	HINSTANCE m_hInstance;
     HWND hWnd;
     HDC m_HDC;
+	NOTIFYICONDATA	m_tnd;
+	HMENU m_hPopupMenu;
     
     bool m_bRight;
   private:
