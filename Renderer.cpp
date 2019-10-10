@@ -537,7 +537,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     int xAdd, yAdd;
     xAdd = yAdd = 0;
     DWORD winType = WS_POPUP|WS_VISIBLE;
-    DWORD exWinType = WS_EX_LAYERED|WS_EX_TRANSPARENT|WS_EX_TOPMOST;
+    DWORD exWinType = WS_EX_LAYERED|WS_EX_TOPMOST;
 
 
     // Create the window based on the previous class	
