@@ -9,6 +9,8 @@
 #ifndef __BLOKAROKA_H__
 #define __BLOKAROKA_H__
 
+#include "resource.h"
+
 #include <time.h>
 #include <vector>
 #include <list>
@@ -28,11 +30,9 @@
 
 #pragma comment(lib, "Winmm.lib") 
 
-inline void gPlaySound(char * strFilename)
+inline void gPlaySound(int resource)
 {
-    char buff[400];
-    sprintf_s(buff,400,"Sounds\\%s.wav", strFilename);
-    PlaySound(buff, NULL, SND_FILENAME|SND_ASYNC);
+    PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE|SND_ASYNC);
 }
 
 inline std::wstring gAppDataDirectory()

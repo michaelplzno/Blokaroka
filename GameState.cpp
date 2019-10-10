@@ -1698,17 +1698,45 @@ GameState::Brick* GameState::GetBrickAt(int x, int y)
 
 void GameState::PlayAttach()
 {
-    char buff[255];
-    sprintf_s(buff,255,"attach%i", rand()%4);
-    gPlaySound(buff);
+	int effect = rand() % 4;
+	if (effect == 0)
+	{
+		gPlaySound(IDR_ATTACH0);
+	}
+	if (effect == 1)
+	{
+		gPlaySound(IDR_ATTACH1);
+	}
+	if (effect == 2)
+	{
+		gPlaySound(IDR_ATTACH2);
+	}
+	if (effect == 3)
+	{
+		gPlaySound(IDR_ATTACH3);
+	}
 }
 
 
 void GameState::PlayDetach()
 {
-    char buff[255];
-    sprintf_s(buff,255,"detach%i", rand()%4);
-    gPlaySound(buff);
+	int effect = rand() % 4;
+	if (effect == 0)
+	{
+		gPlaySound(IDR_DETACH0);
+	}
+	if (effect == 1)
+	{
+		gPlaySound(IDR_DETACH1);
+	}
+	if (effect == 2)
+	{
+		gPlaySound(IDR_DETACH2);
+	}
+	if (effect == 3)
+	{
+		gPlaySound(IDR_DETACH3);
+	}
 }
 
 void GameState::DumpGamestate(std::wstring wstrName)
