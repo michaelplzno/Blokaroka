@@ -6,9 +6,6 @@
 
 const UINT WM_TRAY = WM_USER + 1;
 
-
-
-
 /* Generic wrapper around a DIB with a 32-bit color depth. */
 typedef struct
 {
@@ -26,15 +23,15 @@ class Renderer
 {
   public:
     Renderer() :
-		hWnd(NULL),
-		m_HDC(NULL),
-		m_bRight(false),
-		m_Width(0),
-		m_Height(0),
-		m_ausZBuffer(NULL)
-	{
-		// init singleton
-	}
+        hWnd(NULL),
+        m_HDC(NULL),
+        m_bRight(false),
+        m_Width(0),
+        m_Height(0),
+        m_ausZBuffer(NULL)
+    {
+        // init singleton
+    }
 
     void InitRenderer(HINSTANCE hInstance);
 
@@ -48,8 +45,6 @@ class Renderer
 
     void Circle(int x, int y, int radius, COLORREF c, unsigned int depth = 0, float fAlpha = 1.0f);
 
-
-
     void RenderFrame();
     void PresentFrame();
     void HandleWindows();
@@ -59,11 +54,11 @@ class Renderer
 
     int m_iThing;
 
-	HINSTANCE m_hInstance;
+    HINSTANCE m_hInstance;
     HWND hWnd;
     HDC m_HDC;
-	NOTIFYICONDATA	m_tnd;
-	HMENU m_hPopupMenu;
+    NOTIFYICONDATA m_tnd;
+    HMENU m_hPopupMenu;
     
     bool m_bRight;
   private:
@@ -76,11 +71,7 @@ class Renderer
 
 
       void circlePoints(int cx, int cy, int x, int y, COLORREF color, unsigned int depth, float alpha);
-
-      
-
 };
-
 
 
 inline void ImageDestroy(Image *pImage)

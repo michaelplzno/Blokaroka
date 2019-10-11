@@ -4,40 +4,40 @@ GameState GAMESTATE;
 
 int GameState::Blok::GetColorID()
 {
-	if (m_wColor == COLOR_WHITE)
-	{
-		return 0;
-	}
-	else if (m_wColor == COLOR_RED ||
-		m_wColor == COLOR_AMETHYST_0 ||
-		m_wColor == COLOR_TOPAZ_0 ||
-		m_wColor == COLOR_PERIDOT_0)
-	{
-		return 1;
-	}
-	else if (m_wColor == COLOR_YELLOW ||
-		m_wColor == COLOR_AMETHYST_1 ||
-		m_wColor == COLOR_TOPAZ_1 ||
-		m_wColor == COLOR_PERIDOT_1)
-	{
-		return 2;
-	}
-	else if (m_wColor == COLOR_GREEN ||
-		m_wColor == COLOR_AMETHYST_2 ||
-		m_wColor == COLOR_TOPAZ_2 ||
-		m_wColor == COLOR_PERIDOT_2)
-	{
-		return 3;
-	}
-	else if (m_wColor == COLOR_BLUE ||
-		m_wColor == COLOR_AMETHYST_3 ||
-		m_wColor == COLOR_TOPAZ_3 ||
-		m_wColor == COLOR_PERIDOT_3)
-	{
-		return 4;
-	}
+    if (m_wColor == COLOR_WHITE)
+    {
+        return 0;
+    }
+    else if (m_wColor == COLOR_RED ||
+        m_wColor == COLOR_AMETHYST_0 ||
+        m_wColor == COLOR_TOPAZ_0 ||
+        m_wColor == COLOR_PERIDOT_0)
+    {
+        return 1;
+    }
+    else if (m_wColor == COLOR_YELLOW ||
+        m_wColor == COLOR_AMETHYST_1 ||
+        m_wColor == COLOR_TOPAZ_1 ||
+        m_wColor == COLOR_PERIDOT_1)
+    {
+        return 2;
+    }
+    else if (m_wColor == COLOR_GREEN ||
+        m_wColor == COLOR_AMETHYST_2 ||
+        m_wColor == COLOR_TOPAZ_2 ||
+        m_wColor == COLOR_PERIDOT_2)
+    {
+        return 3;
+    }
+    else if (m_wColor == COLOR_BLUE ||
+        m_wColor == COLOR_AMETHYST_3 ||
+        m_wColor == COLOR_TOPAZ_3 ||
+        m_wColor == COLOR_PERIDOT_3)
+    {
+        return 4;
+    }
 
-	return -1;
+    return -1;
 }
 
 void GameState::Blok::DrawBlok(HDC hdc)
@@ -133,7 +133,7 @@ void GameState::Blok::DrawBlok(HDC hdc)
 
 
 
-	unsigned int depth = ComputeDepth(); //RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
+    unsigned int depth = ComputeDepth(); //RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
     RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT,normal, depth,fAlpha);
 
     
@@ -160,18 +160,18 @@ void GameState::Blok::DrawBlok(HDC hdc)
 
         //RENDER.SetPixel(m_iRenderX-i,m_iRenderY-i,0, depth);
         RENDER.SetPixel(m_iRenderX-i,m_iRenderY+BLOK_HEIGHT-i,0, depth,fAlpha);
-/*        RENDER.SetPixel(m_iRenderX-i-1,m_iRenderY+LEGO_HEIGHT-i,0, depth,.5f);*/
+        //RENDER.SetPixel(m_iRenderX-i-1,m_iRenderY+LEGO_HEIGHT-i,0, depth,.5f);
 
         if(m_poRight == NULL)
         {
             RENDER.SetPixel(m_iRenderX+BLOK_WIDTH-i,m_iRenderY-i,0, depth,fAlpha);
-/*            RENDER.SetPixel(m_iRenderX+LEGO_WIDTH-i+1,m_iRenderY-i,0, depth,.5f);*/
+            //RENDER.SetPixel(m_iRenderX+LEGO_WIDTH-i+1,m_iRenderY-i,0, depth,.5f);
         }
     }
 
     //RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY, 0, depth);
     RENDER.HorizontalLine(m_iRenderX,m_iRenderX+BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, 0, depth,fAlpha);
-/*    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT+1, 0, depth,.5f);*/
+    //RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT+1, 0, depth,.5f);
 
     if(m_poLeft == NULL)
     {
@@ -181,7 +181,7 @@ void GameState::Blok::DrawBlok(HDC hdc)
     if(m_poRight == NULL)
     {
         RENDER.VerticalLine(m_iRenderY, m_iRenderY+BLOK_HEIGHT, m_iRenderX+BLOK_WIDTH, 0, depth,fAlpha);
-/*        RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX+LEGO_WIDTH+1, 0, depth, .5f);*/
+        //RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX+LEGO_WIDTH+1, 0, depth, .5f);
     }
 
     if(m_poTop == NULL && m_iRenderState != BRS_NO_ATTACH)
@@ -304,57 +304,57 @@ void GameState::Blok::ClearBlok(HDC hdc)
 
 bool GameState::Blok::CursorIntersectsPoint(int x, int y)
 {
-	if (!HasLeft())
-	{
-		if (x <= m_iX - BLOK_WIDTH/2)
-		{
-			return false;
-		}
+    if (!HasLeft())
+    {
+        if (x <= m_iX - BLOK_WIDTH/2)
+        {
+            return false;
+        }
 
-		if (x >= m_iX + BLOK_WIDTH)
-		{
-			return false;
-		}
-	}
-	else
-	{
-		if (x <= m_iX)
-		{
-			return false;
-		}
+        if (x >= m_iX + BLOK_WIDTH)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if (x <= m_iX)
+        {
+            return false;
+        }
 
-		if (x >= m_iX + BLOK_WIDTH)
-		{
-			return false;
-		}
-	}
+        if (x >= m_iX + BLOK_WIDTH)
+        {
+            return false;
+        }
+    }
 
-	if (!HasTop())
-	{
-		if (y <= m_iY - BLOK_WIDTH/2)
-		{
-			return false;
-		}
+    if (!HasTop())
+    {
+        if (y <= m_iY - BLOK_WIDTH/2)
+        {
+            return false;
+        }
 
-		if (y >= m_iY + BLOK_HEIGHT)
-		{
-			return false;
-		}
-	}
-	else
-	{
-		if (y <= m_iY)
-		{
-			return false;
-		}
+        if (y >= m_iY + BLOK_HEIGHT)
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if (y <= m_iY)
+        {
+            return false;
+        }
 
-		if (y >= m_iY + BLOK_HEIGHT)
-		{
-			return false;
-		}
-	}
+        if (y >= m_iY + BLOK_HEIGHT)
+        {
+            return false;
+        }
+    }
 
-	return true;
+    return true;
 }
 
 
@@ -683,132 +683,132 @@ void GameState::Blok::SetMarks( int mark )
 
 int GameState::Blok::ComputeDepth()
 {
-	if (HasLeft())
-	{
-		return m_poLeft->ComputeDepth();
-	}
-	/*else if (HasBottom())
-	{
-		return m_poBottom->ComputeDepth();
-	}*/
+    if (HasLeft())
+    {
+        return m_poLeft->ComputeDepth();
+    }
+    /*else if (HasBottom())
+    {
+        return m_poBottom->ComputeDepth();
+    }*/
 
-	return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX);
+    return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX);
 }
 
 void GameState::Blok::RecursiveSetGroup(int group)
 {
-	if (m_iGroup != group)
-	{
-		m_iGroup = group;
+    if (m_iGroup != group)
+    {
+        m_iGroup = group;
 
-		if (m_poLeft != NULL)
-		{
-			m_poLeft->RecursiveSetGroup(group);
-		}
+        if (m_poLeft != NULL)
+        {
+            m_poLeft->RecursiveSetGroup(group);
+        }
 
-		if (m_poRight != NULL)
-		{
-			m_poRight->RecursiveSetGroup(group);
-		}
+        if (m_poRight != NULL)
+        {
+            m_poRight->RecursiveSetGroup(group);
+        }
 
-		if (m_poTop != NULL)
-		{
-			m_poTop->RecursiveSetGroup(group);
-		}
+        if (m_poTop != NULL)
+        {
+            m_poTop->RecursiveSetGroup(group);
+        }
 
-		if (m_poBottom != NULL)
-		{
-			m_poBottom->RecursiveSetGroup(group);
-		}
-	}
+        if (m_poBottom != NULL)
+        {
+            m_poBottom->RecursiveSetGroup(group);
+        }
+    }
 }
 
 void GameState::Blok::SetColorForMenu(int menu)
 {
-	int id = GetColorID();
-	if (id == 1)
-	{
-		if (menu == MENU_AMETHYST)
-		{
-			m_wColor = COLOR_AMETHYST_0;
-		}
-		else if (menu == MENU_TOPAZ)
-		{
-			m_wColor = COLOR_TOPAZ_0;
-		}
-		else if (menu == MENU_PERIDOT)
-		{
-			m_wColor = COLOR_PERIDOT_0;
-		}
-		else
-		{
-			m_wColor = COLOR_RED;
-		}	
-	}
-	else if (id == 2)
-	{
-		if (menu == MENU_AMETHYST)
-		{
-			m_wColor = COLOR_AMETHYST_1;
-		}
-		else if (menu == MENU_TOPAZ)
-		{
-			m_wColor = COLOR_TOPAZ_1;
-		}
-		else if (menu == MENU_PERIDOT)
-		{
-			m_wColor = COLOR_PERIDOT_1;
-		}
-		else
-		{
-			m_wColor = COLOR_YELLOW;
-		}
-	}
-	else if (id == 3)
-	{
-		if (menu == MENU_AMETHYST)
-		{
-			m_wColor = COLOR_AMETHYST_2;
-		}
-		else if (menu == MENU_TOPAZ)
-		{
-			m_wColor = COLOR_TOPAZ_2;
-		}
-		else if (menu == MENU_PERIDOT)
-		{
-			m_wColor = COLOR_PERIDOT_2;
-		}
-		else
-		{
-			m_wColor = COLOR_GREEN;
-		}
-	}
-	else if (id == 4)
-	{
-		if (menu == MENU_AMETHYST)
-		{
-			m_wColor = COLOR_AMETHYST_3;
-		}
-		else if (menu == MENU_TOPAZ)
-		{
-			m_wColor = COLOR_TOPAZ_3;
-		}
-		else if (menu == MENU_PERIDOT)
-		{
-			m_wColor = COLOR_PERIDOT_3;
-		}
-		else
-		{
-			m_wColor = COLOR_BLUE;
-		}
-	}
+    int id = GetColorID();
+    if (id == 1)
+    {
+        if (menu == MENU_AMETHYST)
+        {
+            m_wColor = COLOR_AMETHYST_0;
+        }
+        else if (menu == MENU_TOPAZ)
+        {
+            m_wColor = COLOR_TOPAZ_0;
+        }
+        else if (menu == MENU_PERIDOT)
+        {
+            m_wColor = COLOR_PERIDOT_0;
+        }
+        else
+        {
+            m_wColor = COLOR_RED;
+        }    
+    }
+    else if (id == 2)
+    {
+        if (menu == MENU_AMETHYST)
+        {
+            m_wColor = COLOR_AMETHYST_1;
+        }
+        else if (menu == MENU_TOPAZ)
+        {
+            m_wColor = COLOR_TOPAZ_1;
+        }
+        else if (menu == MENU_PERIDOT)
+        {
+            m_wColor = COLOR_PERIDOT_1;
+        }
+        else
+        {
+            m_wColor = COLOR_YELLOW;
+        }
+    }
+    else if (id == 3)
+    {
+        if (menu == MENU_AMETHYST)
+        {
+            m_wColor = COLOR_AMETHYST_2;
+        }
+        else if (menu == MENU_TOPAZ)
+        {
+            m_wColor = COLOR_TOPAZ_2;
+        }
+        else if (menu == MENU_PERIDOT)
+        {
+            m_wColor = COLOR_PERIDOT_2;
+        }
+        else
+        {
+            m_wColor = COLOR_GREEN;
+        }
+    }
+    else if (id == 4)
+    {
+        if (menu == MENU_AMETHYST)
+        {
+            m_wColor = COLOR_AMETHYST_3;
+        }
+        else if (menu == MENU_TOPAZ)
+        {
+            m_wColor = COLOR_TOPAZ_3;
+        }
+        else if (menu == MENU_PERIDOT)
+        {
+            m_wColor = COLOR_PERIDOT_3;
+        }
+        else
+        {
+            m_wColor = COLOR_BLUE;
+        }
+    }
 }
 
 void GameState::Blok::RecursiveFixNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
-		return;
+        return;
     }
 
     m_iMark = 1;
@@ -823,17 +823,17 @@ void GameState::Blok::RecursiveFixNeighbors(int x, int y)
 
     if(m_poRight != NULL)
     {
-		m_poRight->RecursiveFixNeighbors(x + BLOK_WIDTH, y);
+        m_poRight->RecursiveFixNeighbors(x + BLOK_WIDTH, y);
     }
 
     if(m_poTop != NULL)
     {
-		m_poTop->RecursiveFixNeighbors(x, y - BLOK_HEIGHT);
+        m_poTop->RecursiveFixNeighbors(x, y - BLOK_HEIGHT);
     }
 
     if(m_poBottom != NULL)
     {
-		m_poBottom->RecursiveFixNeighbors(x, y + BLOK_HEIGHT);
+        m_poBottom->RecursiveFixNeighbors(x, y + BLOK_HEIGHT);
     }
 }
 
@@ -841,7 +841,7 @@ void GameState::Blok::RecursiveFixRenderNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
-		return;
+        return;
     }
 
     m_iMark = 1;
@@ -1707,23 +1707,23 @@ void GameState::GenerateBloks()
         int colorNum = rand() % 5;
         if(colorNum == 0)
         {
-			color = COLOR_WHITE;
+            color = COLOR_WHITE;
         } 
         else if(colorNum == 1)
         {
-			color = COLOR_RED;
+            color = COLOR_RED;
         } 
         else if(colorNum == 2)
         {
-			color = COLOR_YELLOW;
+            color = COLOR_YELLOW;
         }
         else if(colorNum == 3)
         {
-			color = COLOR_GREEN;
+            color = COLOR_GREEN;
         }
         else if(colorNum == 4)
         {
-			color = COLOR_BLUE;
+            color = COLOR_BLUE;
         }
 
         int width = rand()%3;
@@ -1807,8 +1807,8 @@ void  GameState::MoveSelected(int x, int y)
 
     m_iLastX = x;
     m_iLastY = y;
-	
-	/*
+    
+    /*
     if(false)
     {
         if(m_iState == GS_Drag_Mating && m_poSelectedBlok->IntersectsAnyBlok())
@@ -1823,7 +1823,7 @@ void  GameState::MoveSelected(int x, int y)
         }
         return;
     }
-	*/
+    */
 
     if(m_iState != GS_Drag_Splitting)
     {
@@ -1833,7 +1833,7 @@ void  GameState::MoveSelected(int x, int y)
             {
                 m_poSelectedBlok->Mate();
 
-				m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
+                m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
                 m_iState = GS_Static;
             }
             else
@@ -1876,50 +1876,50 @@ GameState::Blok* GameState::GetBlokAt(int x, int y)
 
 void GameState::PlayAttach()
 {
-	int effect = rand() % 4;
-	if (effect == 0)
-	{
-		gPlaySound(IDR_ATTACH0);
-	}
-	if (effect == 1)
-	{
-		gPlaySound(IDR_ATTACH1);
-	}
-	if (effect == 2)
-	{
-		gPlaySound(IDR_ATTACH2);
-	}
-	if (effect == 3)
-	{
-		gPlaySound(IDR_ATTACH3);
-	}
+    int effect = rand() % 4;
+    if (effect == 0)
+    {
+        gPlaySound(IDR_ATTACH0);
+    }
+    if (effect == 1)
+    {
+        gPlaySound(IDR_ATTACH1);
+    }
+    if (effect == 2)
+    {
+        gPlaySound(IDR_ATTACH2);
+    }
+    if (effect == 3)
+    {
+        gPlaySound(IDR_ATTACH3);
+    }
 }
 
 
 void GameState::PlayDetach()
 {
-	int effect = rand() % 4;
-	if (effect == 0)
-	{
-		gPlaySound(IDR_DETACH0);
-	}
-	if (effect == 1)
-	{
-		gPlaySound(IDR_DETACH1);
-	}
-	if (effect == 2)
-	{
-		gPlaySound(IDR_DETACH2);
-	}
-	if (effect == 3)
-	{
-		gPlaySound(IDR_DETACH3);
-	}
+    int effect = rand() % 4;
+    if (effect == 0)
+    {
+        gPlaySound(IDR_DETACH0);
+    }
+    if (effect == 1)
+    {
+        gPlaySound(IDR_DETACH1);
+    }
+    if (effect == 2)
+    {
+        gPlaySound(IDR_DETACH2);
+    }
+    if (effect == 3)
+    {
+        gPlaySound(IDR_DETACH3);
+    }
 }
 
 void GameState::DumpGamestate(std::wstring wstrName)
 {
-	CreateDirectoryW(gAppDataDirectory().c_str(), 0);
+    CreateDirectoryW(gAppDataDirectory().c_str(), 0);
 
     std::ofstream out;
 
@@ -2055,11 +2055,11 @@ bool GameState::ReadGamestate(std::wstring wstrName )
 
 void GameState::SetColorsForMenu(int menu)
 {
-	for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
-	{
-		m_vpoBloks[i]->SetColorForMenu(menu);
-	}
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    {
+        m_vpoBloks[i]->SetColorForMenu(menu);
+    }
 
-	RENDER.RenderFrame();
-	RENDER.PresentFrame();
+    RENDER.RenderFrame();
+    RENDER.PresentFrame();
 }

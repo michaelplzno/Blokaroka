@@ -6,22 +6,22 @@ Config CONFIG;
 
 // -- MAIN -------------------------------------------------------------- //
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PSTR pstrCmdLine, int iCmdShow)
+    PSTR pstrCmdLine, int iCmdShow)
 {
 
-	// - - - Command Line- - - - - - - //
-	if (gHandleCommandLineArgs(pstrCmdLine) == false)
-	{
-		return 0;
-	}
+    // - - - Command Line- - - - - - - //
+    if (gHandleCommandLineArgs(pstrCmdLine) == false)
+    {
+        return 0;
+    }
 
-	RENDER.InitRenderer(hInstance);
+    RENDER.InitRenderer(hInstance);
 
 
-	// Try to read the gamestate from the best existing gamestate location.
-	if (!GAMESTATE.ReadGamestate(gGetExistingSaveFilePath()))
-	{
-		// Gamestate was not found or it could not be read correctly, generate a new randomized gamestate.
+    // Try to read the gamestate from the best existing gamestate location.
+    if (!GAMESTATE.ReadGamestate(gGetExistingSaveFilePath()))
+    {
+        // Gamestate was not found or it could not be read correctly, generate a new randomized gamestate.
         GAMESTATE.GenerateBloks();
     }
 
@@ -36,9 +36,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         Sleep(1);
     }
 
-	RENDER.Shutdown();
+    RENDER.Shutdown();
 
-	// Save the gamestate in the location where it exists, or the best place for it.
+    // Save the gamestate in the location where it exists, or the best place for it.
     GAMESTATE.DumpGamestate(gGetExistingSaveFilePath());
 
     return 0;

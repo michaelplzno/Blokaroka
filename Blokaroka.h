@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////
-//  Blokaroka.h		                                                      //
+//  Blokaroka.h                                                              //
 //    A way to render interactive Bloks you can play with on your        //
 //    windows desktop.                                                    //
 //                                                                        //
@@ -33,12 +33,12 @@
 
 #pragma comment(lib, "Winmm.lib") 
 
-#define MENU_BASIC		1000
-#define MENU_AMETHYST	1001
-#define MENU_TOPAZ		1002
-#define MENU_PERIDOT	1003
+#define MENU_BASIC        1000
+#define MENU_AMETHYST    1001
+#define MENU_TOPAZ        1002
+#define MENU_PERIDOT    1003
 
-#define MENU_EXIT		1004
+#define MENU_EXIT        1004
 
 inline void gPlaySound(int resource)
 {
@@ -47,39 +47,39 @@ inline void gPlaySound(int resource)
 
 inline std::wstring gAppDataDirectory()
 {
-	// Search for the AppData folder for this user.
-	wchar_t* knownPath = NULL;
-	HRESULT hr = SHGetKnownFolderPath(FOLDERID_AppDataProgramData, KF_FLAG_CREATE, NULL, &knownPath);
-	std::wstringstream wss;
+    // Search for the AppData folder for this user.
+    wchar_t* knownPath = NULL;
+    HRESULT hr = SHGetKnownFolderPath(FOLDERID_AppDataProgramData, KF_FLAG_CREATE, NULL, &knownPath);
+    std::wstringstream wss;
 
-	if (SUCCEEDED(hr))
-	{
-		OutputDebugString("Got Folder Path: ");
+    if (SUCCEEDED(hr))
+    {
+        OutputDebugString("Got Folder Path: ");
 
-		wss << knownPath << L"\\Blokaroka\\";
+        wss << knownPath << L"\\Blokaroka\\";
 
-		OutputDebugStringW(wss.str().c_str());
-		OutputDebugString("\n");
-	}
-	else
-	{
-		wss << L".\\";
-		OutputDebugString("NO Folder Path\n");
-	}
+        OutputDebugStringW(wss.str().c_str());
+        OutputDebugString("\n");
+    }
+    else
+    {
+        wss << L".\\";
+        OutputDebugString("NO Folder Path\n");
+    }
 
-	// Free the known path info.
-	CoTaskMemFree(knownPath);
+    // Free the known path info.
+    CoTaskMemFree(knownPath);
 
-	return wss.str();
+    return wss.str();
 }
 
 // Returns %APPDATA%\Blokaroka\\gamestate.blok as a std::string - This is the default desired save file location.
 inline std::wstring gGetAppDataSaveFilePath()
 {
-	std::wstringstream wss;
-	wss << gAppDataDirectory() << L"gamestate.blok";
+    std::wstringstream wss;
+    wss << gAppDataDirectory() << L"gamestate.blok";
 
-	return wss.str();
+    return wss.str();
 }
 
 // This function searches several locations for an existing save file and if it finds the file returns the path as a std::string.
@@ -90,41 +90,41 @@ inline std::wstring gGetAppDataSaveFilePath()
 // If the no files can be found it will return the first path.
 inline std::wstring gGetExistingSaveFilePath()
 {
-	// ifstream to test if a file can be opened.
-	std::ifstream in;
+    // ifstream to test if a file can be opened.
+    std::ifstream in;
 
-	// Test the AppData path.
-	std::wstring path1 = gGetAppDataSaveFilePath();
+    // Test the AppData path.
+    std::wstring path1 = gGetAppDataSaveFilePath();
 
-	in.open(path1.c_str(), std::ofstream::in);
-	if (in.is_open())
-	{
-		in.close();
-		return path1;
-	}
+    in.open(path1.c_str(), std::ofstream::in);
+    if (in.is_open())
+    {
+        in.close();
+        return path1;
+    }
 
-	// Test the .blok local path.
-	std::wstring path2 = L"gamestate.blok";
+    // Test the .blok local path.
+    std::wstring path2 = L"gamestate.blok";
 
-	in.open(path2.c_str(), std::ofstream::in);
-	if (in.is_open())
-	{
-		in.close();
-		return path2;
-	}
+    in.open(path2.c_str(), std::ofstream::in);
+    if (in.is_open())
+    {
+        in.close();
+        return path2;
+    }
 
-	// Test the .db legacy local path.
-	std::wstring path3 = L"gamestate.db";
+    // Test the .db legacy local path.
+    std::wstring path3 = L"gamestate.db";
 
-	in.open(path3.c_str(), std::ofstream::in);
-	if (in.is_open())
-	{
-		in.close();
-		return path3;
-	}
+    in.open(path3.c_str(), std::ofstream::in);
+    if (in.is_open())
+    {
+        in.close();
+        return path3;
+    }
 
-	// return the default case since no file was found.
-	return path1;
+    // return the default case since no file was found.
+    return path1;
 }
 
 
@@ -148,7 +148,7 @@ class Config {
         m_bRenderBackgroundGradient(true),
         m_bUseAlpha(true),
         m_bUseAA(false),
-		m_bVSyncLock(false)
+        m_bVSyncLock(false)
     { };
 };
 
