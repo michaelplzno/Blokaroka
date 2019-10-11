@@ -304,14 +304,6 @@ void GameState::Brick::ClearBrick(HDC hdc)
 
 bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 {
-
-//	OutputDebugString("CursorIntersectsPoint: ");
-
-	/*if (IntersectsPoint(x, y))
-	{
-		return true;
-	}*/
-
 	if (!HasLeft())
 	{
 		if (x <= m_iX - BRICK_WIDTH/2)
@@ -335,8 +327,6 @@ bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 		{
 			return false;
 		}
-
-
 	}
 
 	if (!HasTop())
@@ -346,7 +336,7 @@ bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 			return false;
 		}
 
-		if (y >= m_iY + 4 * BRICK_HEIGHT)
+		if (y >= m_iY + BRICK_HEIGHT)
 		{
 			return false;
 		}
