@@ -73,6 +73,7 @@ public:
 
         void ClearBrick(HDC hdc);
         void DrawBrick(HDC hdc);
+		bool CursorIntersectsPoint(int x, int y);
         bool IntersectsPoint(int x, int y);
         bool IntersectsBrick(Brick* poOther);
         bool IntersectsAnyBrick();

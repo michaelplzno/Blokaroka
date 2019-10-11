@@ -302,6 +302,72 @@ void GameState::Brick::ClearBrick(HDC hdc)
     DeleteObject(NewPen);
 }
 
+bool GameState::Brick::CursorIntersectsPoint(int x, int y)
+{
+
+//	OutputDebugString("CursorIntersectsPoint: ");
+
+	/*if (IntersectsPoint(x, y))
+	{
+		return true;
+	}*/
+
+	if (!HasLeft())
+	{
+		if (x <= m_iX - BRICK_WIDTH/2)
+		{
+			return false;
+		}
+
+		if (x >= m_iX + BRICK_WIDTH)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (x <= m_iX)
+		{
+			return false;
+		}
+
+		if (x >= m_iX + BRICK_WIDTH)
+		{
+			return false;
+		}
+
+
+	}
+
+	if (!HasTop())
+	{
+		if (y <= m_iY - (BRICK_WIDTH / 2))
+		{
+			return false;
+		}
+
+		if (y >= m_iY + 4 * BRICK_HEIGHT)
+		{
+			return false;
+		}
+	}
+	else
+	{
+		if (y <= m_iY)
+		{
+			return false;
+		}
+
+		if (y >= m_iY + BRICK_HEIGHT)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
 bool GameState::Brick::IntersectsPoint(int x, int y)
 {
     if(x < m_iX)
@@ -1809,7 +1875,7 @@ GameState::Brick* GameState::GetBrickAt(int x, int y)
 {
     for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoBricks[i]->IntersectsPoint(x,y))
+        if (GAMESTATE.m_vpoBricks[i]->CursorIntersectsPoint(x,y))
         {
             return GAMESTATE.m_vpoBricks[i];
         }
@@ -1999,7 +2065,7 @@ bool GameState::ReadGamestate(std::wstring wstrName )
 
 void GameState::SetColorsForMenu(int menu)
 {
-	for (int i = 0; i < m_vpoBricks.size(); i++)
+	for (unsigned int i = 0; i < m_vpoBricks.size(); i++)
 	{
 		m_vpoBricks[i]->SetColorForMenu(menu);
 	}
