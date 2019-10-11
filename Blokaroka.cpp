@@ -22,7 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	if (!GAMESTATE.ReadGamestate(gGetExistingSaveFilePath()))
 	{
 		// Gamestate was not found or it could not be read correctly, generate a new randomized gamestate.
-        GAMESTATE.GenerateBricks();
+        GAMESTATE.GenerateBloks();
     }
 
 

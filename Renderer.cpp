@@ -61,7 +61,7 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            GameState::Brick * poClicked = GAMESTATE.GetBrickAt(xPos,yPos);
+            GameState::Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
             if( poClicked )
             {
                 GAMESTATE.SetDragging(poClicked, xPos, yPos);
@@ -85,19 +85,19 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            GameState::Brick * poClicked = GAMESTATE.GetBrickAt(xPos,yPos);
-            if( poClicked && poClicked->CanDetachBrickUp())
+            GameState::Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
+            if( poClicked && poClicked->CanDetachUp())
             {
-                poClicked->DetachBrickUp();
+                poClicked->DetachUp();
                 GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
                 //GAMESTATE.SetState(GameState::GS_Drag_Free);
 				RENDER.m_bRight = true;
                 return 1;
             }
 
-            if( poClicked && poClicked->CanDetachBrickDown())
+            if( poClicked && poClicked->CanDetachDown())
             {
-                poClicked->DetachBrickDown();
+                poClicked->DetachDown();
                 GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
 				RENDER.m_bRight = true;
                 return 1;
@@ -202,7 +202,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
     // Switch the windows message to figure out what it is
     switch( uMessage )
     {
-		case WM_COMMAND:
+		case WM_COMMAND: // User interacted with popup menu.
 		{
 			if (wParam == MENU_EXIT)
 			{
@@ -214,27 +214,22 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
 			}
 			else
 			{
+				// This case should never be reached.
 				std::stringstream ss;
 				ss << "You pressed option:" << wParam;
 				MessageBox(NULL, ss.str().c_str(), "Blockaroka Alert", MB_OK);
 			}
 
-			
 			return 0;
 		}
 
-		case WM_TRAY_MESSAGE:
+		case WM_TRAY_MESSAGE: // User interacted with the tray icon.
 		{
-			if (LOWORD(lParam) == WM_LBUTTONDOWN)
+			if (LOWORD(lParam) == WM_LBUTTONUP || LOWORD(lParam) == WM_RBUTTONUP) // User left or right clicked the tray icon.
 			{
-				
-				//MessageBox(NULL, "You Left Clicked The Tray Icon", "Blockaroka Alert", MB_OK);
-			}
-			else if (LOWORD(lParam) == WM_RBUTTONUP)
-			{
-
-
-				RENDER.m_hPopupMenu = CreatePopupMenu();
+				// Generate a popup menu to ask the user what to do.
+				RENDER.m_hPopupMenu = CreatePopupMenu(); 
+			
 				AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_BASIC, "Basic Colors");
 				AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_AMETHYST, "Amethyst");
 				AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_TOPAZ, "Topaz");
@@ -242,9 +237,11 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
 				AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
 				AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_EXIT, "Exit");
 
+				// Popup where the mouse is.
 				tagPOINT pt;
 				GetPhysicalCursorPos(&pt);
 				
+				// Display the popup.
 				TrackPopupMenu(RENDER.m_hPopupMenu,
 							   TPM_LEFTALIGN | TPM_RIGHTBUTTON,
 					 	       pt.x, pt.y, 0, hWnd, NULL);
@@ -254,68 +251,34 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
 			return 0;
 		}
 
-		case WM_KEYDOWN: 
+		case WM_KEYDOWN: // User pressed a key.
         {
-            if( wParam == VK_ESCAPE )
+            if( wParam == VK_ESCAPE ) // Terminate program when ESC is pressed.
             {
-                PostQuitMessage( 0 );
                 g_bIsAppAlive = false;
                 return 1;
             }
-            else if( wParam == VK_RETURN )
-            {
-                //Terminal::enter( );
-            }
-            else if( wParam == VK_UP )
-            {
-                //Terminal::displayLastEntry( );
-            }
+
             return 0;
         }
-
-		case WM_MOUSEMOVE:
-	    {
-		    return 0;
-	    }
-
-		case WM_LBUTTONDOWN:
-		{
-
-			return 0;
-		}
-
-	    case WM_LBUTTONUP:
-		{
-
-			return 0;
-		}
-
-		case WM_SETCURSOR:
-        {
-			SetCursor(LoadCursor(NULL, IDC_HAND));
-			return 0;
-        }
-
 
 	    case WM_PAINT:
 		{
             return 0;
         }
 
-		case WM_DESTROY: 
-		case WM_CLOSE: // The window is about to be closed
+		case WM_DESTROY: // The window is about to be closed
+		case WM_CLOSE: 
 		{  
 			// Our main window is closing.  This means we want our app to exit.
-
 			g_bIsAppAlive = false;
 		    return 0;
 		}
 
 
-	    default:			// Some other message
+		default: // Some other message
         {
             // Let windows handle this message
-
             return DefWindowProc( hWnd, uMessage, wParam, lParam );
         }
     }
@@ -345,8 +308,8 @@ void Renderer::HandleWindows()
 
 void Renderer::RenderFrame(void)
 {
-    HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
-    HPEN NewPen = CreatePen(PS_SOLID, 3, CLEAR_COLOR);
+    //HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
+    //HPEN NewPen = CreatePen(PS_SOLID, 3, CLEAR_COLOR);
 
     BYTE *pPixel = NULL;
 
@@ -365,10 +328,10 @@ void Renderer::RenderFrame(void)
         for (i = 0; i < totalBytes; i += 4)
         {
             pPixel = &m_Image.pPixels[i];
-            pPixel[0] = 0;//(BYTE)((float)pPixel[3] / 255.0f);
-            pPixel[1] = 0;//(BYTE)((float)pPixel[3] / 255.0f);
-            pPixel[2] *= 0;
-            pPixel[3]  = 0;//(BYTE)((float)pPixel[3] / 255.0f);
+            pPixel[0] = 0;
+            pPixel[1] = 0;
+            pPixel[2] = 0;
+            pPixel[3] = 0;
         }
     }
     else
@@ -387,44 +350,46 @@ void Renderer::RenderFrame(void)
             for (x = 0; x < m_Image.width; ++x)
             {
                 pPixel = &m_Image.pPixels[(y * m_Image.pitch) + (x * 4)];
-                pPixel[0] *= 0;//(BYTE)((float)pPixel[3] / 255.0f);
-                pPixel[1] *= 0;//(BYTE)((float)pPixel[3] / 255.0f);
-                pPixel[2] *= 0;
-                pPixel[3]  = 0;//(BYTE)((float)pPixel[3] / 255.0f);
+                pPixel[0] = 0;
+                pPixel[1] = 0;
+                pPixel[2] = 0;
+                pPixel[3] = 0;
             }
         }
     }
 
-    DeleteObject(NewPen);
-    DeleteObject(NewBrush);
+    //DeleteObject(NewPen);
+    //DeleteObject(NewBrush);
 
-	for (unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++)
+	/*
+	for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
 	{
-		GAMESTATE.m_vpoBricks[i]->m_iGroup = -1;
+		GAMESTATE.m_vpoBloks[i]->SetGroup(-1);
 	}
 
 	int index = 1;
-	for (unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++)
+	for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
 	{
-		if (GAMESTATE.m_vpoBricks[i]->GetRenderState() == GameState::Brick::LRS_SOLID && GAMESTATE.m_vpoBricks[i]->m_iGroup == -1)
+		if (GAMESTATE.m_vpoBloks[i]->GetRenderState() == GameState::Blok::BRS_SOLID && GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
 		{
-			GAMESTATE.m_vpoBricks[i]->RecursiveSetGroup(index);
+			GAMESTATE.m_vpoBloks[i]->RecursiveSetGroup(index);
 			index++;
 		}
 	}
 
-	for (unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++)
+	for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
 	{
-		if (GAMESTATE.m_vpoBricks[i]->m_iGroup == -1)
+		if (GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
 		{
-			GAMESTATE.m_vpoBricks[i]->RecursiveSetGroup(index);
+			GAMESTATE.m_vpoBloks[i]->RecursiveSetGroup(index);
 			index++;
 		}
 	}
+	*/
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
-        GAMESTATE.m_vpoBricks[i]->DrawBrick(m_HDC);
+        GAMESTATE.m_vpoBloks[i]->DrawBlok(m_HDC);
     }
 }
 
@@ -523,7 +488,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     // A handle to a smaller version of the apps icon
     wc.hIconSm			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
     // A handle to the cursor to use while the mouse is over our window
-    wc.hCursor			= LoadCursor( NULL, IDC_ARROW );
+    wc.hCursor			= LoadCursor( NULL, IDC_HAND );
     // A handle to the resource to use as our menu
     wc.lpszMenuName	    = NULL;
     // The human readable name for this class
@@ -648,31 +613,9 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 	m_tnd.dwState = NIS_SHAREDICON;
 	m_tnd.uVersion = NOTIFYICON_VERSION_4;
 	strcpy_s(m_tnd.szTip, 128, strAppName);
-	//or you could use:
-	//strcpy ( m_tnd.szTip, AfxGetApp()->m_pszAppName);
-	//this will display the app name instead of the string you specify 
-
-
-
-	// save the pointer to the icon list and set the initial
-	// default icon.
-	//m_pIconList = pList;
 	m_tnd.hIcon = wc.hIconSm;
-	//LoadIconMetric(hInstance, MAKEINTRESOURCEW(IDI_ICON2), LIM_SMALL, &(m_tnd.hIcon));
 
 	Shell_NotifyIcon(NIM_ADD, &m_tnd);
-
-//	m_tnd.hIcon = m_pIconList[id];
-	//Ive found in windows XP that this command makes the icon not visable in the system tray....we dont want that now
-	//do we?
-	//Shell_NotifyIcon(NIM_MODIFY, &m_tnd);
-
-
-	/*m_pTray = new CTrayNot(this, WM_TRAY_NOTIFY,
-		NULL, theApp.m_pIconList);
-	m_pTray->SetState(IDR_MAINFRAME);
-	m_bHidden = TRUE;
-	*/
 }
 
 void Renderer::SetPixel( int x, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/, float fSourceBlend )
@@ -731,10 +674,6 @@ void Renderer::SetPixel( int x, int y, COLORREF color, unsigned int depth, float
 
         }
     }
-//     else
-//     {
-//        
-//     }
 }
 
 void Renderer::Rectangle( int left, int top, int right, int bottom, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/ )

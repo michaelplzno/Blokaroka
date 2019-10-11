@@ -2,7 +2,7 @@
 
 GameState GAMESTATE;
 
-int GameState::Brick::GetColorID()
+int GameState::Blok::GetColorID()
 {
 	if (m_wColor == COLOR_WHITE)
 	{
@@ -40,14 +40,14 @@ int GameState::Brick::GetColorID()
 	return -1;
 }
 
-void GameState::Brick::DrawBrick(HDC hdc)
+void GameState::Blok::DrawBlok(HDC hdc)
 {
     float fDarkerMod = .4f;
     float fBrighterMod = 1.6f;
     float fMyMod = 1.0f;
     float fAlpha = 1.0f;
 
-    if(m_iRenderState == Brick::LRS_GLOW)
+    if(m_iRenderState == Blok::BRS_GLOW)
     {
         fDarkerMod *= 1.5f;
         fBrighterMod *= 1.5f;
@@ -55,7 +55,7 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
     }
 
-    if(m_iRenderState == Brick::LRS_NO_ATTACH)
+    if(m_iRenderState == Blok::BRS_NO_ATTACH)
     {
         fAlpha = .5f;
         //fDarkerMod *= .5f;
@@ -134,43 +134,43 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
 
 	unsigned int depth = ComputeDepth(); //RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
-    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT,normal, depth,fAlpha);
+    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT,normal, depth,fAlpha);
 
     
 
 
-    for(int i = 0; i < BRICK_WIDTH/2; i++)
+    for(int i = 0; i < BLOK_WIDTH/2; i++)
     {
-        if( i+1 >= BRICK_WIDTH/2 )
+        if( i+1 >= BLOK_WIDTH/2 )
         {
 //             i++;
 //             RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+LEGO_HEIGHT-i,m_iRenderX-i, 0, depth,.5f);
 //             RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+LEGO_WIDTH-i, m_iRenderY-i, 0, depth,.5f);
 
-            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BRICK_HEIGHT-i,m_iRenderX-i, 0, depth,fAlpha);
-            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BRICK_WIDTH-i, m_iRenderY-i, 0, depth,fAlpha);
+            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BLOK_HEIGHT-i,m_iRenderX-i, 0, depth,fAlpha);
+            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BLOK_WIDTH-i, m_iRenderY-i, 0, depth,fAlpha);
         }
         else
         {
 
-            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BRICK_HEIGHT-i,m_iRenderX-i,darker, depth,fAlpha);
-            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BRICK_WIDTH-i, m_iRenderY-i, brighter, depth,fAlpha);
+            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BLOK_HEIGHT-i,m_iRenderX-i,darker, depth,fAlpha);
+            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BLOK_WIDTH-i, m_iRenderY-i, brighter, depth,fAlpha);
         }
 
 
         //RENDER.SetPixel(m_iRenderX-i,m_iRenderY-i,0, depth);
-        RENDER.SetPixel(m_iRenderX-i,m_iRenderY+BRICK_HEIGHT-i,0, depth,fAlpha);
+        RENDER.SetPixel(m_iRenderX-i,m_iRenderY+BLOK_HEIGHT-i,0, depth,fAlpha);
 /*        RENDER.SetPixel(m_iRenderX-i-1,m_iRenderY+LEGO_HEIGHT-i,0, depth,.5f);*/
 
         if(m_poRight == NULL)
         {
-            RENDER.SetPixel(m_iRenderX+BRICK_WIDTH-i,m_iRenderY-i,0, depth,fAlpha);
+            RENDER.SetPixel(m_iRenderX+BLOK_WIDTH-i,m_iRenderY-i,0, depth,fAlpha);
 /*            RENDER.SetPixel(m_iRenderX+LEGO_WIDTH-i+1,m_iRenderY-i,0, depth,.5f);*/
         }
     }
 
     //RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY, 0, depth);
-    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT, 0, depth,fAlpha);
+    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, 0, depth,fAlpha);
 /*    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT+1, 0, depth,.5f);*/
 
     if(m_poLeft == NULL)
@@ -180,28 +180,28 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
     if(m_poRight == NULL)
     {
-        RENDER.VerticalLine(m_iRenderY, m_iRenderY+BRICK_HEIGHT, m_iRenderX+BRICK_WIDTH, 0, depth,fAlpha);
+        RENDER.VerticalLine(m_iRenderY, m_iRenderY+BLOK_HEIGHT, m_iRenderX+BLOK_WIDTH, 0, depth,fAlpha);
 /*        RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX+LEGO_WIDTH+1, 0, depth, .5f);*/
     }
 
-    if(m_poTop == NULL && m_iRenderState != LRS_NO_ATTACH)
+    if(m_poTop == NULL && m_iRenderState != BRS_NO_ATTACH)
     {
         // Draw Dot ////////////////////////////////////////////////////////
-        //  Draw the dot thing that connects to other bricks              //
+        //  Draw the dot thing that connects to other Bloks              //
 
         //RENDER.Circle((m_iRenderX + LEGO_WIDTH * .5f)-2, m_iRenderY - LEGO_WIDTH/4.0f, LEGO_WIDTH * .3f, darker, depth);
 
-        int start = (int)(m_iRenderX + BRICK_WIDTH * .15f);
-        int end = (int)(m_iRenderX + BRICK_WIDTH * .85f);
-        int mid = (int)(m_iRenderX + BRICK_WIDTH * .5f);
+        int start = (int)(m_iRenderX + BLOK_WIDTH * .15f);
+        int end = (int)(m_iRenderX + BLOK_WIDTH * .85f);
+        int mid = (int)(m_iRenderX + BLOK_WIDTH * .5f);
 
-        int height = (int)(BRICK_HEIGHT * .25f);
-        int radius = (int)(BRICK_WIDTH * .35f);
+        int height = (int)(BLOK_HEIGHT * .25f);
+        int radius = (int)(BLOK_WIDTH * .35f);
 
         for(int i = start; i <= end; i++)
         {
-            int baseY = m_iRenderY - BRICK_WIDTH/4;
-            int baseX = i - BRICK_WIDTH/4;
+            int baseY = m_iRenderY - BLOK_WIDTH/4;
+            int baseX = i - BLOK_WIDTH/4;
             
             float realHeight = (.5f*sqrt((float)(radius * radius) - (float)((i-mid)*(i-mid))));
             float chopped = realHeight - ((int)realHeight);
@@ -250,7 +250,7 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
             if(i != start && i != end)
             {
-                RENDER.VerticalLine(baseY - 2*(baseY - (m_iRenderY - BRICK_WIDTH/4)) - height , baseY - height, baseX, brighter, depth);
+                RENDER.VerticalLine(baseY - 2*(baseY - (m_iRenderY - BLOK_WIDTH/4)) - height , baseY - height, baseX, brighter, depth);
             }
 
             float AA = 1.0f - abs(chopped);
@@ -264,8 +264,8 @@ void GameState::Brick::DrawBrick(HDC hdc)
                 RENDER.SetPixel(baseX, baseY-height,AACol,depth,fAlpha);
 
 
-            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BRICK_WIDTH/4)) - height,RGB(newR*(1.0f-AA),newG*(1.0f-AA),newB*(1.0f-AA)) ,depth,fAlpha);
-            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BRICK_WIDTH/4)) - height-1,0 ,depth,(1.0f-AA)*fAlpha);
+            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BLOK_WIDTH/4)) - height,RGB(newR*(1.0f-AA),newG*(1.0f-AA),newB*(1.0f-AA)) ,depth,fAlpha);
+            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BLOK_WIDTH/4)) - height-1,0 ,depth,(1.0f-AA)*fAlpha);
             }
             newR = GetRValue(myColor) * (1.0f - AA) + GetRValue(brighter) * AA;
             newG = GetGValue(myColor) * (1.0f - AA) + GetGValue(brighter) * AA;
@@ -287,7 +287,7 @@ void GameState::Brick::DrawBrick(HDC hdc)
 
 }
 
-void GameState::Brick::ClearBrick(HDC hdc)
+void GameState::Blok::ClearBlok(HDC hdc)
 {
 
     HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
@@ -296,22 +296,22 @@ void GameState::Brick::ClearBrick(HDC hdc)
     SelectObject(hdc, NewBrush);
     SelectObject(hdc, NewPen);
 
-    Rectangle(hdc, m_iRenderX, m_iRenderY, m_iRenderX + BRICK_WIDTH, m_iRenderY + BRICK_HEIGHT); 
+    Rectangle(hdc, m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT); 
 
     DeleteObject(NewBrush);
     DeleteObject(NewPen);
 }
 
-bool GameState::Brick::CursorIntersectsPoint(int x, int y)
+bool GameState::Blok::CursorIntersectsPoint(int x, int y)
 {
 	if (!HasLeft())
 	{
-		if (x <= m_iX - BRICK_WIDTH/2)
+		if (x <= m_iX - BLOK_WIDTH/2)
 		{
 			return false;
 		}
 
-		if (x >= m_iX + BRICK_WIDTH)
+		if (x >= m_iX + BLOK_WIDTH)
 		{
 			return false;
 		}
@@ -323,7 +323,7 @@ bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 			return false;
 		}
 
-		if (x >= m_iX + BRICK_WIDTH)
+		if (x >= m_iX + BLOK_WIDTH)
 		{
 			return false;
 		}
@@ -331,12 +331,12 @@ bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 
 	if (!HasTop())
 	{
-		if (y <= m_iY - (BRICK_WIDTH / 2))
+		if (y <= m_iY - BLOK_WIDTH/2)
 		{
 			return false;
 		}
 
-		if (y >= m_iY + BRICK_HEIGHT)
+		if (y >= m_iY + BLOK_HEIGHT)
 		{
 			return false;
 		}
@@ -348,7 +348,7 @@ bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 			return false;
 		}
 
-		if (y >= m_iY + BRICK_HEIGHT)
+		if (y >= m_iY + BLOK_HEIGHT)
 		{
 			return false;
 		}
@@ -358,18 +358,18 @@ bool GameState::Brick::CursorIntersectsPoint(int x, int y)
 }
 
 
-bool GameState::Brick::IntersectsPoint(int x, int y)
+bool GameState::Blok::IntersectsPoint(int x, int y)
 {
     if(x < m_iX)
     {
         return false;
     }
-    if(x > m_iX + BRICK_WIDTH)
+    if(x > m_iX + BLOK_WIDTH)
     {
         return false;
     }
 
-    if(y > m_iY + BRICK_HEIGHT)
+    if(y > m_iY + BLOK_HEIGHT)
     {
         return false;
     }
@@ -382,24 +382,24 @@ bool GameState::Brick::IntersectsPoint(int x, int y)
     return true;
 }
 
-bool GameState::Brick::IntersectsBrick( Brick* poOther )
+bool GameState::Blok::IntersectsBlok( Blok* poOther )
 {
     if (IntersectsPoint(poOther->m_iX, poOther->m_iY))
     {
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX + BRICK_WIDTH, poOther->m_iY))
+    if (IntersectsPoint(poOther->m_iX + BLOK_WIDTH, poOther->m_iY))
     {
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX, poOther->m_iY + BRICK_HEIGHT))
+    if (IntersectsPoint(poOther->m_iX, poOther->m_iY + BLOK_HEIGHT))
     {
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX + BRICK_WIDTH, poOther->m_iY + BRICK_HEIGHT))
+    if (IntersectsPoint(poOther->m_iX + BLOK_WIDTH, poOther->m_iY + BLOK_HEIGHT))
     {
         return true;
     }
@@ -409,24 +409,24 @@ bool GameState::Brick::IntersectsBrick( Brick* poOther )
 }
 
 
-bool GameState::Brick::IntersectsAnyBrick()
+bool GameState::Blok::IntersectsAnyBlok()
 {
     SetMarks(1);
 
-    bool ret = RecursiveIntersectsAnyBrick();
+    bool ret = RecursiveIntersectsAnyBlok();
     SetMarks(0);
 
     return ret;
 }
 
-bool GameState::Brick::CanMateWithBrick( Brick* poOther )
+bool GameState::Blok::CanMateWithBlok( Blok* poOther )
 {
     if( m_poBottom == NULL )
     {
-        if( m_iY + BRICK_HEIGHT + (BRICK_MATE_LENGTH) > poOther->m_iY && 
-            m_iY + BRICK_HEIGHT < poOther->m_iY &&
-            m_iX > poOther->m_iX-BRICK_WIDTH/2.0f &&
-            m_iX < poOther->m_iX+BRICK_WIDTH/2.0f )
+        if( m_iY + BLOK_HEIGHT + (BLOK_MATE_LENGTH) > poOther->m_iY && 
+            m_iY + BLOK_HEIGHT < poOther->m_iY &&
+            m_iX > poOther->m_iX-BLOK_WIDTH/2.0f &&
+            m_iX < poOther->m_iX+BLOK_WIDTH/2.0f )
         {
             return true;
         }
@@ -434,10 +434,10 @@ bool GameState::Brick::CanMateWithBrick( Brick* poOther )
 
     if( m_poTop == NULL )
     {
-        if( m_iY - BRICK_MATE_LENGTH < poOther->m_iY + BRICK_HEIGHT && 
-            m_iY > poOther->m_iY + BRICK_HEIGHT && 
-            m_iX > poOther->m_iX-BRICK_WIDTH/2.0f &&
-            m_iX < poOther->m_iX+BRICK_WIDTH/2.0f )
+        if( m_iY - BLOK_MATE_LENGTH < poOther->m_iY + BLOK_HEIGHT && 
+            m_iY > poOther->m_iY + BLOK_HEIGHT && 
+            m_iX > poOther->m_iX-BLOK_WIDTH/2.0f &&
+            m_iX < poOther->m_iX+BLOK_WIDTH/2.0f )
         {
             return true;
         }
@@ -446,10 +446,10 @@ bool GameState::Brick::CanMateWithBrick( Brick* poOther )
     return false;
 }
 
-GameState::Brick* GameState::Brick::FindMate()
+GameState::Blok* GameState::Blok::FindMate()
 {
     SetMarks(1);
-    Brick* ret = RecursiveFindMate();
+    Blok* ret = RecursiveFindMate();
     SetMarks(1);
 
     if(ret == NULL)
@@ -467,30 +467,30 @@ GameState::Brick* GameState::Brick::FindMate()
 
     if(GAMESTATE.m_poMovingMate->m_iY < GAMESTATE.m_poStaticMate->m_iY )
     {
-        GAMESTATE.m_poMovingMate->SetBrickRenderPosition(GAMESTATE.m_poStaticMate->m_iX,
+        GAMESTATE.m_poMovingMate->SetBlokRenderPosition(GAMESTATE.m_poStaticMate->m_iX,
                                                         GAMESTATE.m_poStaticMate->m_iY 
-                                                           - (int)(BRICK_HEIGHT + BRICK_MATE_LENGTH/4.0f));
+                                                           - (int)(BLOK_HEIGHT + BLOK_MATE_LENGTH/4.0f));
     }
     else
     {
-        GAMESTATE.m_poMovingMate->SetBrickRenderPosition(GAMESTATE.m_poStaticMate->m_iX, 
-                                                        GAMESTATE.m_poStaticMate->m_iY + (int)(BRICK_HEIGHT + BRICK_MATE_LENGTH/4.0f));
+        GAMESTATE.m_poMovingMate->SetBlokRenderPosition(GAMESTATE.m_poStaticMate->m_iX, 
+                                                        GAMESTATE.m_poStaticMate->m_iY + (int)(BLOK_HEIGHT + BLOK_MATE_LENGTH/4.0f));
     }
     return ret;
 }
 
-GameState::Brick* GameState::Brick::RecursiveFindMate()
+GameState::Blok* GameState::Blok::RecursiveFindMate()
 {
     m_iMark = 2;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoBricks[i]->m_iMark == 0 && CanMateWithBrick(GAMESTATE.m_vpoBricks[i]))
+        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 0 && CanMateWithBlok(GAMESTATE.m_vpoBloks[i]))
         {
             GAMESTATE.m_poMovingMate = this;
-            GAMESTATE.m_poStaticMate = GAMESTATE.m_vpoBricks[i];
+            GAMESTATE.m_poStaticMate = GAMESTATE.m_vpoBloks[i];
 
-            return GAMESTATE.m_vpoBricks[i];
+            return GAMESTATE.m_vpoBloks[i];
         }
     }
 
@@ -498,7 +498,7 @@ GameState::Brick* GameState::Brick::RecursiveFindMate()
     {
         if(m_poLeft->m_iMark == 1 )
         {
-            Brick *found = m_poLeft->RecursiveFindMate();
+            Blok *found = m_poLeft->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -509,7 +509,7 @@ GameState::Brick* GameState::Brick::RecursiveFindMate()
     {
         if(m_poRight->m_iMark == 1 )
         {
-            Brick *found = m_poRight->RecursiveFindMate();
+            Blok *found = m_poRight->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -520,7 +520,7 @@ GameState::Brick* GameState::Brick::RecursiveFindMate()
     {
         if(m_poTop->m_iMark == 1 )
         {
-            Brick *found = m_poTop->RecursiveFindMate();
+            Blok *found = m_poTop->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -531,7 +531,7 @@ GameState::Brick* GameState::Brick::RecursiveFindMate()
     {
         if(m_poBottom->m_iMark == 1 )
         {
-            Brick *found = m_poBottom->RecursiveFindMate();
+            Blok *found = m_poBottom->RecursiveFindMate();
 
             if(found != NULL)
                 return found;
@@ -541,25 +541,25 @@ GameState::Brick* GameState::Brick::RecursiveFindMate()
     return NULL;
 }
 
-void GameState::Brick::RecursiveMakeMatches()
+void GameState::Blok::RecursiveMakeMatches()
 {
     m_iMark = 2;
 
     m_poTopDesiredMate = NULL;
     m_poBottomDesiredMate = NULL;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoBricks[i]->m_iMark == 3 && CanMateWithBrick(GAMESTATE.m_vpoBricks[i]))
+        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 3 && CanMateWithBlok(GAMESTATE.m_vpoBloks[i]))
         {
-            GAMESTATE.m_vpoBricks[i]->m_iMark = 4;
-            if (GAMESTATE.m_vpoBricks[i]->m_iY < m_iY)
+            GAMESTATE.m_vpoBloks[i]->m_iMark = 4;
+            if (GAMESTATE.m_vpoBloks[i]->m_iY < m_iY)
             {
-                m_poTopDesiredMate = GAMESTATE.m_vpoBricks[i];
+                m_poTopDesiredMate = GAMESTATE.m_vpoBloks[i];
             }
             else
             {
-                m_poBottomDesiredMate = GAMESTATE.m_vpoBricks[i];
+                m_poBottomDesiredMate = GAMESTATE.m_vpoBloks[i];
             }
         }
     }
@@ -597,61 +597,61 @@ void GameState::Brick::RecursiveMakeMatches()
     }
 }
 
-void GameState::Brick::SetBrickPosition(int x, int y)
+void GameState::Blok::SetBlokPosition(int x, int y)
 {
     RecursiveFixNeighbors(x, y);
     SetMarks(0);
 }
 
-void GameState::Brick::SetBrickRenderPosition( int x, int y )
+void GameState::Blok::SetBlokRenderPosition( int x, int y )
 {
     RecursiveFixRenderNeighbors(x, y);
     SetMarks(0);
 }
 
 
-void GameState::Brick::AttachLeft( Brick * poLeft, bool bMoveOther )
+void GameState::Blok::AttachLeft( Blok * poLeft, bool bMoveOther )
 {
     m_poLeft = poLeft;
     if(bMoveOther)
-        m_poLeft->SetBrickPosition(m_iX - BRICK_WIDTH, m_iY);
+        m_poLeft->SetBlokPosition(m_iX - BLOK_WIDTH, m_iY);
     if(bMoveOther)
-        m_poLeft->SetBrickRenderPosition(m_iRenderX - BRICK_WIDTH, m_iRenderY);
+        m_poLeft->SetBlokRenderPosition(m_iRenderX - BLOK_WIDTH, m_iRenderY);
 
     m_poLeft->m_poRight = this;
 }
 
-void GameState::Brick::AttachRight( Brick * poRight, bool bMoveOther )
+void GameState::Blok::AttachRight( Blok * poRight, bool bMoveOther )
 {
     m_poRight = poRight;
     if(bMoveOther)
-        m_poRight->SetBrickPosition(m_iX - BRICK_WIDTH, m_iY);
+        m_poRight->SetBlokPosition(m_iX - BLOK_WIDTH, m_iY);
     if(bMoveOther)
-        m_poRight->SetBrickRenderPosition(m_iRenderX - BRICK_WIDTH, m_iRenderY);
+        m_poRight->SetBlokRenderPosition(m_iRenderX - BLOK_WIDTH, m_iRenderY);
 
     m_poRight->m_poLeft = this;
 }
 
-void GameState::Brick::AttachTop( Brick * poTop, bool bMoveOther )
+void GameState::Blok::AttachTop( Blok * poTop, bool bMoveOther )
 {
     m_poTop = poTop;
     if(bMoveOther)
-        m_poTop->SetBrickPosition(m_iX, m_iY - BRICK_HEIGHT);
+        m_poTop->SetBlokPosition(m_iX, m_iY - BLOK_HEIGHT);
 
     m_poTop->m_poBottom = this;
 }
 
-void GameState::Brick::AttachBottom( Brick * poBottom, bool bMoveOther )
+void GameState::Blok::AttachBottom( Blok * poBottom, bool bMoveOther )
 {
     m_poBottom = poBottom;
 
     if(bMoveOther)
-        m_poBottom->SetBrickPosition(m_iX, m_iY + BRICK_HEIGHT);
+        m_poBottom->SetBlokPosition(m_iX, m_iY + BLOK_HEIGHT);
 
     m_poBottom->m_poTop = this;
 }
 
-void GameState::Brick::SetMarks( int mark )
+void GameState::Blok::SetMarks( int mark )
 {
     if( m_iMark == mark )
     {
@@ -681,7 +681,7 @@ void GameState::Brick::SetMarks( int mark )
     }
 }
 
-int GameState::Brick::ComputeDepth()
+int GameState::Blok::ComputeDepth()
 {
 	if (HasLeft())
 	{
@@ -695,7 +695,7 @@ int GameState::Brick::ComputeDepth()
 	return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX);
 }
 
-void GameState::Brick::RecursiveSetGroup(int group)
+void GameState::Blok::RecursiveSetGroup(int group)
 {
 	if (m_iGroup != group)
 	{
@@ -723,7 +723,7 @@ void GameState::Brick::RecursiveSetGroup(int group)
 	}
 }
 
-void GameState::Brick::SetColorForMenu(int menu)
+void GameState::Blok::SetColorForMenu(int menu)
 {
 	int id = GetColorID();
 	if (id == 1)
@@ -804,7 +804,7 @@ void GameState::Brick::SetColorForMenu(int menu)
 	}
 }
 
-void GameState::Brick::RecursiveFixNeighbors(int x, int y)
+void GameState::Blok::RecursiveFixNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
@@ -818,26 +818,26 @@ void GameState::Brick::RecursiveFixNeighbors(int x, int y)
 
     if(m_poLeft != NULL)
     {
-        m_poLeft->RecursiveFixNeighbors(x - BRICK_WIDTH, y);
+        m_poLeft->RecursiveFixNeighbors(x - BLOK_WIDTH, y);
     }
 
     if(m_poRight != NULL)
     {
-		m_poRight->RecursiveFixNeighbors(x + BRICK_WIDTH, y);
+		m_poRight->RecursiveFixNeighbors(x + BLOK_WIDTH, y);
     }
 
     if(m_poTop != NULL)
     {
-		m_poTop->RecursiveFixNeighbors(x, y - BRICK_HEIGHT);
+		m_poTop->RecursiveFixNeighbors(x, y - BLOK_HEIGHT);
     }
 
     if(m_poBottom != NULL)
     {
-		m_poBottom->RecursiveFixNeighbors(x, y + BRICK_HEIGHT);
+		m_poBottom->RecursiveFixNeighbors(x, y + BLOK_HEIGHT);
     }
 }
 
-void GameState::Brick::RecursiveFixRenderNeighbors(int x, int y)
+void GameState::Blok::RecursiveFixRenderNeighbors(int x, int y)
 {
     if(m_iMark != 0)
     {
@@ -851,32 +851,32 @@ void GameState::Brick::RecursiveFixRenderNeighbors(int x, int y)
 
     if(m_poLeft != NULL)
     {
-        m_poLeft->RecursiveFixRenderNeighbors(x - BRICK_WIDTH, y);
+        m_poLeft->RecursiveFixRenderNeighbors(x - BLOK_WIDTH, y);
     }
 
     if(m_poRight != NULL)
     {
-        m_poRight->RecursiveFixRenderNeighbors(x + BRICK_WIDTH, y);
+        m_poRight->RecursiveFixRenderNeighbors(x + BLOK_WIDTH, y);
     }
 
     if(m_poTop != NULL)
     {
-        m_poTop->RecursiveFixRenderNeighbors(x, y - BRICK_HEIGHT);
+        m_poTop->RecursiveFixRenderNeighbors(x, y - BLOK_HEIGHT);
     }
 
     if(m_poBottom != NULL)
     {
-        m_poBottom->RecursiveFixRenderNeighbors(x, y + BRICK_HEIGHT);
+        m_poBottom->RecursiveFixRenderNeighbors(x, y + BLOK_HEIGHT);
     }
 }
 
-bool GameState::Brick::RecursiveIntersectsAnyBrick()
+bool GameState::Blok::RecursiveIntersectsAnyBlok()
 {
     m_iMark = 2;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoBricks[i]->m_iMark == 0 && GAMESTATE.m_vpoBricks[i]->IntersectsBrick(this))
+        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 0 && GAMESTATE.m_vpoBloks[i]->IntersectsBlok(this))
         {
             return true;
         }
@@ -884,32 +884,32 @@ bool GameState::Brick::RecursiveIntersectsAnyBrick()
 
     if(m_poLeft != NULL)
     {
-        if(m_poLeft->m_iMark == 1 && m_poLeft->RecursiveIntersectsAnyBrick())
+        if(m_poLeft->m_iMark == 1 && m_poLeft->RecursiveIntersectsAnyBlok())
             return true;
     }
 
     if(m_poRight != NULL)
     {
-        if(m_poRight->m_iMark == 1 && m_poRight->RecursiveIntersectsAnyBrick())
+        if(m_poRight->m_iMark == 1 && m_poRight->RecursiveIntersectsAnyBlok())
             return true;
     }
 
     if(m_poTop != NULL)
     {
-        if(m_poTop->m_iMark == 1 && m_poTop->RecursiveIntersectsAnyBrick())
+        if(m_poTop->m_iMark == 1 && m_poTop->RecursiveIntersectsAnyBlok())
             return true;
     }
 
     if(m_poBottom != NULL)
     {
-        if(m_poBottom->m_iMark == 1 && m_poBottom->RecursiveIntersectsAnyBrick())
+        if(m_poBottom->m_iMark == 1 && m_poBottom->RecursiveIntersectsAnyBlok())
             return true;
     }
 
     return false;
 }
 
-void GameState::Brick::RecursiveMate()
+void GameState::Blok::RecursiveMate()
 {
     m_iMark = 1;
 
@@ -953,7 +953,7 @@ void GameState::Brick::RecursiveMate()
 
 }
 
-void GameState::Brick::Mate()
+void GameState::Blok::Mate()
 {
 
     RecursiveClearDistances();
@@ -979,7 +979,7 @@ void GameState::Brick::Mate()
     GAMESTATE.PlayAttach();
 }
 
-void GameState::Brick::ClearMates()
+void GameState::Blok::ClearMates()
 {
     m_iMark = 1;
 
@@ -1011,30 +1011,30 @@ void GameState::Brick::ClearMates()
     }
 }
 
-bool GameState::Brick::CanDetachBrickUp()
+bool GameState::Blok::CanDetachUp()
 {
     m_iMark = 1;
     bool bIsAttached = false;
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
     }
 
-    for( Brick* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
     }
 
 
     int iNewMark = 2;
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poBottom)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poBottom->RecursiveCanDetachBrickUp(iNewMark))
+            if(!iter->m_poBottom->RecursiveCanDetachBlokUp(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -1043,13 +1043,13 @@ bool GameState::Brick::CanDetachBrickUp()
         
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poBottom)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poBottom->RecursiveCanDetachBrickUp(iNewMark))
+            if(!iter->m_poBottom->RecursiveCanDetachBlokUp(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -1062,7 +1062,7 @@ bool GameState::Brick::CanDetachBrickUp()
     return bIsAttached;
 }
 
-bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
+bool GameState::Blok::RecursiveCanDetachBlokUp(int mark)
 {
     m_iMark = mark;
 
@@ -1074,7 +1074,7 @@ bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
 
         if(m_poBottom->m_iMark != mark)
         {
-            if(!m_poBottom->RecursiveCanDetachBrickUp(mark))
+            if(!m_poBottom->RecursiveCanDetachBlokUp(mark))
             {
                 return false;
             }
@@ -1088,7 +1088,7 @@ bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
 
         if(m_poLeft->m_iMark != mark)
         {
-            if(!m_poLeft->RecursiveCanDetachBrickUp(mark))
+            if(!m_poLeft->RecursiveCanDetachBlokUp(mark))
             {
                 return false;
             }
@@ -1102,7 +1102,7 @@ bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
 
         if(m_poRight->m_iMark != mark)
         {
-            if(!m_poRight->RecursiveCanDetachBrickUp(mark))
+            if(!m_poRight->RecursiveCanDetachBlokUp(mark))
             {
                 return false;
             }
@@ -1116,7 +1116,7 @@ bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
 
         if(m_poTop->m_iMark != mark)
         {
-            if(!m_poTop->RecursiveCanDetachBrickUp(mark))
+            if(!m_poTop->RecursiveCanDetachBlokUp(mark))
             {
                 return false;
             }
@@ -1126,9 +1126,9 @@ bool GameState::Brick::RecursiveCanDetachBrickUp(int mark)
     return true;
 }
 
-void GameState::Brick::DetachBrickUp()
+void GameState::Blok::DetachUp()
 {
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poBottom)
         {
@@ -1137,7 +1137,7 @@ void GameState::Brick::DetachBrickUp()
         }
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poBottom)
         {
@@ -1156,30 +1156,30 @@ void GameState::Brick::DetachBrickUp()
 //////////////////////////////////////////////////////////////////////////
 
 
-bool GameState::Brick::CanDetachBrickDown()
+bool GameState::Blok::CanDetachDown()
 {
     m_iMark = 1;
     bool bIsAttached = false;
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
     }
 
-    for( Brick* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = m_poRight; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
     }
 
 
     int iNewMark = 2;
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poTop->RecursiveCanDetachBrickDown(iNewMark))
+            if(!iter->m_poTop->RecursiveCanDetachBlokDown(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -1188,13 +1188,13 @@ bool GameState::Brick::CanDetachBrickDown()
 
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop)
         {
             bIsAttached = true;
             iNewMark++;
-            if(!iter->m_poTop->RecursiveCanDetachBrickDown(iNewMark))
+            if(!iter->m_poTop->RecursiveCanDetachBlokDown(iNewMark))
             {
                 SetMarks(0);
                 return false;
@@ -1207,7 +1207,7 @@ bool GameState::Brick::CanDetachBrickDown()
     return bIsAttached;
 }
 
-bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
+bool GameState::Blok::RecursiveCanDetachBlokDown(int mark)
 {
     m_iMark = mark;
 
@@ -1219,7 +1219,7 @@ bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
 
         if(m_poTop->m_iMark != mark)
         {
-            if(!m_poTop->RecursiveCanDetachBrickDown(mark))
+            if(!m_poTop->RecursiveCanDetachBlokDown(mark))
             {
                 return false;
             }
@@ -1233,7 +1233,7 @@ bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
 
         if(m_poLeft->m_iMark != mark)
         {
-            if(!m_poLeft->RecursiveCanDetachBrickDown(mark))
+            if(!m_poLeft->RecursiveCanDetachBlokDown(mark))
             {
                 return false;
             }
@@ -1247,7 +1247,7 @@ bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
 
         if(m_poRight->m_iMark != mark)
         {
-            if(!m_poRight->RecursiveCanDetachBrickDown(mark))
+            if(!m_poRight->RecursiveCanDetachBlokDown(mark))
             {
                 return false;
             }
@@ -1261,7 +1261,7 @@ bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
 
         if(m_poBottom->m_iMark != mark)
         {
-            if(!m_poBottom->RecursiveCanDetachBrickDown(mark))
+            if(!m_poBottom->RecursiveCanDetachBlokDown(mark))
             {
                 return false;
             }
@@ -1271,9 +1271,9 @@ bool GameState::Brick::RecursiveCanDetachBrickDown(int mark)
     return true;
 }
 
-void GameState::Brick::DetachBrickDown()
+void GameState::Blok::DetachDown()
 {
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop)
         {
@@ -1282,7 +1282,7 @@ void GameState::Brick::DetachBrickDown()
         }
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop)
         {
@@ -1294,7 +1294,7 @@ void GameState::Brick::DetachBrickDown()
     GAMESTATE.PlayDetach();
 }
 
-void GameState::Brick::CalculateDistances()
+void GameState::Blok::CalculateDistances()
 {
     return;
 
@@ -1304,7 +1304,7 @@ void GameState::Brick::CalculateDistances()
     SetMarks(0);
 }
 
-void GameState::Brick::RecursiveClearDistances()
+void GameState::Blok::RecursiveClearDistances()
 {
     if(m_iMark == 1)
     {
@@ -1335,27 +1335,27 @@ void GameState::Brick::RecursiveClearDistances()
     }
 }
 
-void GameState::Brick::RecursiveCalculateDistances( int distance )
+void GameState::Blok::RecursiveCalculateDistances( int distance )
 {
     if(m_iMark == 1)
     {
         return;
     }
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
         iter->m_iDistance = distance;
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
         iter->m_iDistance = distance;
     }
 
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop)
         {
@@ -1368,7 +1368,7 @@ void GameState::Brick::RecursiveCalculateDistances( int distance )
         }
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop)
         {
@@ -1383,7 +1383,7 @@ void GameState::Brick::RecursiveCalculateDistances( int distance )
 
 }
 
-void GameState::Brick::CalculateWeights()
+void GameState::Blok::CalculateWeights()
 { 
     RecursiveClearHoldWeights();
     SetMarks(0);
@@ -1401,7 +1401,7 @@ void GameState::Brick::CalculateWeights()
 }
 
 
-float GameState::Brick::GetWeight()
+float GameState::Blok::GetWeight()
 {
     if(m_fBlockWeight >= 0)
     {
@@ -1410,7 +1410,7 @@ float GameState::Brick::GetWeight()
 
     float fMyWeight = 0;
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_iDistance != m_iDistance)
         {
@@ -1449,7 +1449,7 @@ float GameState::Brick::GetWeight()
         fMyWeight += 1.0f;
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_fTopWeightHeld < 0)
         {
@@ -1486,12 +1486,12 @@ float GameState::Brick::GetWeight()
 
 
     // Set the block weight
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_fBlockWeight = fMyWeight;
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_fBlockWeight = fMyWeight;
     }
@@ -1500,21 +1500,21 @@ float GameState::Brick::GetWeight()
 
 }
 
-int GameState::Brick::GetNumConnections( Brick* poOther )
+int GameState::Blok::GetNumConnections( Blok* poOther )
 {
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
     }
 
 
     int connections = 0;
-    for( Brick* iter = poOther->m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = poOther->m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poTop && iter->m_poTop->m_iMark == 1)
             connections++;
@@ -1523,7 +1523,7 @@ int GameState::Brick::GetNumConnections( Brick* poOther )
             connections++;
     }
 
-    for( Brick* iter = poOther; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = poOther; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poTop && iter->m_poTop->m_iMark == 1)
             connections++;
@@ -1532,12 +1532,12 @@ int GameState::Brick::GetNumConnections( Brick* poOther )
             connections++;
     }
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 0;
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 0;
     }
@@ -1545,7 +1545,7 @@ int GameState::Brick::GetNumConnections( Brick* poOther )
     return connections;
 }
 
-void GameState::Brick::RecursiveClearHoldWeights()
+void GameState::Blok::RecursiveClearHoldWeights()
 {
     if(m_iMark != 1)
     {
@@ -1577,7 +1577,7 @@ void GameState::Brick::RecursiveClearHoldWeights()
     
 }
 
-void GameState::Brick::BreakStressedConnections()
+void GameState::Blok::BreakStressedConnections()
 {
     float f = (float)rand()/(float)RAND_MAX;
     f *= 1000;
@@ -1589,7 +1589,7 @@ void GameState::Brick::BreakStressedConnections()
     CalculateWeights();
 }
 
-void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
+void GameState::Blok::RecursiveBreakStressedConnections(float fThreshold)
 {
     if(m_iMark == 1)
     {
@@ -1598,7 +1598,7 @@ void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
 
     m_iMark = 1;
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         iter->m_iMark = 1;
         if(iter->m_fBottomWeightHeld > fThreshold)
@@ -1620,7 +1620,7 @@ void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
         }
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         iter->m_iMark = 1;
         if(iter->m_fBottomWeightHeld > fThreshold)
@@ -1642,7 +1642,7 @@ void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
         }
     }
 
-    for( Brick* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
+    for( Blok* iter = m_poLeft; iter != NULL; iter = iter->m_poLeft )
     {
         if(iter->m_poBottom)
             iter->m_poBottom->RecursiveBreakStressedConnections(fThreshold);
@@ -1651,7 +1651,7 @@ void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
             iter->m_poTop->RecursiveBreakStressedConnections(fThreshold);
     }
 
-    for( Brick* iter = this; iter != NULL; iter = iter->m_poRight )
+    for( Blok* iter = this; iter != NULL; iter = iter->m_poRight )
     {
         if(iter->m_poBottom)
             iter->m_poBottom->RecursiveBreakStressedConnections(fThreshold);
@@ -1662,7 +1662,7 @@ void GameState::Brick::RecursiveBreakStressedConnections(float fThreshold)
 
 }
 
-void GameState::Brick::SetRenderState(int iNewState)
+void GameState::Blok::SetRenderState(int iNewState)
 {
     RecursiveSetRenderState(iNewState);
     SetMarks(0);
@@ -1670,7 +1670,7 @@ void GameState::Brick::SetRenderState(int iNewState)
     RENDER.PresentFrame();
 }
 
-void GameState::Brick::RecursiveSetRenderState(int iNewState )
+void GameState::Blok::RecursiveSetRenderState(int iNewState )
 {
     if(m_iMark != 1)
     {
@@ -1699,7 +1699,7 @@ void GameState::Brick::RecursiveSetRenderState(int iNewState )
     }
 }
 
-void GameState::GenerateBricks()
+void GameState::GenerateBloks()
 {
     for( int i = 0; i < 100; i++ )
     {
@@ -1728,13 +1728,13 @@ void GameState::GenerateBricks()
 
         int width = rand()%3;
 
-        m_vpoBricks.push_back(new Brick(color, rand() % 1000, rand() % 768));
+        m_vpoBloks.push_back(new Blok(color, rand() % 1000, rand() % 768));
         
         for(int i = 0; i < pow(2.0f,width)- 1; i++)
         {
-            Brick* newLego = new Brick(color, rand() % 1000, rand() % 768);
-            m_vpoBricks.back()->AttachLeft(newLego);
-            m_vpoBricks.push_back(newLego);
+            Blok* newLego = new Blok(color, rand() % 1000, rand() % 768);
+            m_vpoBloks.back()->AttachLeft(newLego);
+            m_vpoBloks.push_back(newLego);
         }
     }
 }
@@ -1757,10 +1757,10 @@ void GameState::SetState(int iNewState)
     {
         if (m_iState == GS_Drag_Mating)
         {
-            m_poSelectedBrick->Mate();
-            m_poSelectedBrick->SetMarks(0);
+            m_poSelectedBlok->Mate();
+            m_poSelectedBlok->SetMarks(0);
         }
-        m_poSelectedBrick->SetRenderState(Brick::LRS_SOLID);
+        m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
     }
     else if( iNewState == GS_Drag_Free )
     {
@@ -1776,30 +1776,30 @@ int GameState::GetState()
     return m_iState;
 }
 
-void GameState::SetDragging(GameState::Brick* poDragged, int x, int y)
+void GameState::SetDragging(GameState::Blok* poDragged, int x, int y)
 {
-    m_poSelectedBrick = poDragged;
-    m_iXOffset = m_poSelectedBrick->GetX() - x;
-    m_iYOffset = m_poSelectedBrick->GetY() - y;
+    m_poSelectedBlok = poDragged;
+    m_iXOffset = m_poSelectedBlok->GetX() - x;
+    m_iYOffset = m_poSelectedBlok->GetY() - y;
     SetState(GS_Drag_Free);
-    m_poSelectedBrick->SetRenderState(Brick::LRS_GLOW);
+    m_poSelectedBlok->SetRenderState(Blok::BRS_GLOW);
     //m_poSelectedLego->CalculateWeights();
 }
 
-void GameState::SetSplitDragging(GameState::Brick* poDragged, int x, int y)
+void GameState::SetSplitDragging(GameState::Blok* poDragged, int x, int y)
 {
-    m_poSelectedBrick = poDragged;
-    m_iXOffset = m_poSelectedBrick->GetX() - x;
-    m_iYOffset = m_poSelectedBrick->GetY() - y;
+    m_poSelectedBlok = poDragged;
+    m_iXOffset = m_poSelectedBlok->GetX() - x;
+    m_iYOffset = m_poSelectedBlok->GetY() - y;
     SetState(GS_Drag_Splitting);
-    m_poSelectedBrick->SetRenderState(Brick::LRS_NO_ATTACH);
+    m_poSelectedBlok->SetRenderState(Blok::BRS_NO_ATTACH);
     //m_poSelectedLego->CalculateWeights();
 }
 
 void  GameState::MoveSelected(int x, int y)
 {
 
-    m_poSelectedBrick->SetBrickPosition(m_iXOffset + x, m_iYOffset + y);
+    m_poSelectedBlok->SetBlokPosition(m_iXOffset + x, m_iYOffset + y);
     //m_poSelectedLego->BreakStressedConnections();
 
     float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) + 
@@ -1811,15 +1811,15 @@ void  GameState::MoveSelected(int x, int y)
 	/*
     if(false)
     {
-        if(m_iState == GS_Drag_Mating && m_poSelectedBrick->IntersectsAnyBrick())
+        if(m_iState == GS_Drag_Mating && m_poSelectedBlok->IntersectsAnyBlok())
         {
-            m_poSelectedBrick->Mate();
+            m_poSelectedBlok->Mate();
             m_iState = GS_Static;
         }
         else
         {
             SetState(GS_Drag_Free);
-            m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+            m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
         }
         return;
     }
@@ -1827,23 +1827,23 @@ void  GameState::MoveSelected(int x, int y)
 
     if(m_iState != GS_Drag_Splitting)
     {
-        if(m_poSelectedBrick->IntersectsAnyBrick())
+        if(m_poSelectedBlok->IntersectsAnyBlok())
         {
             if(m_iState == GS_Drag_Mating)
             {
-                m_poSelectedBrick->Mate();
+                m_poSelectedBlok->Mate();
 
-				m_poSelectedBrick->SetRenderState(Brick::LRS_SOLID);
+				m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
                 m_iState = GS_Static;
             }
             else
             {
-                m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
         else
         {
-            Brick *mate = m_poSelectedBrick->FindMate();
+            Blok *mate = m_poSelectedBlok->FindMate();
             if(mate)
             {
                 SetState(GS_Drag_Mating);
@@ -1851,23 +1851,23 @@ void  GameState::MoveSelected(int x, int y)
             else
             {
                 SetState(GS_Drag_Free);
-                m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
     }
     else
     {
-        m_poSelectedBrick->SetBrickRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+        m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
     }
 }
 
-GameState::Brick* GameState::GetBrickAt(int x, int y)
+GameState::Blok* GameState::GetBlokAt(int x, int y)
 {
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
-        if (GAMESTATE.m_vpoBricks[i]->CursorIntersectsPoint(x,y))
+        if (GAMESTATE.m_vpoBloks[i]->CursorIntersectsPoint(x,y))
         {
-            return GAMESTATE.m_vpoBricks[i];
+            return GAMESTATE.m_vpoBloks[i];
         }
     }
     
@@ -1926,46 +1926,36 @@ void GameState::DumpGamestate(std::wstring wstrName)
     out.open(wstrName.c_str(), std::ofstream::out );
 
 
-    std::map<const Brick*, int> indexMap;
+    std::map<const Blok*, int> indexMap;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
-        indexMap[m_vpoBricks[i]] = i;
+        indexMap[m_vpoBloks[i]] = i;
         out << i << " " 
-            << m_vpoBricks[i]->GetX() << " " 
-            << m_vpoBricks[i]->GetY() << " "
-            << m_vpoBricks[i]->GetColor() << " "
+            << m_vpoBloks[i]->GetX() << " " 
+            << m_vpoBloks[i]->GetY() << " "
+            << m_vpoBloks[i]->GetColor() << " "
             << std::endl;
     }
 
     out << "-1" << std::endl;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBricks.size(); i++ )
+    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
     {
         out << i << " ";
 
-        if(m_vpoBricks[i]->HasLeft())
+        if(m_vpoBloks[i]->HasLeft())
         {
-            out << indexMap[m_vpoBricks[i]->GetLeft()] << " ";
+            out << indexMap[m_vpoBloks[i]->GetLeft()] << " ";
         }
         else
         {
             out << -1 << " ";
         }
 
-        if(m_vpoBricks[i]->HasTop())
+        if(m_vpoBloks[i]->HasTop())
         {
-            out << indexMap[m_vpoBricks[i]->GetTop()] << " ";
-        }
-        else
-        {
-            out << -1 << " ";
-        }
-
-
-        if(m_vpoBricks[i]->HasRight())
-        {
-            out << indexMap[m_vpoBricks[i]->GetRight()] << " ";
+            out << indexMap[m_vpoBloks[i]->GetTop()] << " ";
         }
         else
         {
@@ -1973,9 +1963,19 @@ void GameState::DumpGamestate(std::wstring wstrName)
         }
 
 
-        if(m_vpoBricks[i]->HasBottom())
+        if(m_vpoBloks[i]->HasRight())
         {
-            out << indexMap[m_vpoBricks[i]->GetBottom()] << std::endl;
+            out << indexMap[m_vpoBloks[i]->GetRight()] << " ";
+        }
+        else
+        {
+            out << -1 << " ";
+        }
+
+
+        if(m_vpoBloks[i]->HasBottom())
+        {
+            out << indexMap[m_vpoBloks[i]->GetBottom()] << std::endl;
         }
         else
         {
@@ -2000,13 +2000,13 @@ bool GameState::ReadGamestate(std::wstring wstrName )
         return false;
     }
 
-    for( unsigned int ui = 0; ui < GAMESTATE.m_vpoBricks.size(); ui++ )
+    for( unsigned int ui = 0; ui < GAMESTATE.m_vpoBloks.size(); ui++ )
     {
-        delete m_vpoBricks[ui];
-        m_vpoBricks[ui] = 0;
+        delete m_vpoBloks[ui];
+        m_vpoBloks[ui] = 0;
     }
 
-    m_vpoBricks.clear();
+    m_vpoBloks.clear();
 
     int i, x, y;
     COLORREF color;
@@ -2015,9 +2015,9 @@ bool GameState::ReadGamestate(std::wstring wstrName )
     while(i >= 0)
     {
         in >> x >> y >> color;
-        Brick* temp = new Brick(color,x,y);
+        Blok* temp = new Blok(color,x,y);
 
-        m_vpoBricks.push_back(temp);
+        m_vpoBloks.push_back(temp);
 
         in >> i;
     }
@@ -2030,22 +2030,22 @@ bool GameState::ReadGamestate(std::wstring wstrName )
     {
         if(left >= 0)
         {
-            m_vpoBricks[i]->AttachLeft(m_vpoBricks[left], false);
+            m_vpoBloks[i]->AttachLeft(m_vpoBloks[left], false);
         }
 
         if(top >= 0)
         {
-            m_vpoBricks[i]->AttachTop(m_vpoBricks[top], false);
+            m_vpoBloks[i]->AttachTop(m_vpoBloks[top], false);
         }
 
         if(bottom >= 0)
         {
-            m_vpoBricks[i]->AttachBottom(m_vpoBricks[bottom], false);
+            m_vpoBloks[i]->AttachBottom(m_vpoBloks[bottom], false);
         }
 
         if(right >= 0)
         {
-            m_vpoBricks[i]->AttachRight(m_vpoBricks[right], false);
+            m_vpoBloks[i]->AttachRight(m_vpoBloks[right], false);
         }
     }
     in.close();
@@ -2055,9 +2055,9 @@ bool GameState::ReadGamestate(std::wstring wstrName )
 
 void GameState::SetColorsForMenu(int menu)
 {
-	for (unsigned int i = 0; i < m_vpoBricks.size(); i++)
+	for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
 	{
-		m_vpoBricks[i]->SetColorForMenu(menu);
+		m_vpoBloks[i]->SetColorForMenu(menu);
 	}
 
 	RENDER.RenderFrame();

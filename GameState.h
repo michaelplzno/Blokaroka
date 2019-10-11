@@ -4,10 +4,10 @@
 #include "Blokaroka.h"
 #include <map>
 
-#define BRICK_WIDTH 15
-#define BRICK_HEIGHT 18
+#define BLOK_WIDTH 15
+#define BLOK_HEIGHT 18
 
-#define BRICK_MATE_LENGTH 15
+#define BLOK_MATE_LENGTH 15
 
 #define COLOR_WHITE			RGB(242,243,242)
 #define COLOR_RED			RGB(196,40,27)
@@ -42,10 +42,10 @@ public:
         GS_Drag_Splitting
     };
 
-    class Brick 
+    class Blok 
     {
     public:
-        Brick(COLORREF color, int x, int y) :
+        Blok(COLORREF color, int x, int y) :
 			m_wColor(color),
 			m_iX(x),
 			m_iY(y),
@@ -59,131 +59,132 @@ public:
 			m_fBottomWeightHeld(-1.0f),
 			m_fTopWeightHeld(-1.0f),
 			m_iDistance(-1),
-			m_iRenderState(LRS_SOLID),
+			m_iRenderState(BRS_SOLID),
 			m_fBlockWeight(0),
 			m_poTopDesiredMate(NULL),
 			m_poBottomDesiredMate(NULL),
 			m_iGroup(0)
         { };
 
+		// Blok Render states:
+		enum
+		{
+			BRS_SOLID,
+			BRS_GLOW,
+			BRS_NO_ATTACH
+		};
 
-        COLORREF m_wColor;
+		int GetColorID(); // Return an index into the color pallate.
+		void SetColorForMenu(int menu); // Based on ColorID set this to the pallate based on the menu passed.
 
-		int GetColorID();
+        void ClearBlok(HDC hdc); // Designed to clear the area this Blok occupies for redrawing, WIP: not used.
+        void DrawBlok(HDC hdc); // Renders this Blok at its current location color and state.
 
-        void ClearBrick(HDC hdc);
-        void DrawBrick(HDC hdc);
-		bool CursorIntersectsPoint(int x, int y);
-        bool IntersectsPoint(int x, int y);
-        bool IntersectsBrick(Brick* poOther);
-        bool IntersectsAnyBrick();
+		bool CursorIntersectsPoint(int x, int y); // Test x,y to see if it is inside the Blok including the trim.
+        bool IntersectsPoint(int x, int y); // Text x,y to see if it is inside the face of the Blok, no trim.
+        bool IntersectsBlok(Blok* poOther); // Do AABB box test between this and poOther.
+        bool IntersectsAnyBlok(); // Recursivley test if this structure intersects with any other Blok.
 
-        bool CanMateWithBrick(Brick* poOther);
-        Brick* FindMate();
-        void Mate();
+        bool CanMateWithBlok(Blok* poOther); // Tests the size of the gap between this Blok and poOther to see if a connection can be made.
+        Blok* FindMate(); // Recursively iterates over this structure to look for any potential prick that this Blok can connect to.
+        void Mate(); // Connect this Blok with the stored m_poTopDesiredMate or m_poBottomDesiredMate
 
-        bool CanDetachBrickUp();
-        void DetachBrickUp();
+        bool CanDetachUp(); // Recursivly iterates over this structure to see if detaching the Bloks above will free a new sub structure.
+        void DetachUp(); // Detach all the top Bloks connected to this Blok.
 
-        bool CanDetachBrickDown();
-        void DetachBrickDown();
-       
+        bool CanDetachDown(); // Recursivly iterate over this structure to see if detaching the Bloks below will free a new sub structure.
+        void DetachDown(); // Detach all the bottom Bloks connected to this Blok.
 
-        void SetBrickPosition(int x, int y);
-        void SetBrickRenderPosition(int x, int y);
+		void SetBlokPosition(int x, int y); // Set the actual position of the Blok, used in physics computations.
+        void SetBlokRenderPosition(int x, int y); // Set the display position of the Blok, this is where we see the Blok and is adjusted when Bloks are lined up to connect.
 
-        void AttachLeft(Brick * poLeft, bool bMoveOther = true);
-        void AttachRight(Brick * poRight, bool bMoveOther = true);
+        void AttachLeft(Blok * poLeft, bool bMoveOther = true); // Add a new left Blok, if bMoveOther the other Blok is positioned correctly.
+        void AttachRight(Blok * poRight, bool bMoveOther = true); // Add a new right Blok, if bMoveOther the other Blok is positioned correctly.
+        void AttachTop(Blok * poTop, bool bMoveOther = true); // Add a new top Blok, if bMoveOther the other Blok is positioned correctly.
+        void AttachBottom(Blok * poBottom, bool bMoveOther = true); // Add a new bottom Blok, if bMoveOther the other Blok is positioned correctly.
 
-        void AttachTop(Brick * poTop, bool bMoveOther = true);
-        void AttachBottom(Brick * poBottom, bool bMoveOther = true);
+        void CalculateDistances(); // UNUSED, physics WIP for randomly detaching Bloks based on weight.
+        void CalculateWeights(); // UNUSED, physics WIP for randomly detaching Bloks based on weight.
+        void BreakStressedConnections(); // UNUSED, physics WIP for randomly detaching Bloks based on weight.
+        
+        void SetMarks(int mark); // Recursively set the mark of all neighbors.
+        void SetRenderState(int iNewState); // Recursivly set the render state.
 
-        void CalculateDistances();
-        void CalculateWeights();
+		int ComputeDepth(); // Compute the render depth used for the z buffer.
 
+		void RecursiveSetGroup(int group); // Used for render depth calculations, WIP.
 
-        void BreakStressedConnections();
-
-        int GetX() const { return m_iX; };
-        int GetY() const { return m_iY; };
-        COLORREF GetColor() const {return m_wColor;};
-
-        const Brick* GetLeft() const {return m_poLeft;};
-        const Brick* GetRight() const {return m_poRight;};
-        const Brick* GetTop() const {return m_poTop;};
-        const Brick* GetBottom() const {return m_poBottom;};
-
-        bool HasLeft() const {return m_poLeft != NULL;};
-        bool HasRight() const {return m_poRight != NULL;};
-        bool HasTop() const {return m_poTop != NULL;};
-        bool HasBottom() const {return m_poBottom != NULL;};
-
-        // Recursively set the mark of all neighbors.
-        void SetMarks(int mark);
-
-        void SetRenderState(int iNewState);
-
-		int ComputeDepth();
-
-		int m_iGroup;
-		void RecursiveSetGroup(int group);
-
-		void SetColorForMenu(int menu);
-
-        enum
-        {
-            LRS_SOLID,
-            LRS_GLOW,
-            LRS_NO_ATTACH
-        };
-
+		// ----- Basic Getter Functions ------------------------------------------------------------------ //
+		int GetX() const { return m_iX; };
+		int GetY() const { return m_iY; };
+		COLORREF GetColor() const { return m_wColor; };
+		const Blok* GetLeft() const { return m_poLeft; };
+		const Blok* GetRight() const { return m_poRight; };
+		const Blok* GetTop() const { return m_poTop; };
+		const Blok* GetBottom() const { return m_poBottom; };
 		int GetRenderState() { return m_iRenderState; };
+		int GetGroup() { return m_iGroup; };
+
+		// ----- Basic Setter Functions ------------------------------------------------------------------ //
+		void SetGroup(int group) { m_iGroup = group; };
+
+		// ----- Basic Has Functions ------------------------------------------------------------------ //
+		bool HasLeft() const { return m_poLeft != NULL; };
+		bool HasRight() const { return m_poRight != NULL; };
+		bool HasTop() const { return m_poTop != NULL; };
+		bool HasBottom() const { return m_poBottom != NULL; };
 
     private:
 
+
+
         void RecursiveFixNeighbors(int x, int y);
-        bool RecursiveIntersectsAnyBrick();
+        bool RecursiveIntersectsAnyBlok();
         void ClearMates();
-        GameState::Brick* RecursiveFindMate();
+        GameState::Blok* RecursiveFindMate();
         void RecursiveMakeMatches();
         void RecursiveMate();
         void RecursiveFixRenderNeighbors(int x, int y);
 
-        bool RecursiveCanDetachBrickUp(int mark);
-        bool RecursiveCanDetachBrickDown(int mark);
+        bool RecursiveCanDetachBlokUp(int mark);
+        bool RecursiveCanDetachBlokDown(int mark);
 
         void RecursiveClearHoldWeights();
 
-        void RecursiveClearDistances();
-        void RecursiveCalculateDistances(int distance=0);
-        float GetWeight();
+        void RecursiveClearDistances(); // Used for WIP physics code.
+        void RecursiveCalculateDistances(int distance=0); // Used for WIP physics code.
+        float GetWeight(); // Used for WIP physics code;
 
-        int GetNumConnections(Brick* poOther);
+        int GetNumConnections(Blok* poOther);
         void RecursiveBreakStressedConnections(float fThreshold);
 
         void RecursiveSetRenderState(int iNewState);
 
-        int m_iX, m_iY;
-        int m_iRenderX, m_iRenderY;
-        int m_iMark;
 
-        int m_iRenderState;
+		// ----- Blok Data Members ------------------------------------------------------------------ //
+        int m_iX, m_iY; // Real position used for physics calculations.
+        int m_iRenderX, m_iRenderY; // Display position used to line up Bloks to show potential connections.
 
+		int m_iMark; // This is used for recursion in various ways, usually it stores if this Blok has been visited.
 
+        int m_iRenderState; // This can be set to make the Bloks glow or transparent.
+		int m_iGroup; // Used for Blok depth calculations - WIP.
 
-        int m_iDistance;
+		COLORREF m_wColor; // Render color.
 
-        float m_fTopWeightHeld;
-        float m_fBottomWeightHeld;
-        float m_fBlockWeight;
+        int m_iDistance; // Used for WIP physics code.
+        float m_fTopWeightHeld; // Used for WIP physics code.
+        float m_fBottomWeightHeld; // Used for WIP physics code.
+        float m_fBlockWeight; // Used for WIP physics code.
 
-        Brick * m_poLeft;
-        Brick * m_poRight;
-        Brick * m_poTop;
-        Brick * m_poBottom;
+		// Neighbors, basically the Bloks are a graph data structure each Blok having 4 potential branches.
+        Blok * m_poLeft;
+        Blok * m_poRight;
+        Blok * m_poTop;
+        Blok * m_poBottom;
 
-        Brick * m_poTopDesiredMate;
-        Brick * m_poBottomDesiredMate;
+        Blok * m_poTopDesiredMate; // Used to store calculated potential connection Bloks.
+        Blok * m_poBottomDesiredMate; // Used to store calculated potential connection Bloks.
     };
 
     GameState() :
@@ -195,44 +196,44 @@ public:
 		m_iXOffset(0),
 		m_poMovingMate(NULL),
 		m_poStaticMate(NULL),
-		m_poSelectedBrick(NULL),
-		m_vpoBricks(NULL)
+		m_poSelectedBlok(NULL),
+		m_vpoBloks(NULL)
 	{
 
 	}
 
-    void GenerateBricks();
+    void GenerateBloks();
     void Shutdown();
     void Update();
 
     void SetState(int iNewState);
     int GetState();
 
-    void SetDragging(Brick* poDragged, int x, int y);
+    void SetDragging(Blok* poDragged, int x, int y);
 
     void MoveSelected(int x, int y);
 
-    Brick* GetBrickAt(int x, int y);
+    Blok* GetBlokAt(int x, int y);
 
     void PlayAttach();
     void PlayDetach();
 
     void DumpGamestate(std::wstring cstrName);
     bool ReadGamestate(std::wstring cstrName);
-    void SetSplitDragging(GameState::Brick* poDragged, int x, int y);
+    void SetSplitDragging(GameState::Blok* poDragged, int x, int y);
 
 	void SetColorsForMenu(int menu);
 
     int m_iXOffset, m_iYOffset;
 
-    std::vector<Brick*> m_vpoBricks;
+    std::vector<Blok*> m_vpoBloks;
 
-    Brick * m_poMovingMate;
-    Brick * m_poStaticMate;
+    Blok * m_poMovingMate;
+    Blok * m_poStaticMate;
 
 private:
 
-    Brick * m_poSelectedBrick;
+    Blok * m_poSelectedBlok;
     int m_iState;
 
     int m_iLastX;
