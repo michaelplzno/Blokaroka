@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR pstrCmdLine, int iCmdShow)
 {
     const char UniqueMutex[] = "one_Instance_only";
-    Handle hHandle = CreateMutex(NULL, TRUE, UniqueMutex);
+    HANDLE hHandle = CreateMutex(NULL, TRUE, UniqueMutex);
 
     if(ERROR_ALREADY_EXISTS == GetLastError())
     {
