@@ -47,7 +47,7 @@ void GameState::Blok::DrawBlok(HDC hdc)
     float fMyMod = 1.0f;
     float fAlpha = 1.0f;
 
-    if(m_iRenderState == Blok::BRS_GLOW)
+    if (m_iRenderState == Blok::BRS_GLOW)
     {
         fDarkerMod *= 1.5f;
         fBrighterMod *= 1.5f;
@@ -55,35 +55,31 @@ void GameState::Blok::DrawBlok(HDC hdc)
 
     }
 
-    if(m_iRenderState == Blok::BRS_NO_ATTACH)
+    if (m_iRenderState == Blok::BRS_NO_ATTACH)
     {
         fAlpha = .5f;
-        //fDarkerMod *= .5f;
-        //fBrighterMod *= .5f;
-        //fMyMod *= .5f;
-
     }
 
     COLORREF darker = RGB(GetRValue(m_wColor) * fDarkerMod,
-                          GetGValue(m_wColor) * fDarkerMod,
-                          GetBValue(m_wColor) * fDarkerMod);
+        GetGValue(m_wColor) * fDarkerMod,
+        GetBValue(m_wColor) * fDarkerMod);
 
     COLORREF brighter = m_wColor;
     float newR = GetRValue(m_wColor) * fBrighterMod;
     float newG = GetGValue(m_wColor) * fBrighterMod;
     float newB = GetBValue(m_wColor) * fBrighterMod;
 
-    if( newR >= 256 )
+    if (newR > 255)
     {
         newR = 255;
     }
 
-    if( newG >= 256 )
+    if (newG > 255)
     {
         newG = 255;
     }
 
-    if( newB >= 256 )
+    if (newB > 255)
     {
         newB = 255;
     }
@@ -94,20 +90,22 @@ void GameState::Blok::DrawBlok(HDC hdc)
     newR = GetRValue(m_wColor) * 2.25f;
     newG = GetGValue(m_wColor) * 2.25f;
     newB = GetBValue(m_wColor) * 2.25f;
-    if( newR >= 256 )
+    
+    if (newR > 255)
     {
         newR = 255;
     }
 
-    if( newG >= 256 )
+    if (newG > 255)
     {
         newG = 255;
     }
 
-    if( newB >= 256 )
+    if (newB > 255)
     {
         newB = 255;
     }
+
     brightest = RGB(newR, newG, newB);
 
 
@@ -115,76 +113,58 @@ void GameState::Blok::DrawBlok(HDC hdc)
     newR = GetRValue(m_wColor) * fMyMod;
     newG = GetGValue(m_wColor) * fMyMod;
     newB = GetBValue(m_wColor) * fMyMod;
-    if( newR >= 256 )
+    
+    if (newR >= 255)
     {
         newR = 255;
     }
 
-    if( newG >= 256 )
+    if (newG >= 255)
     {
         newG = 255;
     }
 
-    if( newB >= 256 )
+    if (newB >= 255)
     {
         newB = 255;
     }
+
     normal = RGB(newR, newG, newB);
 
-
-
     unsigned int depth = ComputeDepth(); //RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
-    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT,normal, depth,fAlpha);
-
-    
+    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, normal, depth, fAlpha);
 
 
-    for(int i = 0; i < BLOK_WIDTH/2; i++)
+    for (int i = 0; i < BLOK_WIDTH / 2; i++)
     {
-        if( i+1 >= BLOK_WIDTH/2 )
+        if (i + 1 >= BLOK_WIDTH / 2)
         {
-//             i++;
-//             RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+LEGO_HEIGHT-i,m_iRenderX-i, 0, depth,.5f);
-//             RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+LEGO_WIDTH-i, m_iRenderY-i, 0, depth,.5f);
-
-            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BLOK_HEIGHT-i,m_iRenderX-i, 0, depth,fAlpha);
-            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BLOK_WIDTH-i, m_iRenderY-i, 0, depth,fAlpha);
+            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i, m_iRenderX - i, 0, depth, fAlpha);
+            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, 0, depth, fAlpha);
         }
         else
         {
-
-            RENDER.VerticalLine(m_iRenderY-i, m_iRenderY+BLOK_HEIGHT-i,m_iRenderX-i,darker, depth,fAlpha);
-            RENDER.HorizontalLine(m_iRenderX-i,m_iRenderX+BLOK_WIDTH-i, m_iRenderY-i, brighter, depth,fAlpha);
+            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i, m_iRenderX - i, darker, depth, fAlpha);
+            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, brighter, depth, fAlpha);
         }
 
+        RENDER.SetPixel(m_iRenderX - i, m_iRenderY + BLOK_HEIGHT - i, 0, depth, fAlpha);
 
-        //RENDER.SetPixel(m_iRenderX-i,m_iRenderY-i,0, depth);
-        RENDER.SetPixel(m_iRenderX-i,m_iRenderY+BLOK_HEIGHT-i,0, depth,fAlpha);
-        //RENDER.SetPixel(m_iRenderX-i-1,m_iRenderY+LEGO_HEIGHT-i,0, depth,.5f);
-
-        if(m_poRight == NULL)
+        if (m_poRight == NULL)
         {
-            RENDER.SetPixel(m_iRenderX+BLOK_WIDTH-i,m_iRenderY-i,0, depth,fAlpha);
-            //RENDER.SetPixel(m_iRenderX+LEGO_WIDTH-i+1,m_iRenderY-i,0, depth,.5f);
+            RENDER.SetPixel(m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, 0, depth, fAlpha);
         }
     }
 
-    //RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY, 0, depth);
-    RENDER.HorizontalLine(m_iRenderX,m_iRenderX+BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, 0, depth,fAlpha);
-    //RENDER.HorizontalLine(m_iRenderX,m_iRenderX+LEGO_WIDTH, m_iRenderY + LEGO_HEIGHT+1, 0, depth,.5f);
+    RENDER.HorizontalLine(m_iRenderX, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, 0, depth, fAlpha);
 
-    if(m_poLeft == NULL)
+
+    if (m_poRight == NULL)
     {
-        //RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX, 0, depth);
+        RENDER.VerticalLine(m_iRenderY, m_iRenderY + BLOK_HEIGHT, m_iRenderX + BLOK_WIDTH, 0, depth, fAlpha);
     }
 
-    if(m_poRight == NULL)
-    {
-        RENDER.VerticalLine(m_iRenderY, m_iRenderY+BLOK_HEIGHT, m_iRenderX+BLOK_WIDTH, 0, depth,fAlpha);
-        //RENDER.VerticalLine(m_iRenderY, m_iRenderY+LEGO_HEIGHT, m_iRenderX+LEGO_WIDTH+1, 0, depth, .5f);
-    }
-
-    if(m_poTop == NULL && m_iRenderState != BRS_NO_ATTACH)
+    if (m_poTop == NULL && m_iRenderState != BRS_NO_ATTACH)
     {
         // Draw Dot ////////////////////////////////////////////////////////
         //  Draw the dot thing that connects to other Bloks              //
@@ -198,40 +178,40 @@ void GameState::Blok::DrawBlok(HDC hdc)
         int height = (int)(BLOK_HEIGHT * .25f);
         int radius = (int)(BLOK_WIDTH * .35f);
 
-        for(int i = start; i <= end; i++)
+        for (int i = start; i <= end; i++)
         {
-            int baseY = m_iRenderY - BLOK_WIDTH/4;
-            int baseX = i - BLOK_WIDTH/4;
-            
-            float realHeight = (.5f*sqrt((float)(radius * radius) - (float)((i-mid)*(i-mid))));
+            int baseY = m_iRenderY - BLOK_WIDTH / 4;
+            int baseX = i - BLOK_WIDTH / 4;
+
+            float realHeight = (.5f * sqrt((float)(radius * radius) - (float)((i - mid) * (i - mid))));
             float chopped = realHeight - ((int)realHeight);
             baseY += (int)(realHeight);
 
-            float PercentDone = (float)(i-start)/(float)(end-start);
+            float PercentDone = (float)(i - start) / (float)(end - start);
             COLORREF myColor;
 
-            if(i == start || i == end)
+            if (i == start || i == end)
             {
                 myColor = 0;
             }
-            else if(PercentDone <= .5f)
+            else if (PercentDone <= .5f)
             {
                 PercentDone *= 2.0f;
                 float newR = GetRValue(darker) * (1.0f - PercentDone) + GetRValue(normal) * PercentDone;
                 float newG = GetGValue(darker) * (1.0f - PercentDone) + GetGValue(normal) * PercentDone;
-                float newB = GetBValue(darker) * (1.0f - PercentDone) + GetBValue(normal) * PercentDone;  
+                float newB = GetBValue(darker) * (1.0f - PercentDone) + GetBValue(normal) * PercentDone;
 
-                myColor = RGB(newR,newG,newB);
+                myColor = RGB(newR, newG, newB);
             }
-            else if(PercentDone <= .75f)
+            else if (PercentDone <= .75f)
             {
                 PercentDone -= .5f;
                 PercentDone *= 4.0f;
                 float newR = GetRValue(normal) * (1.0f - PercentDone) + GetRValue(brightest) * PercentDone;
                 float newG = GetGValue(normal) * (1.0f - PercentDone) + GetGValue(brightest) * PercentDone;
-                float newB = GetBValue(normal) * (1.0f - PercentDone) + GetBValue(brightest) * PercentDone;   
+                float newB = GetBValue(normal) * (1.0f - PercentDone) + GetBValue(brightest) * PercentDone;
 
-                myColor = RGB(newR,newG,newB);
+                myColor = RGB(newR, newG, newB);
             }
             else
             {
@@ -239,57 +219,48 @@ void GameState::Blok::DrawBlok(HDC hdc)
                 PercentDone *= 4.0f;
                 float newR = GetRValue(brightest) * (1.0f - PercentDone) + GetRValue(normal) * PercentDone;
                 float newG = GetGValue(brightest) * (1.0f - PercentDone) + GetGValue(normal) * PercentDone;
-                float newB = GetBValue(brightest) * (1.0f - PercentDone) + GetBValue(normal) * PercentDone; 
+                float newB = GetBValue(brightest) * (1.0f - PercentDone) + GetBValue(normal) * PercentDone;
 
-                myColor = RGB(newR,newG,newB);
+                myColor = RGB(newR, newG, newB);
             }
 
 
 
             RENDER.VerticalLine(baseY - height, baseY, baseX, myColor, depth);
 
-            if(i != start && i != end)
+            if (i != start && i != end)
             {
-                RENDER.VerticalLine(baseY - 2*(baseY - (m_iRenderY - BLOK_WIDTH/4)) - height , baseY - height, baseX, brighter, depth);
+                RENDER.VerticalLine(baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) - height, baseY - height, baseX, brighter, depth);
             }
 
             float AA = 1.0f - abs(chopped);
             float newR = GetRValue(brighter) * (1.0f - AA) + GetRValue(myColor) * AA;
             float newG = GetGValue(brighter) * (1.0f - AA) + GetGValue(myColor) * AA;
             float newB = GetBValue(brighter) * (1.0f - AA) + GetBValue(myColor) * AA;
-            COLORREF AACol = RGB(newR,newG,newB);
+            COLORREF AACol = RGB(newR, newG, newB);
 
-            if(i != start && i != end)
+            if (i != start && i != end)
             {
-                RENDER.SetPixel(baseX, baseY-height,AACol,depth,fAlpha);
+                RENDER.SetPixel(baseX, baseY - height, AACol, depth, fAlpha);
 
 
-            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BLOK_WIDTH/4)) - height,RGB(newR*(1.0f-AA),newG*(1.0f-AA),newB*(1.0f-AA)) ,depth,fAlpha);
-            RENDER.SetPixel(baseX, baseY - 2*(baseY - (m_iRenderY - BLOK_WIDTH/4)) - height-1,0 ,depth,(1.0f-AA)*fAlpha);
+                RENDER.SetPixel(baseX, baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) - height, RGB(newR * (1.0f - AA), newG * (1.0f - AA), newB * (1.0f - AA)), depth, fAlpha);
+                RENDER.SetPixel(baseX, baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) - height - 1, 0, depth, (1.0f - AA) * fAlpha);
             }
             newR = GetRValue(myColor) * (1.0f - AA) + GetRValue(brighter) * AA;
             newG = GetGValue(myColor) * (1.0f - AA) + GetGValue(brighter) * AA;
             newB = GetBValue(myColor) * (1.0f - AA) + GetBValue(brighter) * AA;
-            AACol = RGB(newR,newG,newB);
-            if(i != start && i != end)
+            AACol = RGB(newR, newG, newB);
+            if (i != start && i != end)
             {
-                RENDER.SetPixel(baseX, baseY,AACol,depth,fAlpha);
+                RENDER.SetPixel(baseX, baseY, AACol, depth, fAlpha);
             }
-
-
         }
-
-        //RENDER.VerticalLine(m_iRenderY - LEGO_WIDTH/4 - height-1, m_iRenderY - LEGO_WIDTH/4 + 1, start - LEGO_WIDTH/4, 0, depth);
-        //RENDER.VerticalLine(m_iRenderY - LEGO_WIDTH/4 - height-1, m_iRenderY - LEGO_WIDTH/4 + 1, end - LEGO_WIDTH/4, 0, depth);
-
     }
-
-
 }
 
 void GameState::Blok::ClearBlok(HDC hdc)
 {
-
     HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
     HPEN NewPen = CreatePen(PS_SOLID, 0, CLEAR_COLOR);
 
@@ -384,6 +355,13 @@ bool GameState::Blok::IntersectsPoint(int x, int y)
 
 bool GameState::Blok::IntersectsBlok( Blok* poOther )
 {
+    if (std::abs(m_iX - poOther->m_iX) > BLOK_WIDTH) return false;
+    if (std::abs(m_iY - poOther->m_iY) > BLOK_HEIGHT) return false;
+    
+    // We have an overlap
+    return true;
+
+    /*
     if (IntersectsPoint(poOther->m_iX, poOther->m_iY))
     {
         return true;
@@ -403,9 +381,9 @@ bool GameState::Blok::IntersectsBlok( Blok* poOther )
     {
         return true;
     }
-
+    
     return false;
-
+    */
 }
 
 
@@ -1749,6 +1727,15 @@ void GameState::Update()
 
 }
 
+void GameState::ClearBloks()
+{
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    {
+        delete m_vpoBloks[i];
+    }
+
+    m_vpoBloks.clear();
+}
 
 
 void GameState::SetState(int iNewState)

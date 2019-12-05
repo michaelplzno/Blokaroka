@@ -33,12 +33,16 @@
 
 #pragma comment(lib, "Winmm.lib") 
 
-#define MENU_BASIC        1000
-#define MENU_AMETHYST    1001
-#define MENU_TOPAZ        1002
+#define MENU_BASIC      1000
+#define MENU_AMETHYST   1001
+#define MENU_TOPAZ      1002
 #define MENU_PERIDOT    1003
 
-#define MENU_EXIT        1004
+#define MENU_RESET      1004
+#define MENU_SAVE       1005
+#define MENU_LOAD       1006
+
+#define MENU_EXIT       1007
 
 inline void gPlaySound(int resource)
 {

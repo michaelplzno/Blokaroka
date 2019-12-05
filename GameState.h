@@ -205,6 +205,7 @@ public:
     void GenerateBloks();
     void Shutdown();
     void Update();
+    void ClearBloks();
 
     void SetState(int iNewState);
     int GetState();

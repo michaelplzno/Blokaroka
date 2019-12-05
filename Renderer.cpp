@@ -192,13 +192,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                           WPARAM wParam, LPARAM lParam )
 {
 
-    /*
-    if (uMessage >= WM_USER)
-    {
-        
-    }
-    */
-
     // Switch the windows message to figure out what it is
     switch( uMessage )
     {
@@ -207,6 +200,104 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
             if (wParam == MENU_EXIT)
             {
                 g_bIsAppAlive = false;
+            }
+            else if (wParam == MENU_RESET)
+            {
+                int answer = MessageBox(0, "Are you sure you want to reset your bloks? This cannot be undone.", "Reset Your Bloks?", MB_YESNO | MB_ICONQUESTION);
+                if (answer == IDYES)
+                {
+                    GAMESTATE.ClearBloks();
+                    GAMESTATE.GenerateBloks();
+                    RENDER.RenderFrame();
+                    RENDER.PresentFrame();
+                }
+            }
+            else if (wParam == MENU_SAVE)
+            {
+                OPENFILENAME ofn;       // common dialog box structure
+                char szFile[260];       // buffer for file name
+                HWND hwnd = RENDER.hWnd;// owner window
+                HANDLE hf;              // file handle
+
+                // Initialize OPENFILENAME
+                ZeroMemory(&ofn, sizeof(ofn));
+                ofn.lStructSize = sizeof(ofn);
+                ofn.hwndOwner = hwnd;
+                ofn.lpstrFile = szFile;
+                // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+                // use the contents of szFile to initialize itself.
+                ofn.lpstrFile[0] = '\0';
+                ofn.nMaxFile = sizeof(szFile);
+                ofn.lpstrFilter = ".blok";
+                ofn.lpstrDefExt = "blok";
+                ofn.nFilterIndex = 0;
+                ofn.lpstrFileTitle = NULL;
+                ofn.nMaxFileTitle = 0;
+                ofn.lpstrInitialDir = NULL;
+                ofn.Flags = OFN_PATHMUSTEXIST;// | OFN_FILEMUSTEXIST;
+
+                // Display the Open dialog box. 
+
+                if (GetSaveFileName(&ofn) == TRUE)
+                {
+
+                    int answer = IDYES;
+                    
+                    WIN32_FIND_DATA FindFileData;
+                    HANDLE handle = FindFirstFile(szFile, &FindFileData);
+
+                    if (handle != INVALID_HANDLE_VALUE)
+                    {
+                        MessageBox(0, "This file already exists, are you sure you want to overwrite it?", "Overwrite Save File?", MB_YESNO | MB_ICONQUESTION);
+                    }
+
+                    if (answer == IDYES)
+                    {
+                        std::wstringstream wss;
+                        wss << szFile;
+                        GAMESTATE.DumpGamestate(wss.str());
+                    }
+
+
+                    
+                }
+            }
+            else if (wParam == MENU_LOAD)
+            {
+                OPENFILENAME ofn;       // common dialog box structure
+                char szFile[260];       // buffer for file name
+                HWND hwnd = RENDER.hWnd;// owner window
+                HANDLE hf;              // file handle
+
+                // Initialize OPENFILENAME
+                ZeroMemory(&ofn, sizeof(ofn));
+                ofn.lStructSize = sizeof(ofn);
+                ofn.hwndOwner = hwnd;
+                ofn.lpstrFile = szFile;
+                // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+                // use the contents of szFile to initialize itself.
+                ofn.lpstrFile[0] = '\0';
+                ofn.nMaxFile = sizeof(szFile);
+                ofn.lpstrFilter = "Blok\0*.blok\0Text\0*.TXT\0All\0*.*";
+                ofn.lpstrDefExt = "blok";
+                ofn.nFilterIndex = 1;
+                ofn.lpstrFileTitle = NULL;
+                ofn.nMaxFileTitle = 0;
+                ofn.lpstrInitialDir = NULL;
+                ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+                // Display the Open dialog box. 
+
+                if (GetOpenFileName(&ofn) == TRUE)
+                {
+                    std::wstringstream wss;
+                    wss << szFile;
+                    GAMESTATE.ClearBloks();
+                    GAMESTATE.ReadGamestate(wss.str());
+
+                    RENDER.RenderFrame();
+                    RENDER.PresentFrame();
+                }
             }
             else if (wParam == MENU_BASIC || wParam == MENU_AMETHYST || wParam == MENU_TOPAZ || wParam == MENU_PERIDOT)
             {
@@ -234,6 +325,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_AMETHYST, "Amethyst");
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_TOPAZ, "Topaz");
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT, "Peridot");
+                AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
+                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_RESET, "Reset");
+                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_SAVE, "Save");
+                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_LOAD, "Load");
                 AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_EXIT, "Exit");
 
