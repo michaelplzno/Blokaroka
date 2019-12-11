@@ -3,7 +3,7 @@ One of my first projects: an attempt to make bricks appear on top of the UI in W
 
 If the project catches on, hopefully we can work together to make it a popular app.
 
-![Screenshot on Windows 10](https://blokaroka.com)
+![Screenshot on Windows 10](https://raw.githubusercontent.com/michaelplzno/DesktopBricks/master/Blokaroka.PNG)
 
 Hit the ESC key to terminate the program, or right click the icon in the start bar and hit CLOSE, or now there is a System Tray icon that when right clicked creates a menu that allows you to change your blok colors or exit. The app is designed to appear on top of the Windows UI, so it has no window frame or X in the corner to close it. 
 
