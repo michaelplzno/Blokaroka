@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
-//  Blokaroka.h                                                              //
-//    A way to render interactive Bloks you can play with on your        //
+//  Blokaroka.h                                                           //
+//    A way to render interactive Bloks you can play with on your         //
 //    windows desktop.                                                    //
 //                                                                        //
 //  Michael Silverman, 2007 - Open Source in 2019                         //
