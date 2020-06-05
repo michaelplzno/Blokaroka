@@ -21,7 +21,32 @@ typedef struct
 
 class Renderer
 {
-  public:
+public:
+    class Pixel
+    {
+    public:
+        Pixel() :
+            m_iX(0),
+            m_iY(0)
+        {
+
+        }
+
+        Pixel(int x, int y)
+        {
+            m_iX = x;
+            m_iY = y;
+        };
+
+        Pixel(b2Vec2 physicsPoint);
+
+        void SetFromPhysics(b2Vec2 physicsPoint);
+
+        b2Vec2 ToPhysics();
+
+        int m_iX, m_iY;
+    };
+
     Renderer() :
         hWnd(NULL),
         m_HDC(NULL),
@@ -42,6 +67,9 @@ class Renderer
 
     void HorizontalLine(int left, int right, int y, COLORREF color, unsigned int depth = 0, float fAlpha = 1.0f);
     void VerticalLine(int top, int bottom, int x, COLORREF color, unsigned int depth = 0, float fAlpha = 1.0f);
+
+    void Line(Pixel start, Pixel end, COLORREF color, unsigned int depth, float alpha);
+    void Line(int startX, int startY, int endX, int endY, COLORREF color, unsigned int depth, float alpha);
 
     void Circle(int x, int y, int radius, COLORREF c, unsigned int depth = 0, float fAlpha = 1.0f);
 

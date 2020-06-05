@@ -2,6 +2,25 @@
 #include <math.h>
 
 
+b2Vec2 Renderer::Pixel::ToPhysics()
+{
+    b2Vec2 ret;
+    ret.x = m_iX * PIXELS_TO_PHYSICS;
+    ret.y = (RENDER.GetHeight() - m_iY)* PIXELS_TO_PHYSICS;
+    return ret;
+}
+
+Renderer::Pixel::Pixel(b2Vec2 physicsPoint)
+{
+    SetFromPhysics(physicsPoint);
+}
+
+void Renderer::Pixel::SetFromPhysics(b2Vec2 physicsPoint)
+{
+    m_iX = (int)(physicsPoint.x * PHYSICS_TO_PIXELS);
+    m_iY = RENDER.GetHeight() - (int)(physicsPoint.y * PHYSICS_TO_PIXELS);
+}
+
 typedef LRESULT (__cdecl*hookFunc)(HWND, HWND);
 
 LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
@@ -61,7 +80,7 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            GameState::Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
+            Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
             if( poClicked )
             {
                 GAMESTATE.SetDragging(poClicked, xPos, yPos);
@@ -85,7 +104,7 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            GameState::Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
+            Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
             if( poClicked && poClicked->CanDetachUp())
             {
                 poClicked->DetachUp();
@@ -217,7 +236,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                 OPENFILENAME ofn;       // common dialog box structure
                 char szFile[260];       // buffer for file name
                 HWND hwnd = RENDER.hWnd;// owner window
-                HANDLE hf;              // file handle
 
                 // Initialize OPENFILENAME
                 ZeroMemory(&ofn, sizeof(ofn));
@@ -267,7 +285,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                 OPENFILENAME ofn;       // common dialog box structure
                 char szFile[260];       // buffer for file name
                 HWND hwnd = RENDER.hWnd;// owner window
-                HANDLE hf;              // file handle
 
                 // Initialize OPENFILENAME
                 ZeroMemory(&ofn, sizeof(ofn));
@@ -465,7 +482,7 @@ void Renderer::RenderFrame(void)
     int index = 1;
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
-        if (GAMESTATE.m_vpoBloks[i]->GetRenderState() == GameState::Blok::BRS_SOLID && GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
+        if (GAMESTATE.m_vpoBloks[i]->GetRenderState() == Blok::BRS_SOLID && GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
         {
             GAMESTATE.m_vpoBloks[i]->RecursiveSetGroup(index);
             index++;
@@ -486,6 +503,8 @@ void Renderer::RenderFrame(void)
     {
         GAMESTATE.m_vpoBloks[i]->DrawBlok(m_HDC);
     }
+
+    PHYSICS.Draw();
 }
 
 void Renderer::PresentFrame()
@@ -678,6 +697,18 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     RECT r;
     GetClipBox(GetDC(NULL),&r);
 
+
+    RECT desktop;
+    // Get a handle to the desktop window
+    const HWND hDesktop = GetDesktopWindow();
+    // Get the size of screen to the variable desktop
+    GetWindowRect(hDesktop, &desktop);
+    // The top left corner will have coordinates (0,0)
+    // and the bottom right corner will have coordinates
+    // (horizontal, vertical)
+    //horizontal = desktop.right;
+    //vertical = desktop.bottom;
+
     /*SetWindowLong(hWnd, 
         GWL_EXSTYLE, 
         GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);*/
@@ -686,8 +717,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     //SetLayeredWindowAttributes(hWnd, CLEAR_COLOR, 255, LWA_COLORKEY);
 
 
-    m_Width = r.right - r.left;
-    m_Height = r.bottom - r.top;
+    m_Width = desktop.right;// r.right - r.left;
+    m_Height = desktop.bottom;// r.bottom - r.top;
 
     m_ausZBuffer = new unsigned int[m_Width * m_Height];
 
@@ -796,6 +827,54 @@ void Renderer::VerticalLine( int top, int bottom, int x, COLORREF color, unsigne
     {
         SetPixel(x,y,color, depth, fAlpha);
     }
+}
+
+void Renderer::Line(Renderer::Pixel start, Renderer::Pixel end, COLORREF color, unsigned int depth, float alpha)
+{
+    Line(start.m_iX, start.m_iY, end.m_iX, end.m_iY, color, depth, alpha);
+}
+
+void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color, unsigned int depth, float alpha)
+{
+   /* if (x1 < x0)
+    {
+        int temp = x1;
+        x1 = x0;
+        x0 = temp;
+
+        temp = y1;
+        y1 = y0;
+        y0 = temp;
+    }*/
+
+    int dx = abs(x1 - x0);
+    int sx = x0 < x1 ? 1 : -1;
+    int dy = -abs(y1 - y0);
+    int sy = y0 < y1 ? 1 : -1;
+    int err = dx + dy;
+
+    while (true)
+    {
+        SetPixel(x0, y0, color, depth, alpha);
+        if (x0 == x1 && y0 == y1)
+        {
+            break;
+        }
+
+        int e2 = 2 * err;
+        if (e2 >= dy)
+        {
+            err += dy; /* e_xy+e_x > 0 */
+            x0 += sx;
+        }
+        
+        if (e2 <= dx) /* e_xy+e_y < 0 */
+        {
+            err += dx;
+            y0 += sy;
+        }
+    }
+
 }
 
 void Renderer::Circle( int xCenter, int yCenter, int radius, COLORREF c, unsigned int depth /*= 0*/, float fAlpha /*= 1.0f*/ )

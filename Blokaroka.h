@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////
 //  Blokaroka.h                                                           //
 //    A way to render interactive Bloks you can play with on your         //
+//  Blokaroka.h                                                           //
+//    A way to render interactive Bloks you can play with on your         //
 //    windows desktop.                                                    //
 //                                                                        //
 //  Michael Silverman, 2007 - Open Source in 2019                         //
@@ -19,6 +21,8 @@
 #include <iostream>
 #include <math.h>
 #include <sstream>
+
+#include "box2d\box2d.h"
 
 
 #define WINVER 0x0600
@@ -144,6 +148,7 @@ class Config {
     bool m_bUseAA;                 // Anti-Aliasing
     bool m_bVSyncLock;             // Lock FPS to VSync
 
+
     Config() :
         m_uiWindowWidth(1024),
         m_uiWindowHeight(768),
@@ -159,12 +164,22 @@ class Config {
 extern volatile bool      g_bIsAppAlive;
 extern Config             CONFIG;
 
+extern LARGE_INTEGER g_liFrequency;   // ticks per second
+extern LARGE_INTEGER g_liLastFrame;   // counter tick of the last frame
+extern float g_fDeltaT;               // elapsed time between frames
+
 // -- GLOBAL FUNCTIONS -------------------------------------------------- //
 bool gHandleCommandLineArgs(PSTR pstrCmdLine);
 
 
 // -- Project Classes --------------------------------------------------- //
+class GameState;
+class Blok;
+
+#include "Blok.h"
 #include "Renderer.h"
 #include "Gamestate.h"
+#include "Physics.h"
 
+#endif
 #endif

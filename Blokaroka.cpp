@@ -4,6 +4,11 @@
 volatile bool g_bIsAppAlive = true;
 Config CONFIG;
 
+double g_dFrequency;   // ticks per second
+LARGE_INTEGER g_liLastFrame;   // counter tick of the last frame
+float g_fDeltaT;               // elapsed time between frames
+
+
 // -- MAIN -------------------------------------------------------------- //
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR pstrCmdLine, int iCmdShow)
@@ -16,6 +21,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         return 1;
     }
 
+    LARGE_INTEGER li;
+    QueryPerformanceFrequency(&li);
+
+    g_dFrequency = double(li.QuadPart);
+    
+
+
     // - - - Command Line- - - - - - - //
     if (gHandleCommandLineArgs(pstrCmdLine) == false)
     {
@@ -23,6 +35,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     }
 
     RENDER.InitRenderer(hInstance);
+    PHYSICS.Init();
 
 
     // Try to read the gamestate from the best existing gamestate location.
@@ -37,9 +50,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     RENDER.PresentFrame();
 
 
+    QueryPerformanceCounter(&g_liLastFrame);
     while(g_bIsAppAlive)
     {
+        LARGE_INTEGER nextTime;
+        QueryPerformanceCounter(&nextTime);
+
+        g_fDeltaT = (float)((nextTime.QuadPart - g_liLastFrame.QuadPart) / g_dFrequency);
+        g_liLastFrame = nextTime;
+
         RENDER.HandleWindows();
+        GAMESTATE.Update();
+        PHYSICS.Update();
+        RENDER.RenderFrame();
+        RENDER.PresentFrame();
         Sleep(1);
     }
 
