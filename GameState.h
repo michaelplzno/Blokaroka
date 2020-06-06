@@ -63,6 +63,7 @@ public:
     void Shutdown();
     void Update();
     void ClearBloks();
+    void RegenPhysics();
 
     void SetState(int iNewState);
     int GetState();

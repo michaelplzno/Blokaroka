@@ -29,31 +29,29 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
     if( wParam == WM_LBUTTONUP )
     { 
+        PHYSICS.OnMouseUp();
+
         if(GAMESTATE.GetState() == GameState::GS_Drag_Free)
         {
             GAMESTATE.SetState(GameState::GS_Static);
-            RENDER.RenderFrame();
-            RENDER.PresentFrame();
             return 1;
         }
 
         if(GAMESTATE.GetState() == GameState::GS_Drag_Mating)
         {
             GAMESTATE.SetState(GameState::GS_Static);
-            RENDER.RenderFrame();
-            RENDER.PresentFrame();
             return 1;
         }
         return 0;
     }
     else if( wParam == WM_RBUTTONUP )
     { 
+        PHYSICS.OnMouseUp();
+
         if(GAMESTATE.GetState() != GameState::GS_Static)
         {
             RENDER.m_bRight = false;
             GAMESTATE.SetState(GameState::GS_Static);
-            RENDER.RenderFrame();
-            RENDER.PresentFrame();
             return 1;
         }
         if(RENDER.m_bRight)
@@ -78,8 +76,23 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
         xPos = result.x;
         yPos = result.y;
 
+        Renderer::Pixel p(xPos, yPos);
+
+        PHYSICS.OnMouseMove(p.ToPhysics());
+
+
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
+            Renderer::Pixel p(xPos, yPos);
+
+            Blok* poClicked = PHYSICS.OnMouseDown(p.ToPhysics());
+            if (poClicked)
+            {
+                GAMESTATE.SetDragging(poClicked, xPos, yPos);
+                return 1;
+            }
+
+            /*
             Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
             if( poClicked )
             {
@@ -87,6 +100,7 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
                 
                 return 1;
             }
+            */
 
         }
         return 0;
@@ -102,31 +116,42 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
         xPos = result.x;
         yPos = result.y;
 
+        Renderer::Pixel p(xPos, yPos);
+
+        PHYSICS.OnMouseMove(p.ToPhysics());
+
         if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
             Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
-            if( poClicked && poClicked->CanDetachUp())
+            int ret = 0;
+            if (poClicked && poClicked->CanDetachUp())
             {
                 poClicked->DetachUp();
-                GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
-                //GAMESTATE.SetState(GameState::GS_Drag_Free);
-                RENDER.m_bRight = true;
-                return 1;
-            }
 
-            if( poClicked && poClicked->CanDetachDown())
+                ret = 1;
+            }
+            else if (poClicked && poClicked->CanDetachDown())
             {
                 poClicked->DetachDown();
-                GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
-                RENDER.m_bRight = true;
-                return 1;
+
+                ret = 1;
+            }
+            else if(poClicked)
+            {
+                ret = 1;
             }
 
-            if(poClicked)
+            if (ret == 1)
             {
-                GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
-                //GAMESTATE.SetState(GameState::GS_Drag_Free);
-                RENDER.m_bRight = true;
+                GAMESTATE.RegenPhysics();
+
+                poClicked = PHYSICS.OnMouseDown(p.ToPhysics());
+                if (poClicked)
+                {
+                    GAMESTATE.SetSplitDragging(poClicked, xPos, yPos);
+                    RENDER.m_bRight = true;
+                }
+
                 return 1;
             }
 
@@ -146,10 +171,18 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
             int xPos = result.x;
             int yPos = result.y;
 
+            Renderer::Pixel p(xPos, yPos);
+
+            PHYSICS.OnMouseMove(p.ToPhysics());
+            
             GAMESTATE.MoveSelected(xPos, yPos);
 
+            /*
+
+            
+
             RENDER.RenderFrame();
-            RENDER.PresentFrame();
+            RENDER.PresentFrame();*/
             return 0;
         }
     }
@@ -746,7 +779,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 
 void Renderer::SetPixel( int x, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/, float fSourceBlend )
 {
-    if(x > m_Image.width || x < 0 ||
+    if(x >= m_Image.width || x < 0 ||
        y >= m_Image.height || y <= 0)
     {
         return;

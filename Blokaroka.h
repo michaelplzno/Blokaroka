@@ -21,6 +21,7 @@
 #include <iostream>
 #include <math.h>
 #include <sstream>
+#include <set>
 
 #include "box2d\box2d.h"
 
@@ -181,5 +182,4 @@ class Blok;
 #include "Gamestate.h"
 #include "Physics.h"
 
-#endif
 #endif

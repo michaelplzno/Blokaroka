@@ -59,6 +59,7 @@ void GameState::Update()
 
             b2Body* body = PHYSICS.GenerateBody();
             body->SetTransform(m_vpoBloks[i]->GetPhysicsPos(), 0);
+            body->SetUserData(m_vpoBloks[i]);
 
             m_vpoBloks[i]->InitPhysics(body);
         }
@@ -73,20 +74,61 @@ void GameState::ClearBloks()
 {
     for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
     {
+        std::set<b2Body*> toDestroy;
+        m_vpoBloks[i]->ClearPhysics(&toDestroy);
+
+        for (std::set<b2Body*>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+        {
+            PHYSICS.DestroyBody(*it);
+        }
+
         delete m_vpoBloks[i];
     }
 
     m_vpoBloks.clear();
 }
 
+void GameState::RegenPhysics()
+{
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    {
+        if (!m_vpoBloks[i]->PhysicsInited())
+        {
+            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(), m_vpoBloks[i]->GetY());
+
+            b2Body* body = PHYSICS.GenerateBody();
+            body->SetTransform(m_vpoBloks[i]->GetPhysicsPos(), 0);
+            body->SetUserData(m_vpoBloks[i]);
+
+            m_vpoBloks[i]->InitPhysics(body);
+        }
+    }
+}
+
 
 void GameState::SetState(int iNewState)
 {
+    if (m_poSelectedBlok != NULL)
+    {
+        m_poSelectedBlok->EnablePhysics();
+    }
+
     if (iNewState == GS_Static)
     {
         if (m_iState == GS_Drag_Mating)
         {
+            PHYSICS.OnMouseUp();
+
             m_poSelectedBlok->Mate();
+
+            std::set<b2Body*> toDestroy;
+            m_poSelectedBlok->ClearPhysics(&toDestroy);
+
+            for (std::set<b2Body*>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+            {
+                PHYSICS.DestroyBody(*it);
+            }
+
             m_poSelectedBlok->SetMarks(0);
         }
         m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
@@ -94,6 +136,13 @@ void GameState::SetState(int iNewState)
     else if( iNewState == GS_Drag_Free )
     {
 
+    }
+    else if (iNewState == GS_Drag_Mating)
+    {
+        if (m_poSelectedBlok != NULL)
+        {
+            m_poSelectedBlok->DisablePhysics();
+        }
     }
 
         
@@ -128,7 +177,11 @@ void GameState::SetSplitDragging(Blok* poDragged, int x, int y)
 void  GameState::MoveSelected(int x, int y)
 {
 
-    m_poSelectedBlok->SetBlokPosition(m_iXOffset + x, m_iYOffset + y);
+    if (m_poSelectedBlok != NULL && !m_poSelectedBlok->PhysicsEnabled())
+    {
+        m_poSelectedBlok->SetBlokPosition(m_iXOffset + x, m_iYOffset + y);
+    }
+
     //m_poSelectedLego->BreakStressedConnections();
 
     float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) + 
@@ -160,14 +213,24 @@ void  GameState::MoveSelected(int x, int y)
         {
             if(m_iState == GS_Drag_Mating)
             {
+                PHYSICS.OnMouseUp();
+
                 m_poSelectedBlok->Mate();
+
+                std::set<b2Body*> toDestroy;
+                m_poSelectedBlok->ClearPhysics(&toDestroy);
+
+                for (std::set<b2Body*>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+                {
+                    PHYSICS.DestroyBody(*it);
+                }
 
                 m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
                 m_iState = GS_Static;
             }
             else
             {
-                m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                //m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
         else
@@ -180,13 +243,13 @@ void  GameState::MoveSelected(int x, int y)
             else
             {
                 SetState(GS_Drag_Free);
-                m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                //m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
     }
     else
     {
-        m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+        //m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
     }
 }
 

@@ -61,6 +61,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
         RENDER.HandleWindows();
         GAMESTATE.Update();
+        PHYSICS.UpdateMouse();
         PHYSICS.Update();
         RENDER.RenderFrame();
         RENDER.PresentFrame();
