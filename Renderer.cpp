@@ -387,7 +387,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT, "Peridot");
                 AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
 
-                if (gravity_OnOff) {
+                if (gravity_OnOff) {     //Depending if gravity_OnOff is true or false the menu changes to Gravity On or Off
                     AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF, "Gravity OFF");
                 }
                 else {
