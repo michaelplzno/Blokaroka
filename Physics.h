@@ -4,6 +4,7 @@
 
 #define PIXELS_TO_PHYSICS 0.0151515f
 #define PHYSICS_TO_PIXELS 66.0f
+extern bool gravity_OnOff;
 
 class Physics
 {

@@ -49,6 +49,9 @@
 
 #define MENU_EXIT       1007
 
+#define MENU_G_ON       1008
+#define MENU_G_OFF      1009
+
 inline void gPlaySound(int resource)
 {
     PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE|SND_ASYNC);
