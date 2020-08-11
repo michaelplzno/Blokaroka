@@ -99,7 +99,6 @@ void GameState::RegenPhysics()
             b2Body* body = PHYSICS.GenerateBody();
             body->SetTransform(m_vpoBloks[i]->GetPhysicsPos(), 0);
             body->SetUserData(m_vpoBloks[i]);
-
             m_vpoBloks[i]->InitPhysics(body);
         }
     }

@@ -2,6 +2,7 @@
 
 // -- EXTERN DECLARATIONS ----------------------------------------------- //
 volatile bool g_bIsAppAlive = true;
+extern bool gravity_OnOff = true;
 Config CONFIG;
 
 double g_dFrequency;   // ticks per second

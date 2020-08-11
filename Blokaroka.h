@@ -49,6 +49,11 @@
 
 #define MENU_EXIT       1007
 
+#define MENU_G_ON       1008
+#define MENU_G_OFF      1009
+
+
+
 inline void gPlaySound(int resource)
 {
     PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE|SND_ASYNC);
@@ -163,11 +168,14 @@ class Config {
 };
 
 extern volatile bool      g_bIsAppAlive;
+extern bool               gravity_OnOff;
 extern Config             CONFIG;
 
 extern LARGE_INTEGER g_liFrequency;   // ticks per second
 extern LARGE_INTEGER g_liLastFrame;   // counter tick of the last frame
 extern float g_fDeltaT;               // elapsed time between frames
+
+
 
 // -- GLOBAL FUNCTIONS -------------------------------------------------- //
 bool gHandleCommandLineArgs(PSTR pstrCmdLine);
