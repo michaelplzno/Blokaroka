@@ -4,7 +4,6 @@
 
 #define PIXELS_TO_PHYSICS 0.0151515f
 #define PHYSICS_TO_PIXELS 66.0f
-extern bool gravity_OnOff;
 
 class Physics
 {
@@ -69,13 +68,15 @@ public:
 	void OnMouseUp();
 	void UpdateMouse();
 
+	void changeGravity(float yG);
+
 private:
     b2World* m_world;
 	b2MouseJoint* m_mouseJoint;
 	DebugDraw* m_debugDraw;
 	b2Body* m_groundBody;
 	b2Vec2 m_mouseTarget;
-
+	b2Vec2 m_gravity;
 };
 
 extern Physics PHYSICS;

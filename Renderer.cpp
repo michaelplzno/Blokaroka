@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <math.h>
 
+bool gravityOnOff = true;
 
 b2Vec2 Renderer::Pixel::ToPhysics()
 {
@@ -355,11 +356,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
             }
             else if (wParam == MENU_G_ON)
             {
-                gravity_OnOff = true;
+                gravityOnOff = true;
+                PHYSICS.changeGravity(-10.0f);
             }
             else if (wParam == MENU_G_OFF)
             {
-                gravity_OnOff = false;
+                gravityOnOff = false;
+                PHYSICS.changeGravity(0.0f);
             }
             else
             {
@@ -384,7 +387,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_TOPAZ, "Topaz");
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT, "Peridot");
                 AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
-                if (gravity_OnOff) AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF, "Gravity OFF");
+                if (gravityOnOff) AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF, "Gravity OFF");
                 else AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_G_ON, "Gravity ON");
                 AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
                 AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_RESET, "Reset");

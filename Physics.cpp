@@ -1,7 +1,6 @@
 #include "Physics.h"
 
 Physics PHYSICS;
-extern bool gravity_OnOff = true;
 //
 void Physics::DebugDraw::Create()
 {
@@ -181,14 +180,6 @@ void Physics::Update()
 	m_world->SetWarmStarting(true);
 	m_world->SetContinuousPhysics(true);
 	m_world->SetSubStepping(true);
-
-	b2Vec2 gravity;
-	if (gravity_OnOff)
-		gravity.Set(0.0f, -10.0f);
-	else
-		gravity.Set(0.0f, 0.0f);
-	m_world->SetGravity(gravity);
-
 	m_world->Step(g_fDeltaT, 10, 5);
 }
 
@@ -329,4 +320,8 @@ void Physics::OnMouseUp()
 	}
 }
 
-
+void Physics::changeGravity(float y_G)
+{
+	m_gravity.Set(0.00f, y_G);
+	m_world->SetGravity(m_gravity);
+}
