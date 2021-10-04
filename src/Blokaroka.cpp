@@ -10,7 +10,7 @@ float g_fDeltaT;               // elapsed time between frames
 
 
 // -- MAIN -------------------------------------------------------------- //
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR pstrCmdLine, int iCmdShow)
 {
     const char UniqueMutex[] = "one_Instance_only";
