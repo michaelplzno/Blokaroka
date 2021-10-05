@@ -23,7 +23,8 @@
 #include <sstream>
 #include <set>
 
-#include "box2d\box2d.h"
+#include <box2d/box2d.h>
+
 
 
 #define WINVER 0x0600
