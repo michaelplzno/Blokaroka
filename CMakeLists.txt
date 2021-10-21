@@ -4,6 +4,8 @@ message (STATUS "Building Blokaroka .. ")
 project(Blokaroka LANGUAGES CXX)
 set(executable_name "Blokaroka")
 
+
+add_subdirectory(extern/box2d)
 add_subdirectory(src)
 
 
