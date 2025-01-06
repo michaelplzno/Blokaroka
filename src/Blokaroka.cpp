@@ -8,7 +8,6 @@ double g_dFrequency;   // ticks per second
 LARGE_INTEGER g_liLastFrame;   // counter tick of the last frame
 float g_fDeltaT;               // elapsed time between frames
 
-
 // -- MAIN -------------------------------------------------------------- //
 int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     PSTR pstrCmdLine, int iCmdShow)

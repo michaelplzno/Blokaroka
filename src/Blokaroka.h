@@ -23,7 +23,7 @@
 #include <sstream>
 #include <set>
 
-#include <box2d/box2d.h>
+#include "C:\Users\Daxel\OneDrive\Documents\coding\c++\Blokaroka\extern\box2d\include\box2d\box2d.h"
 
 
 
@@ -52,6 +52,7 @@
 
 #define MENU_G_ON       1008
 #define MENU_G_OFF      1009
+#define SUBMENU_GRAVITY 1010
 
 inline void gPlaySound(int resource)
 {

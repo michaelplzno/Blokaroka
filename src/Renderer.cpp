@@ -240,6 +240,8 @@ LRESULT CALLBACK KeyHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
     return CallNextHookEx( NULL, nCode, wParam, lParam );
 }
 
+ITaskbarList3* pTaskbarList = nullptr;
+
 // Windows protocal handler function.
 LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage, 
                           WPARAM wParam, LPARAM lParam )
@@ -364,6 +366,19 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
                 gravityOnOff = false;
                 PHYSICS.changeGravity(0.0f);
             }
+            else if (LOWORD(wParam) == SUBMENU_GRAVITY)
+            {
+                if (gravityOnOff)
+                {
+                    gravityOnOff = false;
+                    PHYSICS.changeGravity(0.0f);
+                }
+                else
+                {
+                    gravityOnOff = true;
+                    PHYSICS.changeGravity(-10.0f);
+                }
+            }
             else
             {
                 // This case should never be reached.
@@ -427,6 +442,12 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage,
         }
 
         case WM_DESTROY: // The window is about to be closed
+            // Clean up Taskbar interface
+            if (pTaskbarList) {
+                pTaskbarList->Release();
+                pTaskbarList = nullptr;
+            }
+            PostQuitMessage(0);
         case WM_CLOSE: 
         {  
             // Our main window is closing.  This means we want our app to exit.
@@ -645,7 +666,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     // The handle to the brush to use for the window background
     wc.hbrBackground    = CreateSolidBrush(CLEAR_COLOR);
     // A handle to the icon to use for the window
-    wc.hIcon            = LoadIcon(hInstance, MAKEINTRESOURCE(1));
+    wc.hIcon            = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     // A handle to a smaller version of the apps icon
     wc.hIconSm            = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
     // A handle to the cursor to use while the mouse is over our window
@@ -667,7 +688,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 
 
     // Create the window based on the previous class    
-    hWnd = CreateWindowEx(  exWinType,                 // Advanced style settings 
+    hWnd = CreateWindowEx(  
+                            exWinType | WS_EX_APPWINDOW,   // Advanced style settings 
                             strAppName,             // The name of the class
                             strAppName,             // The window caption
                             winType,                // The window style
@@ -694,6 +716,30 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
         MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK );
         g_bIsAppAlive = false;
         return;
+    }
+
+    // Create the Taskbar interface
+    HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pTaskbarList));
+    if (FAILED(hr) || FAILED(pTaskbarList->HrInit())) {
+        MessageBox(hWnd, TEXT("Failed to initialize Taskbar interface"), TEXT("Error"), MB_ICONERROR);
+        return;
+    }
+
+    // create Taskbar Thumbbutton image
+    HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON2));
+
+    // Define the Taskbar button
+    THUMBBUTTON thumbButton = {};
+    thumbButton.dwMask = THB_ICON | THB_TOOLTIP | THB_FLAGS;
+    thumbButton.iId = SUBMENU_GRAVITY;
+    thumbButton.hIcon = hIcon;
+    wcscpy_s(thumbButton.szTip, L"Toggle Gravity");
+    thumbButton.dwFlags = THBF_ENABLED;
+
+    // Add the button to the taskbar thumbnail toolbar
+    hr = pTaskbarList->ThumbBarAddButtons(hWnd, 1, &thumbButton);
+    if (FAILED(hr)) {
+        MessageBox(hWnd, TEXT("Failed to add Taskbar button"), TEXT("Error"), MB_ICONERROR);
     }
 
 /* 
