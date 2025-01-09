@@ -90,8 +90,18 @@ void Physics::Init()
     m_debugDraw.DrawSolidPolygon = DrawSolidPolygon;
     m_debugDraw.DrawSegment = DrawSegment;
 
-    // Bottom Edge. TODO: Move this edge up the number of pixels the start menu is.
+    // Bottom Edge. Move this edge up by the number of pixels the start menu is.
     {
+        // Get the height of the taskbar
+        RECT taskbarRect;
+        HWND taskbar = FindWindow("Shell_TrayWnd", NULL);
+        int taskbarHeight = 0;
+        if (taskbar && GetWindowRect(taskbar, &taskbarRect))
+        {
+            taskbarHeight = taskbarRect.bottom - taskbarRect.top;
+        }
+        float taskbarHeightPhysics = taskbarHeight * PIXELS_TO_PHYSICS;
+
         b2BodyDef bd = b2DefaultBodyDef();
         bd.type = b2_staticBody;
 
@@ -104,7 +114,7 @@ void Physics::Init()
         // Set the ground body for the mouse joint.
         b2BodyId bodyId = m_groundBody = b2CreateBody(m_worldId, &bd);
         b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
-        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS, -2};
+        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS, -2 + taskbarHeightPhysics};
         b2Body_SetTransform(bodyId, pos, b2Rot_identity);
     }
 
@@ -234,6 +244,7 @@ Blok *Physics::OnMouseDown(b2Vec2 p)
         md.dampingRatio = 0.7f;
         md.hertz = 5.0f;
         m_mouseJoint = b2CreateMouseJoint(m_worldId, &md);
+        b2Joint_SetCollideConnected(m_mouseJoint, true);
         b2Body_SetAwake(m_callbackBody, true);
 
         return (Blok *)b2Body_GetUserData(m_callbackBody);
