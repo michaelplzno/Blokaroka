@@ -1,4 +1,4 @@
-# [Blokaroka](https://blokaroka.com)
+# Current Build v0.2.00 Downloadable Here: [Blokaroka](https://blokaroka.com)
 One of my first projects: an attempt to make bricks appear on top of the UI in Windows. This will help you pass the time while your program compiles in the background, or if you are at work and need to keep your brain active during a dull stretch. Playing with blocks improves creativity and dynamic thinking, so having this app running might even make you more effective at work, or help you cut your stress!
 
 If the project catches on, hopefully we can work together to make it a popular app.
