@@ -14,23 +14,23 @@ int Blok::GetColorID()
     {
         return 0;
     }
-    else if (m_wColor == COLOR_RED || m_wColor == COLOR_AMETHYST_0 || m_wColor == COLOR_TOPAZ_0 ||
-             m_wColor == COLOR_PERIDOT_0)
+    else if (m_wColor == COLOR_RED || m_wColor == COLOR_AMETHYST_0 ||
+             m_wColor == COLOR_TOPAZ_0 || m_wColor == COLOR_PERIDOT_0)
     {
         return 1;
     }
-    else if (m_wColor == COLOR_YELLOW || m_wColor == COLOR_AMETHYST_1 || m_wColor == COLOR_TOPAZ_1 ||
-             m_wColor == COLOR_PERIDOT_1)
+    else if (m_wColor == COLOR_YELLOW || m_wColor == COLOR_AMETHYST_1 ||
+             m_wColor == COLOR_TOPAZ_1 || m_wColor == COLOR_PERIDOT_1)
     {
         return 2;
     }
-    else if (m_wColor == COLOR_GREEN || m_wColor == COLOR_AMETHYST_2 || m_wColor == COLOR_TOPAZ_2 ||
-             m_wColor == COLOR_PERIDOT_2)
+    else if (m_wColor == COLOR_GREEN || m_wColor == COLOR_AMETHYST_2 ||
+             m_wColor == COLOR_TOPAZ_2 || m_wColor == COLOR_PERIDOT_2)
     {
         return 3;
     }
-    else if (m_wColor == COLOR_BLUE || m_wColor == COLOR_AMETHYST_3 || m_wColor == COLOR_TOPAZ_3 ||
-             m_wColor == COLOR_PERIDOT_3)
+    else if (m_wColor == COLOR_BLUE || m_wColor == COLOR_AMETHYST_3 ||
+             m_wColor == COLOR_TOPAZ_3 || m_wColor == COLOR_PERIDOT_3)
     {
         return 4;
     }
@@ -58,7 +58,8 @@ void Blok::DrawBlok(HDC hdc)
     }
 
     COLORREF darker =
-        RGB(GetRValue(m_wColor) * fDarkerMod, GetGValue(m_wColor) * fDarkerMod, GetBValue(m_wColor) * fDarkerMod);
+        RGB(GetRValue(m_wColor) * fDarkerMod, GetGValue(m_wColor) * fDarkerMod,
+            GetBValue(m_wColor) * fDarkerMod);
 
     COLORREF brighter = m_wColor;
     float newR = GetRValue(m_wColor) * fBrighterMod;
@@ -127,35 +128,45 @@ void Blok::DrawBlok(HDC hdc)
     normal = RGB(newR, newG, newB);
 
     unsigned int depth =
-        ComputeDepth(); // RENDER.GetWidth() * ((RENDER.GetHeight() - m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
-    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, normal, depth, fAlpha);
+        ComputeDepth(); // RENDER.GetWidth() * ((RENDER.GetHeight() -
+                        // m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
+    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH,
+                     m_iRenderY + BLOK_HEIGHT, normal, depth, fAlpha);
 
     for (int i = 0; i < BLOK_WIDTH / 2; i++)
     {
         if (i + 1 >= BLOK_WIDTH / 2)
         {
-            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i, m_iRenderX - i, 0, depth, fAlpha);
-            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, 0, depth, fAlpha);
+            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i,
+                                m_iRenderX - i, 0, depth, fAlpha);
+            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i,
+                                  m_iRenderY - i, 0, depth, fAlpha);
         }
         else
         {
-            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i, m_iRenderX - i, darker, depth, fAlpha);
-            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, brighter, depth, fAlpha);
+            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i,
+                                m_iRenderX - i, darker, depth, fAlpha);
+            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i,
+                                  m_iRenderY - i, brighter, depth, fAlpha);
         }
 
-        RENDER.SetPixel(m_iRenderX - i, m_iRenderY + BLOK_HEIGHT - i, 0, depth, fAlpha);
+        RENDER.SetPixel(m_iRenderX - i, m_iRenderY + BLOK_HEIGHT - i, 0, depth,
+                        fAlpha);
 
         if (m_poRight == NULL)
         {
-            RENDER.SetPixel(m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, 0, depth, fAlpha);
+            RENDER.SetPixel(m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, 0,
+                            depth, fAlpha);
         }
     }
 
-    RENDER.HorizontalLine(m_iRenderX, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT, 0, depth, fAlpha);
+    RENDER.HorizontalLine(m_iRenderX, m_iRenderX + BLOK_WIDTH,
+                          m_iRenderY + BLOK_HEIGHT, 0, depth, fAlpha);
 
     if (m_poRight == NULL)
     {
-        RENDER.VerticalLine(m_iRenderY, m_iRenderY + BLOK_HEIGHT, m_iRenderX + BLOK_WIDTH, 0, depth, fAlpha);
+        RENDER.VerticalLine(m_iRenderY, m_iRenderY + BLOK_HEIGHT,
+                            m_iRenderX + BLOK_WIDTH, 0, depth, fAlpha);
     }
 
     if (m_poTop == NULL && m_iRenderState != BRS_NO_ATTACH)
@@ -163,8 +174,9 @@ void Blok::DrawBlok(HDC hdc)
         // Draw Dot ////////////////////////////////////////////////////////
         //  Draw the dot thing that connects to other Bloks              //
 
-        // RENDER.Circle((m_iRenderX + LEGO_WIDTH * .5f)-2, m_iRenderY - LEGO_WIDTH/4.0f, LEGO_WIDTH * .3f, darker,
-        // depth);
+        // RENDER.Circle((m_iRenderX + LEGO_WIDTH * .5f)-2, m_iRenderY -
+        // LEGO_WIDTH/4.0f, LEGO_WIDTH
+        // * .3f, darker, depth);
 
         int start = (int)(m_iRenderX + BLOK_WIDTH * .15f);
         int end = (int)(m_iRenderX + BLOK_WIDTH * .85f);
@@ -178,7 +190,8 @@ void Blok::DrawBlok(HDC hdc)
             int baseY = m_iRenderY - BLOK_WIDTH / 4;
             int baseX = i - BLOK_WIDTH / 4;
 
-            float realHeight = (.5f * sqrt((float)(radius * radius) - (float)((i - mid) * (i - mid))));
+            float realHeight = (.5f * sqrt((float)(radius * radius) -
+                                           (float)((i - mid) * (i - mid))));
             float chopped = realHeight - ((int)realHeight);
             baseY += (int)(realHeight);
 
@@ -192,9 +205,12 @@ void Blok::DrawBlok(HDC hdc)
             else if (PercentDone <= .5f)
             {
                 PercentDone *= 2.0f;
-                float newR = GetRValue(darker) * (1.0f - PercentDone) + GetRValue(normal) * PercentDone;
-                float newG = GetGValue(darker) * (1.0f - PercentDone) + GetGValue(normal) * PercentDone;
-                float newB = GetBValue(darker) * (1.0f - PercentDone) + GetBValue(normal) * PercentDone;
+                float newR = GetRValue(darker) * (1.0f - PercentDone) +
+                             GetRValue(normal) * PercentDone;
+                float newG = GetGValue(darker) * (1.0f - PercentDone) +
+                             GetGValue(normal) * PercentDone;
+                float newB = GetBValue(darker) * (1.0f - PercentDone) +
+                             GetBValue(normal) * PercentDone;
 
                 myColor = RGB(newR, newG, newB);
             }
@@ -202,9 +218,12 @@ void Blok::DrawBlok(HDC hdc)
             {
                 PercentDone -= .5f;
                 PercentDone *= 4.0f;
-                float newR = GetRValue(normal) * (1.0f - PercentDone) + GetRValue(brightest) * PercentDone;
-                float newG = GetGValue(normal) * (1.0f - PercentDone) + GetGValue(brightest) * PercentDone;
-                float newB = GetBValue(normal) * (1.0f - PercentDone) + GetBValue(brightest) * PercentDone;
+                float newR = GetRValue(normal) * (1.0f - PercentDone) +
+                             GetRValue(brightest) * PercentDone;
+                float newG = GetGValue(normal) * (1.0f - PercentDone) +
+                             GetGValue(brightest) * PercentDone;
+                float newB = GetGValue(normal) * (1.0f - PercentDone) +
+                             GetBValue(brightest) * PercentDone;
 
                 myColor = RGB(newR, newG, newB);
             }
@@ -212,9 +231,12 @@ void Blok::DrawBlok(HDC hdc)
             {
                 PercentDone -= .75f;
                 PercentDone *= 4.0f;
-                float newR = GetRValue(brightest) * (1.0f - PercentDone) + GetRValue(normal) * PercentDone;
-                float newG = GetGValue(brightest) * (1.0f - PercentDone) + GetGValue(normal) * PercentDone;
-                float newB = GetBValue(brightest) * (1.0f - PercentDone) + GetBValue(normal) * PercentDone;
+                float newR = GetRValue(brightest) * (1.0f - PercentDone) +
+                             GetRValue(normal) * PercentDone;
+                float newG = GetGValue(brightest) * (1.0f - PercentDone) +
+                             GetGValue(normal) * PercentDone;
+                float newB = GetBValue(brightest) * (1.0f - PercentDone) +
+                             GetBValue(normal) * PercentDone;
 
                 myColor = RGB(newR, newG, newB);
             }
@@ -223,24 +245,37 @@ void Blok::DrawBlok(HDC hdc)
 
             if (i != start && i != end)
             {
-                RENDER.VerticalLine(baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) - height, baseY - height, baseX,
-                                    brighter, depth);
+                RENDER.VerticalLine(
+                    baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) -
+                        height,
+                    baseY - height, baseX, brighter, depth);
             }
 
             float AA = 1.0f - abs(chopped);
-            float newR = GetRValue(brighter) * (1.0f - AA) + GetRValue(myColor) * AA;
-            float newG = GetGValue(brighter) * (1.0f - AA) + GetGValue(myColor) * AA;
-            float newB = GetBValue(brighter) * (1.0f - AA) + GetBValue(myColor) * AA;
+            float newR =
+                GetRValue(brighter) * (1.0f - AA) + GetRValue(myColor) * AA;
+            float newG =
+                GetGValue(brighter) * (1.0f - AA) + GetGValue(myColor) * AA;
+            float newB =
+                GetBValue(brighter) * (1.0f - AA) + GetBValue(myColor) * AA;
             COLORREF AACol = RGB(newR, newG, newB);
 
             if (i != start && i != end)
             {
                 RENDER.SetPixel(baseX, baseY - height, AACol, depth, fAlpha);
 
-                RENDER.SetPixel(baseX, baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) - height,
-                                RGB(newR * (1.0f - AA), newG * (1.0f - AA), newB * (1.0f - AA)), depth, fAlpha);
-                RENDER.SetPixel(baseX, baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) - height - 1, 0, depth,
-                                (1.0f - AA) * fAlpha);
+                RENDER.SetPixel(
+                    baseX,
+                    baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) -
+                        height,
+                    RGB(newR * (1.0f - AA), newG * (1.0f - AA),
+                        newB * (1.0f - AA)),
+                    depth, fAlpha);
+                RENDER.SetPixel(
+                    baseX,
+                    baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) -
+                        height - 1,
+                    0, depth, (1.0f - AA) * fAlpha);
             }
             newR = GetRValue(myColor) * (1.0f - AA) + GetRValue(brighter) * AA;
             newG = GetGValue(myColor) * (1.0f - AA) + GetGValue(brighter) * AA;
@@ -262,7 +297,8 @@ void Blok::ClearBlok(HDC hdc)
     SelectObject(hdc, NewBrush);
     SelectObject(hdc, NewPen);
 
-    Rectangle(hdc, m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH, m_iRenderY + BLOK_HEIGHT);
+    Rectangle(hdc, m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH,
+              m_iRenderY + BLOK_HEIGHT);
 
     DeleteObject(NewBrush);
     DeleteObject(NewPen);
@@ -373,7 +409,8 @@ bool Blok::IntersectsBlok(Blok *poOther)
         return true;
     }
 
-    if (IntersectsPoint(poOther->m_iX + BLOK_WIDTH, poOther->m_iY + BLOK_HEIGHT))
+    if (IntersectsPoint(poOther->m_iX + BLOK_WIDTH, poOther->m_iY +
+    BLOK_HEIGHT))
     {
         return true;
     }
@@ -396,8 +433,10 @@ bool Blok::CanMateWithBlok(Blok *poOther)
 {
     if (m_poBottom == NULL)
     {
-        if (m_iY + BLOK_HEIGHT + (BLOK_MATE_LENGTH) > poOther->m_iY && m_iY + BLOK_HEIGHT < poOther->m_iY &&
-            m_iX > poOther->m_iX - BLOK_WIDTH / 2.0f && m_iX < poOther->m_iX + BLOK_WIDTH / 2.0f)
+        if (m_iY + BLOK_HEIGHT + (BLOK_MATE_LENGTH) > poOther->m_iY &&
+            m_iY + BLOK_HEIGHT < poOther->m_iY &&
+            m_iX > poOther->m_iX - BLOK_WIDTH / 2.0f &&
+            m_iX < poOther->m_iX + BLOK_WIDTH / 2.0f)
         {
             return true;
         }
@@ -405,8 +444,10 @@ bool Blok::CanMateWithBlok(Blok *poOther)
 
     if (m_poTop == NULL)
     {
-        if (m_iY - BLOK_MATE_LENGTH < poOther->m_iY + BLOK_HEIGHT && m_iY > poOther->m_iY + BLOK_HEIGHT &&
-            m_iX > poOther->m_iX - BLOK_WIDTH / 2.0f && m_iX < poOther->m_iX + BLOK_WIDTH / 2.0f)
+        if (m_iY - BLOK_MATE_LENGTH < poOther->m_iY + BLOK_HEIGHT &&
+            m_iY > poOther->m_iY + BLOK_HEIGHT &&
+            m_iX > poOther->m_iX - BLOK_WIDTH / 2.0f &&
+            m_iX < poOther->m_iX + BLOK_WIDTH / 2.0f)
         {
             return true;
         }
@@ -434,17 +475,19 @@ Blok *Blok::FindMate()
     ret->SetMarks(0);
     SetMarks(0);
 
-    if (GAMESTATE.m_poMovingMate->m_iY < GAMESTATE.m_poStaticMate->m_iY)
+    if (GAMESTATE.GetMovingMate()->m_iY < GAMESTATE.GetStaticMate()->m_iY)
     {
-        GAMESTATE.m_poMovingMate->SetBlokRenderPosition(GAMESTATE.m_poStaticMate->m_iX,
-                                                        GAMESTATE.m_poStaticMate->m_iY -
-                                                            (int)(BLOK_HEIGHT + BLOK_MATE_LENGTH / 4.0f));
+        GAMESTATE.GetMovingMate()->SetBlokRenderPosition(
+            GAMESTATE.GetStaticMate()->m_iX,
+            GAMESTATE.GetStaticMate()->m_iY -
+                (int)(BLOK_HEIGHT + BLOK_MATE_LENGTH / 4.0f));
     }
     else
     {
-        GAMESTATE.m_poMovingMate->SetBlokRenderPosition(GAMESTATE.m_poStaticMate->m_iX,
-                                                        GAMESTATE.m_poStaticMate->m_iY +
-                                                            (int)(BLOK_HEIGHT + BLOK_MATE_LENGTH / 4.0f));
+        GAMESTATE.GetMovingMate()->SetBlokRenderPosition(
+            GAMESTATE.GetStaticMate()->m_iX,
+            GAMESTATE.GetStaticMate()->m_iY +
+                (int)(BLOK_HEIGHT + BLOK_MATE_LENGTH / 4.0f));
     }
     return ret;
 }
@@ -453,15 +496,11 @@ Blok *Blok::RecursiveFindMate()
 {
     m_iMark = 2;
 
-    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
-    {
-        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 0 && CanMateWithBlok(GAMESTATE.m_vpoBloks[i]))
-        {
-            GAMESTATE.m_poMovingMate = this;
-            GAMESTATE.m_poStaticMate = GAMESTATE.m_vpoBloks[i];
+    Blok *b = GAMESTATE.MateSearch(this);
 
-            return GAMESTATE.m_vpoBloks[i];
-        }
+    if (b != NULL)
+    {
+        return b;
     }
 
     if (m_poLeft != NULL)
@@ -520,7 +559,8 @@ void Blok::RecursiveMakeMatches()
 
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
-        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 3 && CanMateWithBlok(GAMESTATE.m_vpoBloks[i]))
+        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 3 &&
+            CanMateWithBlok(GAMESTATE.m_vpoBloks[i]))
         {
             GAMESTATE.m_vpoBloks[i]->m_iMark = 4;
             if (GAMESTATE.m_vpoBloks[i]->m_iY < m_iY)
@@ -661,7 +701,8 @@ int Blok::ComputeDepth()
         return m_poBottom->ComputeDepth();
     }*/
 
-    return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() + RENDER.GetWidth() - m_iRenderX);
+    return ((RENDER.GetHeight() - m_iRenderY) * RENDER.GetWidth() +
+            RENDER.GetWidth() - m_iRenderX);
 }
 
 void Blok::RecursiveSetGroup(int group)
@@ -855,7 +896,8 @@ bool Blok::RecursiveIntersectsAnyBlok()
 
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
-        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 0 && GAMESTATE.m_vpoBloks[i]->IntersectsBlok(this))
+        if (GAMESTATE.m_vpoBloks[i]->m_iMark == 0 &&
+            GAMESTATE.m_vpoBloks[i]->IntersectsBlok(this))
         {
             return true;
         }
@@ -881,7 +923,8 @@ bool Blok::RecursiveIntersectsAnyBlok()
 
     if (m_poBottom != NULL)
     {
-        if (m_poBottom->m_iMark == 1 && m_poBottom->RecursiveIntersectsAnyBlok())
+        if (m_poBottom->m_iMark == 1 &&
+            m_poBottom->RecursiveIntersectsAnyBlok())
             return true;
     }
 
@@ -936,9 +979,10 @@ void Blok::Mate()
 
     std::set<b2BodyId> toDestroy;
     ClearPhysics(&toDestroy);
-    GAMESTATE.m_poStaticMate->ClearPhysics(&toDestroy);
+    GAMESTATE.GetStaticMate()->ClearPhysics(&toDestroy);
 
-    for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+    for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+         it != toDestroy.end(); ++it)
     {
         PHYSICS.DestroyBody(*it);
     }
@@ -952,13 +996,14 @@ void Blok::Mate()
     RecursiveMate();
     SetMarks(0);
 
-    GAMESTATE.m_poStaticMate->SetMarks(0);
+    GAMESTATE.GetStaticMate()->SetMarks(0);
 
-    GAMESTATE.m_poStaticMate->RecursiveFixRenderNeighbors(GAMESTATE.m_poStaticMate->m_iX,
-                                                          GAMESTATE.m_poStaticMate->m_iY);
+    GAMESTATE.GetStaticMate()->RecursiveFixRenderNeighbors(
+        GAMESTATE.GetStaticMate()->m_iX, GAMESTATE.GetStaticMate()->m_iY);
     SetMarks(0);
 
-    GAMESTATE.m_poStaticMate->RecursiveFixNeighbors(GAMESTATE.m_poStaticMate->m_iX, GAMESTATE.m_poStaticMate->m_iY);
+    GAMESTATE.GetStaticMate()->RecursiveFixNeighbors(
+        GAMESTATE.GetStaticMate()->m_iX, GAMESTATE.GetStaticMate()->m_iY);
     SetMarks(0);
 
     ClearMates();
@@ -1114,7 +1159,8 @@ void Blok::DetachUp()
     std::set<b2BodyId> toDestroy;
     ClearPhysics(&toDestroy);
 
-    for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+    for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+         it != toDestroy.end(); ++it)
     {
         PHYSICS.DestroyBody(*it);
     }
@@ -1260,7 +1306,8 @@ void Blok::DetachDown()
     std::set<b2BodyId> toDestroy;
     ClearPhysics(&toDestroy);
 
-    for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+    for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+         it != toDestroy.end(); ++it)
     {
         PHYSICS.DestroyBody(*it);
     }
@@ -1406,7 +1453,8 @@ float Blok::GetWeight()
         {
             if (iter->m_poTop && iter->m_poTop->m_iDistance > m_iDistance)
             {
-                iter->m_fTopWeightHeld = iter->m_poTop->GetWeight() / iter->m_poTop->GetNumConnections(iter);
+                iter->m_fTopWeightHeld = iter->m_poTop->GetWeight() /
+                                         iter->m_poTop->GetNumConnections(iter);
             }
             else
             {
@@ -1420,7 +1468,9 @@ float Blok::GetWeight()
         {
             if (iter->m_poBottom && iter->m_poBottom->m_iDistance > m_iDistance)
             {
-                iter->m_fBottomWeightHeld = iter->m_poBottom->GetWeight() / iter->m_poBottom->GetNumConnections(iter);
+                iter->m_fBottomWeightHeld =
+                    iter->m_poBottom->GetWeight() /
+                    iter->m_poBottom->GetNumConnections(iter);
             }
             else
             {
@@ -1439,7 +1489,8 @@ float Blok::GetWeight()
         {
             if (iter->m_poTop && iter->m_poTop->m_iDistance > m_iDistance)
             {
-                iter->m_fTopWeightHeld = iter->m_poTop->GetWeight() / iter->m_poTop->GetNumConnections(iter);
+                iter->m_fTopWeightHeld = iter->m_poTop->GetWeight() /
+                                         iter->m_poTop->GetNumConnections(iter);
             }
             else
             {
@@ -1453,7 +1504,9 @@ float Blok::GetWeight()
         {
             if (iter->m_poBottom && iter->m_poBottom->m_iDistance > m_iDistance)
             {
-                iter->m_fBottomWeightHeld = iter->m_poBottom->GetWeight() / iter->m_poBottom->GetNumConnections(iter);
+                iter->m_fBottomWeightHeld =
+                    iter->m_poBottom->GetWeight() /
+                    iter->m_poBottom->GetNumConnections(iter);
             }
             else
             {
@@ -1581,7 +1634,8 @@ void Blok::RecursiveBreakStressedConnections(float fThreshold)
         iter->m_iMark = 1;
         if (iter->m_fBottomWeightHeld > fThreshold)
         {
-            if (iter->m_poBottom && iter->GetNumConnections(iter->m_poBottom) == 1)
+            if (iter->m_poBottom &&
+                iter->GetNumConnections(iter->m_poBottom) == 1)
             {
                 iter->m_poBottom->m_poTop = NULL;
                 iter->m_poBottom = NULL;
@@ -1603,7 +1657,8 @@ void Blok::RecursiveBreakStressedConnections(float fThreshold)
         iter->m_iMark = 1;
         if (iter->m_fBottomWeightHeld > fThreshold)
         {
-            if (iter->m_poBottom && iter->GetNumConnections(iter->m_poBottom) == 1)
+            if (iter->m_poBottom &&
+                iter->GetNumConnections(iter->m_poBottom) == 1)
             {
                 iter->m_poBottom->m_poTop = NULL;
                 iter->m_poBottom = NULL;
@@ -1702,25 +1757,30 @@ void Blok::InitPhysics(b2BodyId newBody, float offsetX, float offsetY)
     // m_b2v2FixturePos.y -= BLOK_WIDTH * .75f * PIXELS_TO_PHYSICS;
 
     std::vector<b2Vec2> vertices;
-    b2Vec2 point = {((BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) * PIXELS_TO_PHYSICS,
-                    (BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
+    b2Vec2 point = {
+        ((BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) * PIXELS_TO_PHYSICS,
+        (BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
     vertices.push_back(m_shapePos + point);
 
-    point = {((BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) * PIXELS_TO_PHYSICS,
+    point = {((BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) *
+                 PIXELS_TO_PHYSICS,
              -(BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
     vertices.push_back(m_shapePos + point);
 
-    point = {(-(BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) * PIXELS_TO_PHYSICS,
+    point = {(-(BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) *
+                 PIXELS_TO_PHYSICS,
              -(BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
     vertices.push_back(m_shapePos + point);
 
-    point = {(-(BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) * PIXELS_TO_PHYSICS,
+    point = {(-(BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) *
+                 PIXELS_TO_PHYSICS,
              (BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
     vertices.push_back(m_shapePos + point);
 
     b2Hull hull = b2ComputeHull(vertices.data(), vertices.size());
 
-    b2Polygon shape = b2MakePolygon(&hull, 0); // (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
+    b2Polygon shape =
+        b2MakePolygon(&hull, 0); // (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
 
     b2ShapeDef shapeDef = b2DefaultShapeDef();
     shapeDef.density = 1.0f;
@@ -1730,22 +1790,26 @@ void Blok::InitPhysics(b2BodyId newBody, float offsetX, float offsetY)
 
     if (m_poLeft != NULL)
     {
-        m_poLeft->InitPhysics(newBody, offsetX - (float)BLOK_WIDTH * PIXELS_TO_PHYSICS, offsetY);
+        m_poLeft->InitPhysics(
+            newBody, offsetX - (float)BLOK_WIDTH * PIXELS_TO_PHYSICS, offsetY);
     }
 
     if (m_poRight != NULL)
     {
-        m_poRight->InitPhysics(newBody, offsetX + (float)BLOK_WIDTH * PIXELS_TO_PHYSICS, offsetY);
+        m_poRight->InitPhysics(
+            newBody, offsetX + (float)BLOK_WIDTH * PIXELS_TO_PHYSICS, offsetY);
     }
 
     if (m_poTop != NULL)
     {
-        m_poTop->InitPhysics(newBody, offsetX, offsetY + (float)BLOK_HEIGHT * PIXELS_TO_PHYSICS);
+        m_poTop->InitPhysics(newBody, offsetX,
+                             offsetY + (float)BLOK_HEIGHT * PIXELS_TO_PHYSICS);
     }
 
     if (m_poBottom != NULL)
     {
-        m_poBottom->InitPhysics(newBody, offsetX, offsetY - (float)BLOK_HEIGHT * PIXELS_TO_PHYSICS);
+        m_poBottom->InitPhysics(
+            newBody, offsetX, offsetY - (float)BLOK_HEIGHT * PIXELS_TO_PHYSICS);
     }
 }
 
@@ -1856,6 +1920,5 @@ bool Blok::PhysicsEnabled()
     {
         return b2Body_IsEnabled(m_physicsBodyId);
     }
-
     return false;
 }

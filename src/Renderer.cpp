@@ -153,7 +153,8 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
     else if (wParam == WM_MOUSEMOVE)
     {
-        if (GAMESTATE.GetState() == GameState::GS_Drag_Free || GAMESTATE.GetState() == GameState::GS_Drag_Mating ||
+        if (GAMESTATE.GetState() == GameState::GS_Drag_Free ||
+            GAMESTATE.GetState() == GameState::GS_Drag_Mating ||
             GAMESTATE.GetState() == GameState::GS_Drag_Splitting)
         {
             MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
@@ -242,12 +243,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
         }
         else if (wParam == MENU_RESET)
         {
-            int answer = MessageBoxW(0, L"Are you sure you want to reset your bloks? This cannot be undone.",
-                                     L"Reset Your Bloks?", MB_YESNO | MB_ICONQUESTION);
+            int answer =
+                MessageBoxW(0,
+                            L"Are you sure you want to reset your bloks? This "
+                            L"cannot be undone.",
+                            L"Reset Your Bloks?", MB_YESNO | MB_ICONQUESTION);
             if (answer == IDYES)
             {
                 GAMESTATE.ClearBloks();
-                GAMESTATE.GenerateBloks();
+                GAMESTATE.GenerateRandomBloks();
                 RENDER.RenderFrame();
                 RENDER.PresentFrame();
             }
@@ -287,8 +291,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 
                 if (handle != INVALID_HANDLE_VALUE)
                 {
-                    MessageBoxW(0, L"This file already exists, are you sure you want to overwrite it?",
-                                L"Overwrite Save File?", MB_YESNO | MB_ICONQUESTION);
+                    MessageBoxW(0,
+                                L"This file already exists, are you sure you "
+                                L"want to overwrite it?",
+                                L"Overwrite Save File?",
+                                MB_YESNO | MB_ICONQUESTION);
                 }
 
                 if (answer == IDYES)
@@ -335,7 +342,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
                 RENDER.PresentFrame();
             }
         }
-        else if (wParam == MENU_BASIC || wParam == MENU_AMETHYST || wParam == MENU_TOPAZ || wParam == MENU_PERIDOT)
+        else if (wParam == MENU_BASIC || wParam == MENU_AMETHYST ||
+                 wParam == MENU_TOPAZ || wParam == MENU_PERIDOT)
         {
             GAMESTATE.SetColorsForMenu(wParam);
         }
@@ -375,24 +383,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
     case WM_TRAY_MESSAGE: // User interacted with the tray icon.
     {
         if (LOWORD(lParam) == WM_LBUTTONUP ||
-            LOWORD(lParam) == WM_RBUTTONUP) // User left or right clicked the tray icon.
+            LOWORD(lParam) ==
+                WM_RBUTTONUP) // User left or right clicked the tray icon.
         {
             // Generate a popup menu to ask the user what to do.
             RENDER.m_hPopupMenu = CreatePopupMenu();
 
-            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_BASIC, L"Basic Colors");
-            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_AMETHYST, L"Amethyst");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_BASIC,
+                        L"Basic Colors");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_AMETHYST,
+                        L"Amethyst");
             AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_TOPAZ, L"Topaz");
-            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT, L"Peridot");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT,
+                        L"Peridot");
             AppendMenuW(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
             if (PHYSICS.IsGravityOn())
-                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF, L"Turn Gravity OFF");
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF,
+                            L"Turn Gravity OFF");
             else
-                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_G_ON, L"Turn Gravity ON");
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_G_ON,
+                            L"Turn Gravity ON");
             if (PHYSICS.IsDebugRenderOn())
-                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_DEBUG_DRAW_OFF, L"Turn Debug Draw OFF");
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_DEBUG_DRAW_OFF,
+                            L"Turn Debug Draw OFF");
             else
-                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_DEBUG_DRAW_ON, L"Turn Debug Draw ON");
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_DEBUG_DRAW_ON,
+                            L"Turn Debug Draw ON");
             AppendMenuW(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
             AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_RESET, L"Reset");
             AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_SAVE, L"Save");
@@ -405,7 +421,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
             GetPhysicalCursorPos(&pt);
 
             // Display the popup.
-            TrackPopupMenu(RENDER.m_hPopupMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, hWnd, NULL);
+            TrackPopupMenu(RENDER.m_hPopupMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON,
+                           pt.x, pt.y, 0, hWnd, NULL);
 
             DestroyMenu(RENDER.m_hPopupMenu);
         }
@@ -534,7 +551,8 @@ void Renderer::RenderFrame(void)
     int index = 1;
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
-        if (GAMESTATE.m_vpoBloks[i]->GetRenderState() == Blok::BRS_SOLID && GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
+        if (GAMESTATE.m_vpoBloks[i]->GetRenderState() == Blok::BRS_SOLID &&
+    GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
         {
             GAMESTATE.m_vpoBloks[i]->RecursiveSetGroup(index);
             index++;
@@ -551,10 +569,7 @@ void Renderer::RenderFrame(void)
     }
     */
 
-    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
-    {
-        GAMESTATE.m_vpoBloks[i]->DrawBlok(m_HDC);
-    }
+    GAMESTATE.Draw(m_HDC);
 
     PHYSICS.Draw();
 }
@@ -571,7 +586,8 @@ void Renderer::PresentFrame()
     hPrevObj = SelectObject(m_Image.hdc, m_Image.hBitmap);
     ClientToScreen(hWnd, &ptDest);
 
-    if (UpdateLayeredWindow(hWnd, GetDC(hWnd), &ptDest, &client, m_Image.hdc, &ptSrc, 0, &blendFunc, ULW_ALPHA) == 0)
+    if (UpdateLayeredWindow(hWnd, GetDC(hWnd), &ptDest, &client, m_Image.hdc,
+                            &ptSrc, 0, &blendFunc, ULW_ALPHA) == 0)
     {
         char buff[300];
         sprintf_s(buff, 300, "Failed to update window: 0x%x", GetLastError());
@@ -607,7 +623,8 @@ void Renderer::PresentFrame()
 
 
     if (UpdateLayeredWindow( hWnd, NULL,  &windowPosition,
-        &size, m_HDC, &layerPosition, CLEAR_COLOR, &blendFunction, ULW_COLORKEY) == 0)
+        &size, m_HDC, &layerPosition, CLEAR_COLOR, &blendFunction, ULW_COLORKEY)
+    == 0)
     {
         char buff[300];
         sprintf(buff, "Failed to update window: 0x%x", GetLastError());
@@ -661,46 +678,54 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     // Register the class with windows
     RegisterClassExW(&wc);
 
-    // make sure the window is created with the correct game area as opposed to correct outer
-    // size
+    // make sure the window is created with the correct game area as opposed to
+    // correct outer size
     int xAdd, yAdd;
     xAdd = yAdd = 0;
     DWORD winType = WS_POPUP | WS_VISIBLE;
     DWORD exWinType = WS_EX_LAYERED | WS_EX_TOPMOST;
 
     // Create the window based on the previous class
-    hWnd = CreateWindowExW(exWinType | WS_EX_APPWINDOW, // Advanced style settings
-                           strAppName,                  // The name of the class
-                           strAppName,                  // The window caption
-                           winType,                     // The window style
-                           0,                           // The initial x position
-                           0,                           // The initial y position
-                           1280,
-                           1000,      // The initial width / height
-                           NULL,      // Handle to parent window
-                           NULL,      // Handle to the menu
-                           hInstance, // Handle to the apps instance
-                           NULL);     // Advanced context
+    hWnd =
+        CreateWindowExW(exWinType | WS_EX_APPWINDOW, // Advanced style settings
+                        strAppName,                  // The name of the class
+                        strAppName,                  // The window caption
+                        winType,                     // The window style
+                        0,                           // The initial x position
+                        0,                           // The initial y position
+                        1280,
+                        1000,      // The initial width / height
+                        NULL,      // Handle to parent window
+                        NULL,      // Handle to the menu
+                        hInstance, // Handle to the apps instance
+                        NULL);     // Advanced context
 
-    if (SetWindowsHookEx(13, KeyHookWndProc, GetModuleHandle(NULL), NULL) == NULL)
+    if (SetWindowsHookEx(13, KeyHookWndProc, GetModuleHandle(NULL), NULL) ==
+        NULL)
     {
-        MessageBox(NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK);
+        MessageBox(NULL, TEXT("ok"), TEXT("Unable to load function(s)."),
+                   MB_OK);
         g_bIsAppAlive = false;
         return;
     }
 
-    if (SetWindowsHookEx(14, MouseHookWndProc, GetModuleHandle(NULL), NULL) == NULL)
+    if (SetWindowsHookEx(14, MouseHookWndProc, GetModuleHandle(NULL), NULL) ==
+        NULL)
     {
-        MessageBox(NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK);
+        MessageBox(NULL, TEXT("ok"), TEXT("Unable to load function(s)."),
+                   MB_OK);
         g_bIsAppAlive = false;
         return;
     }
 
     // Create the Taskbar interface
-    HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pTaskbarList));
+    HRESULT hr =
+        CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER,
+                         IID_PPV_ARGS(&pTaskbarList));
     if (FAILED(hr) || FAILED(pTaskbarList->HrInit()))
     {
-        MessageBox(hWnd, TEXT("Failed to initialize Taskbar interface"), TEXT("Error"), MB_ICONERROR);
+        MessageBox(hWnd, TEXT("Failed to initialize Taskbar interface"),
+                   TEXT("Error"), MB_ICONERROR);
         return;
     }
 
@@ -719,7 +744,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     hr = pTaskbarList->ThumbBarAddButtons(hWnd, 1, &thumbButton);
     if (FAILED(hr))
     {
-        MessageBox(hWnd, TEXT("Failed to add Taskbar button"), TEXT("Error"), MB_ICONERROR);
+        MessageBox(hWnd, TEXT("Failed to add Taskbar button"), TEXT("Error"),
+                   MB_ICONERROR);
     }
 
     /*
@@ -731,7 +757,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
         hinstDLL = LoadLibrary("Hooks.dll");
         if(!hinstDLL)
         {
-            MessageBox(GetDesktopWindow(), "Could Not Load DLL", "Error", MB_OK);
+            MessageBox(GetDesktopWindow(), "Could Not Load DLL", "Error",
+       MB_OK);
         }
 
         SetHook = (hookFunc)GetProcAddress((HMODULE)hinstDLL, "SetHook");
@@ -744,9 +771,11 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 
         int r = SetHook(GetDesktopWindow(), hWnd);
         if( r < 0 )
-            MessageBox(GetDesktopWindow(), "Failed to install hook", "Error", MB_OK);
+            MessageBox(GetDesktopWindow(), "Failed to install hook", "Error",
+       MB_OK);
 
-           hkprcSysMsg = (HOOKPROC)GetProcAddress((HMODULE)hinstDLL, (LPTSTR)"CallWndProc");
+           hkprcSysMsg = (HOOKPROC)GetProcAddress((HMODULE)hinstDLL,
+       (LPTSTR)"CallWndProc");
 
 
         hhookSysMsg = SetWindowsHookEx(WH_CALLWNDPROC,hkprcSysMsg,hinstDLL,0);
@@ -755,9 +784,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 
         if ( hkprcSysMsg == NULL || hhookSysMsg == NULL)
         {
-            MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK );
-            g_bIsAppAlive = false;
-            return;
+            MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."),
+       MB_OK ); g_bIsAppAlive = false; return;
         }*/
 
     // Display the window we just created
@@ -814,7 +842,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     Shell_NotifyIcon(NIM_ADD, &m_tnd);
 }
 
-void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/, float fSourceBlend)
+void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth,
+                        float fAlpha /*= 1.0f*/, float fSourceBlend)
 {
     if (x >= m_Image.width || x < 0 || y >= m_Image.height || y <= 0)
     {
@@ -833,18 +862,19 @@ void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth, float 
         m_ausZBuffer[y * m_Width + x] = depth;
         if (m_Image.width * 4 == m_Image.pitch)
         {
-            /* This is a special case. When the image width is already a multiple
-             * of 4 the image does not require any padding bytes at the end of each
-             * scan line. Consequently we do not need to address each scan line
-             * separately. This is much faster than the below case where the image
-             * width is not a multiple of 4.
+            /* This is a special case. When the image width is already a
+             * multiple of 4 the image does not require any padding bytes at the
+             * end of each scan line. Consequently we do not need to address
+             * each scan line separately. This is much faster than the below
+             * case where the image width is not a multiple of 4.
              */
 
             int i = 0;
             int totalBytes = m_Image.width * m_Image.height * 4;
 
             pPixel = &m_Image.pPixels[x * 4 + y * m_Image.width * 4];
-            pPixel[0] = (BYTE)(GetBValue(color) * fAlpha); // * (BYTE)((float)pPixel[3] / 255.0f);
+            pPixel[0] = (BYTE)(GetBValue(color) *
+                               fAlpha); // * (BYTE)((float)pPixel[3] / 255.0f);
             pPixel[1] = (BYTE)(GetGValue(color) * fAlpha);
             pPixel[2] = (BYTE)(GetRValue(color) * fAlpha);
             pPixel[3] = (BYTE)(255 * fAlpha);
@@ -853,12 +883,13 @@ void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth, float 
         {
             /* Width of the image is not a multiple of 4. So padding bytes have
              * been included in the DIB's pixel data. Need to address each scan
-             * line separately. This is much slower than the above case where the
-             * width of the image is already a multiple of 4.
+             * line separately. This is much slower than the above case where
+             * the width of the image is already a multiple of 4.
              */
 
             pPixel = &m_Image.pPixels[(y * m_Image.pitch) + (x * 4)];
-            pPixel[0] = (BYTE)(GetBValue(color) * fAlpha); // * (BYTE)((float)pPixel[3] / 255.0f);
+            pPixel[0] = (BYTE)(GetBValue(color) *
+                               fAlpha); // * (BYTE)((float)pPixel[3] / 255.0f);
             pPixel[1] = (BYTE)(GetGValue(color) * fAlpha);
             pPixel[2] = (BYTE)(GetRValue(color) * fAlpha);
             pPixel[3] = (BYTE)(255 * fAlpha);
@@ -866,7 +897,8 @@ void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth, float 
     }
 }
 
-void Renderer::Rectangle(int left, int top, int right, int bottom, COLORREF color, unsigned int depth,
+void Renderer::Rectangle(int left, int top, int right, int bottom,
+                         COLORREF color, unsigned int depth,
                          float fAlpha /*= 1.0f*/)
 {
     for (int x = left; x <= right; x++)
@@ -878,7 +910,8 @@ void Renderer::Rectangle(int left, int top, int right, int bottom, COLORREF colo
     }
 }
 
-void Renderer::HorizontalLine(int left, int right, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/)
+void Renderer::HorizontalLine(int left, int right, int y, COLORREF color,
+                              unsigned int depth, float fAlpha /*= 1.0f*/)
 {
     for (int x = left; x <= right; x++)
     {
@@ -886,7 +919,8 @@ void Renderer::HorizontalLine(int left, int right, int y, COLORREF color, unsign
     }
 }
 
-void Renderer::VerticalLine(int top, int bottom, int x, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/)
+void Renderer::VerticalLine(int top, int bottom, int x, COLORREF color,
+                            unsigned int depth, float fAlpha /*= 1.0f*/)
 {
     for (int y = top; y <= bottom; y++)
     {
@@ -894,12 +928,14 @@ void Renderer::VerticalLine(int top, int bottom, int x, COLORREF color, unsigned
     }
 }
 
-void Renderer::Line(Renderer::Pixel start, Renderer::Pixel end, COLORREF color, unsigned int depth, float alpha)
+void Renderer::Line(Renderer::Pixel start, Renderer::Pixel end, COLORREF color,
+                    unsigned int depth, float alpha)
 {
     Line(start.m_iX, start.m_iY, end.m_iX, end.m_iY, color, depth, alpha);
 }
 
-void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color, unsigned int depth, float alpha)
+void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color,
+                    unsigned int depth, float alpha)
 {
     /* if (x1 < x0)
      {
@@ -941,8 +977,8 @@ void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color, unsigned int
     }
 }
 
-void Renderer::Circle(int xCenter, int yCenter, int radius, COLORREF c, unsigned int depth /*= 0*/,
-                      float fAlpha /*= 1.0f*/)
+void Renderer::Circle(int xCenter, int yCenter, int radius, COLORREF c,
+                      unsigned int depth /*= 0*/, float fAlpha /*= 1.0f*/)
 {
     int x = 0;
     int y = radius;
@@ -965,7 +1001,8 @@ void Renderer::Circle(int xCenter, int yCenter, int radius, COLORREF c, unsigned
     }
 }
 
-void Renderer::circlePoints(int cx, int cy, int x, int y, COLORREF color, unsigned int depth, float alpha)
+void Renderer::circlePoints(int cx, int cy, int x, int y, COLORREF color,
+                            unsigned int depth, float alpha)
 {
     if (x == 0)
     {

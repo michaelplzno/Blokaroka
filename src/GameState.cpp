@@ -4,7 +4,7 @@
 
 GameState GAMESTATE;
 
-void GameState::GenerateBloks()
+void GameState::GenerateRandomBloks()
 {
     for (int i = 0; i < 100; i++)
     {
@@ -44,10 +44,6 @@ void GameState::GenerateBloks()
     }
 }
 
-void GameState::Shutdown()
-{
-}
-
 void GameState::Update()
 {
     for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
@@ -62,7 +58,8 @@ void GameState::Update()
 
             m_vpoBloks[i]->InitPhysics(body);
 
-            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(), m_vpoBloks[i]->GetY());
+            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(),
+                                                 m_vpoBloks[i]->GetY());
         }
         else
         {
@@ -78,7 +75,8 @@ void GameState::ClearBloks()
         std::set<b2BodyId> toDestroy;
         m_vpoBloks[i]->ClearPhysics(&toDestroy);
 
-        for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+        for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+             it != toDestroy.end(); ++it)
         {
             PHYSICS.DestroyBody(*it);
         }
@@ -95,7 +93,8 @@ void GameState::RegenPhysics()
     {
         if (!m_vpoBloks[i]->PhysicsInited())
         {
-            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(), m_vpoBloks[i]->GetY());
+            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(),
+                                                 m_vpoBloks[i]->GetY());
 
             b2BodyId body = PHYSICS.GenerateBody();
             b2Rot rot = b2Rot_identity;
@@ -125,7 +124,8 @@ void GameState::SetState(int iNewState)
             std::set<b2BodyId> toDestroy;
             m_poSelectedBlok->ClearPhysics(&toDestroy);
 
-            for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+            for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+                 it != toDestroy.end(); ++it)
             {
                 PHYSICS.DestroyBody(*it);
             }
@@ -156,8 +156,6 @@ int GameState::GetState()
 void GameState::SetDragging(Blok *poDragged, int x, int y)
 {
     m_poSelectedBlok = poDragged;
-    m_iXOffset = m_poSelectedBlok->GetX() - x;
-    m_iYOffset = m_poSelectedBlok->GetY() - y;
     SetState(GS_Drag_Free);
     m_poSelectedBlok->SetRenderState(Blok::BRS_GLOW);
     // m_poSelectedLego->CalculateWeights();
@@ -166,8 +164,6 @@ void GameState::SetDragging(Blok *poDragged, int x, int y)
 void GameState::SetSplitDragging(Blok *poDragged, int x, int y)
 {
     m_poSelectedBlok = poDragged;
-    m_iXOffset = m_poSelectedBlok->GetX() - x;
-    m_iYOffset = m_poSelectedBlok->GetY() - y;
     SetState(GS_Drag_Splitting);
     m_poSelectedBlok->SetRenderState(Blok::BRS_NO_ATTACH);
     // m_poSelectedLego->CalculateWeights();
@@ -175,14 +171,11 @@ void GameState::SetSplitDragging(Blok *poDragged, int x, int y)
 
 void GameState::MoveSelected(int x, int y)
 {
-    if (m_poSelectedBlok != NULL && !m_poSelectedBlok->MateEnabled())
-    {
-        m_poSelectedBlok->SetBlokPosition(m_iXOffset + x, m_iYOffset + y);
-    }
 
     // m_poSelectedLego->BreakStressedConnections();
 
-    float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) + (y - m_iLastY) * (y - m_iLastY)));
+    float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) +
+                               (y - m_iLastY) * (y - m_iLastY)));
 
     m_iLastX = x;
     m_iLastY = y;
@@ -198,7 +191,8 @@ void GameState::MoveSelected(int x, int y)
         else
         {
             SetState(GS_Drag_Free);
-            m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+            m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +
+    y);
         }
         return;
     }
@@ -219,7 +213,8 @@ void GameState::MoveSelected(int x, int y)
                 std::set<b2BodyId> toDestroy;
                 m_poSelectedBlok->ClearPhysics(&toDestroy);
 
-                for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+                for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+                     it != toDestroy.end(); ++it)
                 {
                     PHYSICS.DestroyBody(*it);
                 }
@@ -229,7 +224,8 @@ void GameState::MoveSelected(int x, int y)
             }
             else
             {
-                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x,
+                // m_iYOffset + y);
             }
         }
         else
@@ -242,13 +238,15 @@ void GameState::MoveSelected(int x, int y)
             else
             {
                 SetState(GS_Drag_Free);
-                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x,
+                // m_iYOffset + y);
             }
         }
     }
     else
     {
-        // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+        // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +
+        // y);
     }
 }
 
@@ -338,8 +336,8 @@ void GameState::DumpGamestate(std::wstring wstrName)
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
         indexMap[m_vpoBloks[i]] = i;
-        out << i << " " << m_vpoBloks[i]->GetX() << " " << m_vpoBloks[i]->GetY() << " " << m_vpoBloks[i]->GetColor()
-            << " " << std::endl;
+        out << i << " " << m_vpoBloks[i]->GetX() << " " << m_vpoBloks[i]->GetY()
+            << " " << m_vpoBloks[i]->GetColor() << " " << std::endl;
     }
 
     out << "-1" << std::endl;
@@ -482,4 +480,29 @@ void GameState::SetColorsForMenu(int menu)
 
     RENDER.RenderFrame();
     RENDER.PresentFrame();
+}
+
+Blok *GameState::MateSearch(Blok *poBlok)
+{
+
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    {
+        if (m_vpoBloks[i]->GetMark() == 0 &&
+            poBlok->CanMateWithBlok(m_vpoBloks[i]))
+        {
+            m_poMovingMate = poBlok;
+            m_poStaticMate = m_vpoBloks[i];
+
+            return m_vpoBloks[i];
+        }
+    }
+    return NULL;
+}
+
+void GameState::Draw(HDC hdc)
+{
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    {
+        m_vpoBloks[i]->DrawBlok(hdc);
+    }
 }

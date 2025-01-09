@@ -1,4 +1,5 @@
 #include "Blokaroka.h"
+
 #include "GameState.h"
 #include "Physics.h"
 #include "Renderer.h"
@@ -12,9 +13,9 @@ LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
 float g_fDeltaT;             // elapsed time between frames
 
 // -- MAIN -------------------------------------------------------------- //
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pstrCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+                   PSTR pstrCmdLine, int iCmdShow)
 {
-
     const wchar_t UniqueMutex[] = L"one_instance_only_some_num_1982756";
     HANDLE hHandle = CreateMutexW(NULL, TRUE, UniqueMutex);
 
@@ -40,8 +41,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pstrCmdLin
     // Try to read the gamestate from the best existing gamestate location.
     if (!GAMESTATE.ReadGamestate(gGetExistingSaveFilePath()))
     {
-        // Gamestate was not found or it could not be read correctly, generate a new randomized gamestate.
-        GAMESTATE.GenerateBloks();
+        // Gamestate was not found or it could not be read correctly, generate a
+        // new randomized gamestate.
+        GAMESTATE.GenerateRandomBloks();
     }
 
     RENDER.RenderFrame();
@@ -49,14 +51,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pstrCmdLin
 
     QueryPerformanceCounter(&g_liLastFrame);
 
-    // Main Game Loop, continue to loop while alive and Handle Windows, Update, Physics, Render, and Present, then sleep
-    // a bit to not hog the processor.
+    // Main Game Loop, continue to loop while alive and Handle Windows, Update,
+    // Physics, Render, and Present, then sleep a bit to not hog the processor.
     while (g_bIsAppAlive)
     {
         LARGE_INTEGER nextTime;
         QueryPerformanceCounter(&nextTime);
 
-        g_fDeltaT = (float)((nextTime.QuadPart - g_liLastFrame.QuadPart) / g_dFrequency);
+        g_fDeltaT = (float)((nextTime.QuadPart - g_liLastFrame.QuadPart) /
+                            g_dFrequency);
         g_liLastFrame = nextTime;
 
         RENDER.HandleWindows();
@@ -75,15 +78,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pstrCmdLin
     ReleaseMutex(hHandle);
     CloseHandle(hHandle);
 
-    // Save the gamestate in the location where it exists, or the best place for it.
+    // Save the gamestate in the location where it exists, or the best place for
+    // it.
     GAMESTATE.DumpGamestate(gGetExistingSaveFilePath());
 
     return 0;
 }
 
 // -- handleCommandLineArgs --------------------------------------------- //
-/*      Command Line Argument Handling (Loop and look for args that matter)
- */
+/* Command Line Argument Handling (Loop and look for args that matter)    */
 bool gHandleCommandLineArgs(PSTR pstrCmdLine)
 {
     return true;

@@ -11,21 +11,19 @@
 #ifndef __BLOKAROKA_H__
 #define __BLOKAROKA_H__
 
-#include "resource.h"
-
-#include <time.h>
-#include <vector>
-#include <list>
-#include <fstream>
-#include <stdio.h>
-#include <iostream>
-#include <math.h>
-#include <sstream>
-#include <set>
-
 #include <box2d\box2d.h>
+#include <math.h>
+#include <stdio.h>
+#include <time.h>
 
+#include <fstream>
+#include <iostream>
+#include <list>
+#include <set>
+#include <sstream>
+#include <vector>
 
+#include "resource.h"
 
 #define WINVER 0x0600
 #undef _WIN32_WINNT
@@ -33,25 +31,25 @@
 
 #define WM_TRAY_MESSAGE (WM_USER + 1)
 
+#include <Shlobj.h>
 #include <windows.h>
 #include <windowsx.h>
-#include <Shlobj.h>
 
-#pragma comment(lib, "Winmm.lib") 
+#pragma comment(lib, "Winmm.lib")
 
-#define MENU_BASIC      1000
-#define MENU_AMETHYST   1001
-#define MENU_TOPAZ      1002
-#define MENU_PERIDOT    1003
+#define MENU_BASIC 1000
+#define MENU_AMETHYST 1001
+#define MENU_TOPAZ 1002
+#define MENU_PERIDOT 1003
 
-#define MENU_RESET      1004
-#define MENU_SAVE       1005
-#define MENU_LOAD       1006
+#define MENU_RESET 1004
+#define MENU_SAVE 1005
+#define MENU_LOAD 1006
 
-#define MENU_EXIT       1007
+#define MENU_EXIT 1007
 
-#define MENU_G_ON       1008
-#define MENU_G_OFF      1009
+#define MENU_G_ON 1008
+#define MENU_G_OFF 1009
 #define SUBMENU_GRAVITY 1010
 
 #define MENU_DEBUG_DRAW_ON 1011
@@ -60,14 +58,15 @@
 
 inline void gPlaySound(int resource)
 {
-    PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE|SND_ASYNC);
+    PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE | SND_ASYNC);
 }
 
 inline std::wstring gAppDataDirectory()
 {
     // Search for the AppData folder for this user.
-    wchar_t* knownPath = NULL;
-    HRESULT hr = SHGetKnownFolderPath(FOLDERID_AppDataProgramData, KF_FLAG_CREATE, NULL, &knownPath);
+    wchar_t *knownPath = NULL;
+    HRESULT hr = SHGetKnownFolderPath(FOLDERID_AppDataProgramData,
+                                      KF_FLAG_CREATE, NULL, &knownPath);
     std::wstringstream wss;
 
     if (SUCCEEDED(hr))
@@ -91,7 +90,8 @@ inline std::wstring gAppDataDirectory()
     return wss.str();
 }
 
-// Returns %APPDATA%\Blokaroka\\gamestate.blok as a std::string - This is the default desired save file location.
+// Returns %APPDATA%\Blokaroka\\gamestate.blok as a std::string - This is the
+// default desired save file location.
 inline std::wstring gGetAppDataSaveFilePath()
 {
     std::wstringstream wss;
@@ -100,8 +100,9 @@ inline std::wstring gGetAppDataSaveFilePath()
     return wss.str();
 }
 
-// This function searches several locations for an existing save file and if it finds the file returns the path as a std::string.
-// These are the locations it searches in order:
+// This function searches several locations for an existing save file and if it
+// finds the file returns the path as a std::string. These are the locations it
+// searches in order:
 //   1) %APPDATA%\Blokaroka\\gamestate.blok
 //   2) gamestate.blok
 //   3) gamestate.db
@@ -145,50 +146,42 @@ inline std::wstring gGetExistingSaveFilePath()
     return path1;
 }
 
-
 // -- COMMAND LINE ARGUMENTS -------------------------------------------- //
-class Config {
+class Config
+{
   public:
     unsigned int m_uiWindowWidth;  // width of window
     unsigned int m_uiWindowHeight; // height of window
     unsigned int m_uiRandomSeed;   // random number generator seed
     bool m_bWindowedMode;          // windowed or not
     bool m_bRenderBackgroundGradient;
-    bool m_bUseAlpha;              // For pseudo transparent objects
-    bool m_bUseAA;                 // Anti-Aliasing
-    bool m_bVSyncLock;             // Lock FPS to VSync
+    bool m_bUseAlpha;  // For pseudo transparent objects
+    bool m_bUseAA;     // Anti-Aliasing
+    bool m_bVSyncLock; // Lock FPS to VSync
 
-
-    Config() :
-        m_uiWindowWidth(1024),
-        m_uiWindowHeight(768),
-        m_uiRandomSeed(1),
-        m_bWindowedMode(true),
-        m_bRenderBackgroundGradient(true),
-        m_bUseAlpha(true),
-        m_bUseAA(false),
-        m_bVSyncLock(false)
-    { };
+    Config()
+        : m_uiWindowWidth(1024), m_uiWindowHeight(768), m_uiRandomSeed(1),
+          m_bWindowedMode(true), m_bRenderBackgroundGradient(true),
+          m_bUseAlpha(true), m_bUseAA(false), m_bVSyncLock(false) {};
 };
 
-extern volatile bool      g_bIsAppAlive;
-extern Config             CONFIG;
+extern volatile bool g_bIsAppAlive;
+extern Config CONFIG;
 
-extern LARGE_INTEGER g_liFrequency;   // ticks per second
-extern LARGE_INTEGER g_liLastFrame;   // counter tick of the last frame
-extern float g_fDeltaT;               // elapsed time between frames
+extern LARGE_INTEGER g_liFrequency; // ticks per second
+extern LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
+extern float g_fDeltaT;             // elapsed time between frames
 
 // -- GLOBAL FUNCTIONS -------------------------------------------------- //
 bool gHandleCommandLineArgs(PSTR pstrCmdLine);
-
 
 // -- Project Classes --------------------------------------------------- //
 class GameState;
 class Blok;
 
 #include "Blok.h"
-#include "Renderer.h"
 #include "Gamestate.h"
 #include "Physics.h"
+#include "Renderer.h"
 
 #endif

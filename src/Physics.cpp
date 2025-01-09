@@ -3,20 +3,23 @@
 Physics PHYSICS;
 b2BodyId Physics::m_callbackBody;
 
-void Physics::DrawTransformedPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor color, void *context,
+void Physics::DrawTransformedPolygon(const b2Vec2 *vertices, int vertexCount,
+                                     b2HexColor color, void *context,
                                      b2Transform t)
 {
     for (int i = 0; i < vertexCount; i++)
     {
         Renderer::Pixel start(b2TransformPoint(t, vertices[i]));
-        Renderer::Pixel end(b2TransformPoint(t, vertices[(i + 1) % vertexCount]));
+        Renderer::Pixel end(
+            b2TransformPoint(t, vertices[(i + 1) % vertexCount]));
 
         RENDER.Line(start, end, color, -10000, 1);
     }
     // OutputDebugString("DrawPolygon\n");
 }
 
-void Physics::DrawPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor color, void *context)
+void Physics::DrawPolygon(const b2Vec2 *vertices, int vertexCount,
+                          b2HexColor color, void *context)
 {
     for (int i = 0; i < vertexCount; i++)
     {
@@ -28,15 +31,17 @@ void Physics::DrawPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor co
     // OutputDebugString("DrawPolygon\n");
 }
 
-void Physics::DrawSolidPolygon(b2Transform transform, const b2Vec2 *vertices, int vertexCount, float radius,
-                               b2HexColor color, void *context)
+void Physics::DrawSolidPolygon(b2Transform transform, const b2Vec2 *vertices,
+                               int vertexCount, float radius, b2HexColor color,
+                               void *context)
 {
     DrawTransformedPolygon(vertices, vertexCount, color, context, transform);
 
     // OutputDebugString("DrawPolygon2\n");
 }
 
-void Physics::DrawCircle(b2Vec2 center, float radius, b2HexColor color, void *context)
+void Physics::DrawCircle(b2Vec2 center, float radius, b2HexColor color,
+                         void *context)
 {
     MessageBoxW(NULL, L"DrawCircle is called", L"Info", MB_OK);
 
@@ -46,7 +51,8 @@ void Physics::DrawCircle(b2Vec2 center, float radius, b2HexColor color, void *co
     RENDER.Circle(pix.m_iX, pix.m_iY, r, color, 0, 1);
 }
 
-void Physics::DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void *context)
+void Physics::DrawSolidCircle(b2Transform transform, float radius,
+                              b2HexColor color, void *context)
 {
     MessageBoxW(NULL, L"DrawSolidCircle is called", L"Info", MB_OK);
 
@@ -72,7 +78,8 @@ void Physics::DrawPoint(const b2Vec2 &p, float size, const b2HexColor &color)
     Renderer::Pixel pix(p);
     int s = (int)(size); // *PHYSICS_TO_PIXELS);
 
-    RENDER.Rectangle(pix.m_iX - s, pix.m_iY - s, pix.m_iX + s, pix.m_iY + s, color, 0, 1);
+    RENDER.Rectangle(pix.m_iX - s, pix.m_iY - s, pix.m_iX + s, pix.m_iY + s,
+                     color, 0, 1);
 }
 
 void Physics::Init()
@@ -105,7 +112,8 @@ void Physics::Init()
         b2BodyDef bd = b2DefaultBodyDef();
         bd.type = b2_staticBody;
 
-        b2Polygon shape = b2MakeBox((RENDER.GetWidth() * .55f) * PIXELS_TO_PHYSICS, 2);
+        b2Polygon shape =
+            b2MakeBox((RENDER.GetWidth() * .55f) * PIXELS_TO_PHYSICS, 2);
 
         b2ShapeDef shapeDef = b2DefaultShapeDef();
         shapeDef.density = 1.0f;
@@ -114,7 +122,8 @@ void Physics::Init()
         // Set the ground body for the mouse joint.
         b2BodyId bodyId = m_groundBody = b2CreateBody(m_worldId, &bd);
         b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
-        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS, -2 + taskbarHeightPhysics};
+        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS,
+                      -2 + taskbarHeightPhysics};
         b2Body_SetTransform(bodyId, pos, b2Rot_identity);
     }
 
@@ -123,7 +132,8 @@ void Physics::Init()
         b2BodyDef bd = b2DefaultBodyDef();
         bd.type = b2_staticBody;
 
-        b2Polygon shape = b2MakeBox((RENDER.GetWidth() * .55f) * PIXELS_TO_PHYSICS, 2);
+        b2Polygon shape =
+            b2MakeBox((RENDER.GetWidth() * .55f) * PIXELS_TO_PHYSICS, 2);
 
         b2ShapeDef shapeDef = b2DefaultShapeDef();
         shapeDef.density = 1.0f;
@@ -131,7 +141,8 @@ void Physics::Init()
 
         b2BodyId bodyId = b2CreateBody(m_worldId, &bd);
         b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
-        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS, RENDER.GetHeight() * PIXELS_TO_PHYSICS + 2};
+        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS,
+                      RENDER.GetHeight() * PIXELS_TO_PHYSICS + 2};
         b2Body_SetTransform(bodyId, pos, b2Rot_identity);
     }
 
@@ -140,7 +151,8 @@ void Physics::Init()
         b2BodyDef bd = b2DefaultBodyDef();
         bd.type = b2_staticBody;
 
-        b2Polygon shape = b2MakeBox(2, (RENDER.GetHeight() * .55f) * PIXELS_TO_PHYSICS);
+        b2Polygon shape =
+            b2MakeBox(2, (RENDER.GetHeight() * .55f) * PIXELS_TO_PHYSICS);
 
         b2ShapeDef shapeDef = b2DefaultShapeDef();
         shapeDef.density = 1.0f;
@@ -157,7 +169,8 @@ void Physics::Init()
         b2BodyDef bd = b2DefaultBodyDef();
         bd.type = b2_staticBody;
 
-        b2Polygon shape = b2MakeBox(2, (RENDER.GetHeight() * .55f) * PIXELS_TO_PHYSICS);
+        b2Polygon shape =
+            b2MakeBox(2, (RENDER.GetHeight() * .55f) * PIXELS_TO_PHYSICS);
 
         b2ShapeDef shapeDef = b2DefaultShapeDef();
         shapeDef.density = 1.0f;
@@ -165,7 +178,8 @@ void Physics::Init()
 
         b2BodyId bodyId = b2CreateBody(m_worldId, &bd);
         b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
-        b2Vec2 pos = {RENDER.GetWidth() * PIXELS_TO_PHYSICS + 2, RENDER.GetHeight() * .5f * PIXELS_TO_PHYSICS};
+        b2Vec2 pos = {RENDER.GetWidth() * PIXELS_TO_PHYSICS + 2,
+                      RENDER.GetHeight() * .5f * PIXELS_TO_PHYSICS};
         b2Body_SetTransform(bodyId, pos, b2Rot_identity);
     }
 }
@@ -199,7 +213,8 @@ b2BodyId Physics::GenerateBody()
     b2BodyDef bd = b2DefaultBodyDef();
     bd.type = b2_dynamicBody;
     bd.fixedRotation = true;
-    // bd.position.Set(blok->GetX() * PIXELS_TO_PHYSICS, (RENDER.GetHeight() - blok->GetY()) * PIXELS_TO_PHYSICS);
+    // bd.position.Set(blok->GetX() * PIXELS_TO_PHYSICS, (RENDER.GetHeight() -
+    // blok->GetY()) * PIXELS_TO_PHYSICS);
 
     b2BodyId body = b2CreateBody(m_worldId, &bd);
 

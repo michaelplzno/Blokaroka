@@ -43,7 +43,9 @@ class Renderer
         int m_iX, m_iY;
     };
 
-    Renderer() : hWnd(NULL), m_HDC(NULL), m_bRight(false), m_Width(0), m_Height(0), m_ausZBuffer(NULL)
+    Renderer()
+        : hWnd(NULL), m_HDC(NULL), m_bRight(false), m_Width(0), m_Height(0),
+          m_ausZBuffer(NULL)
     {
         // init singleton
     }
@@ -52,17 +54,23 @@ class Renderer
 
     void Shutdown();
 
-    void SetPixel(int x, int y, COLORREF color, unsigned int depth = 0, float fAlpha = 1.0f, float fSourceBlend = 1.0f);
-    void Rectangle(int left, int top, int right, int bottom, COLORREF color, unsigned int depth = 0,
-                   float fAlpha = 1.0f);
+    void SetPixel(int x, int y, COLORREF color, unsigned int depth = 0,
+                  float fAlpha = 1.0f, float fSourceBlend = 1.0f);
+    void Rectangle(int left, int top, int right, int bottom, COLORREF color,
+                   unsigned int depth = 0, float fAlpha = 1.0f);
 
-    void HorizontalLine(int left, int right, int y, COLORREF color, unsigned int depth = 0, float fAlpha = 1.0f);
-    void VerticalLine(int top, int bottom, int x, COLORREF color, unsigned int depth = 0, float fAlpha = 1.0f);
+    void HorizontalLine(int left, int right, int y, COLORREF color,
+                        unsigned int depth = 0, float fAlpha = 1.0f);
+    void VerticalLine(int top, int bottom, int x, COLORREF color,
+                      unsigned int depth = 0, float fAlpha = 1.0f);
 
-    void Line(Pixel start, Pixel end, COLORREF color, unsigned int depth, float alpha);
-    void Line(int startX, int startY, int endX, int endY, COLORREF color, unsigned int depth, float alpha);
+    void Line(Pixel start, Pixel end, COLORREF color, unsigned int depth,
+              float alpha);
+    void Line(int startX, int startY, int endX, int endY, COLORREF color,
+              unsigned int depth, float alpha);
 
-    void Circle(int x, int y, int radius, COLORREF c, unsigned int depth = 0, float fAlpha = 1.0f);
+    void Circle(int x, int y, int radius, COLORREF c, unsigned int depth = 0,
+                float fAlpha = 1.0f);
 
     void RenderFrame();
     void PresentFrame();
@@ -94,7 +102,8 @@ class Renderer
 
     unsigned int *m_ausZBuffer;
 
-    void circlePoints(int cx, int cy, int x, int y, COLORREF color, unsigned int depth, float alpha);
+    void circlePoints(int cx, int cy, int x, int y, COLORREF color,
+                      unsigned int depth, float alpha);
 };
 
 inline void ImageDestroy(Image *pImage)
@@ -151,7 +160,9 @@ inline BOOL ImageCreate(Image *pImage, int width, int height)
     pImage->info.bmiHeader.biCompression = BI_RGB;
     pImage->info.bmiHeader.biPlanes = 1;
 
-    pImage->hBitmap = CreateDIBSection(pImage->hdc, &pImage->info, DIB_RGB_COLORS, (void **)&pImage->pPixels, NULL, 0);
+    pImage->hBitmap =
+        CreateDIBSection(pImage->hdc, &pImage->info, DIB_RGB_COLORS,
+                         (void **)&pImage->pPixels, NULL, 0);
 
     if (!pImage->hBitmap)
     {

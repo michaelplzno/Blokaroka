@@ -19,8 +19,8 @@ class Physics
 {
   public:
     Physics()
-        : m_worldId(), m_mouseJoint(), m_debugDraw(), m_groundBody(), m_mouseTarget(), m_gravity(),
-          m_bDebugRenderOn(false)
+        : m_worldId(), m_mouseJoint(), m_debugDraw(), m_groundBody(),
+          m_mouseTarget(), m_gravity(), m_bDebugRenderOn(false)
     {
         m_callbackBody = b2BodyId();
     };
@@ -46,14 +46,20 @@ class Physics
     bool IsDebugRenderOn();
 
     // Debug Draw functions pased to m_debugDraw in Init()
-    static void DrawTransformedPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor color, void *context,
+    static void DrawTransformedPolygon(const b2Vec2 *vertices, int vertexCount,
+                                       b2HexColor color, void *context,
                                        b2Transform t = b2Transform_identity);
-    static void DrawPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor color, void *context);
-    static void DrawSolidPolygon(b2Transform transform, const b2Vec2 *vertices, int vertexCount, float radius,
+    static void DrawPolygon(const b2Vec2 *vertices, int vertexCount,
+                            b2HexColor color, void *context);
+    static void DrawSolidPolygon(b2Transform transform, const b2Vec2 *vertices,
+                                 int vertexCount, float radius,
                                  b2HexColor color, void *context);
-    static void DrawCircle(b2Vec2 center, float radius, b2HexColor color, void *context);
-    static void DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void *context);
-    static void DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void *context);
+    static void DrawCircle(b2Vec2 center, float radius, b2HexColor color,
+                           void *context);
+    static void DrawSolidCircle(b2Transform transform, float radius,
+                                b2HexColor color, void *context);
+    static void DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color,
+                            void *context);
     static void DrawPoint(const b2Vec2 &p, float size, const b2HexColor &color);
 
     static bool MouseTestCallback(b2ShapeId shape, void *context);
