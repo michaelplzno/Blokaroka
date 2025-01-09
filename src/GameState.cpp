@@ -1,4 +1,6 @@
+#define NOMINMAX
 #include "GameState.h"
+#include <limits>
 
 GameState GAMESTATE;
 
@@ -313,6 +315,24 @@ void GameState::DumpGamestate(std::wstring wstrName)
 
     out.open(wstrName.c_str(), std::ofstream::out);
 
+    if (PHYSICS.IsGravityOn())
+    {
+        out << "~g 1" << std::endl;
+    }
+    else
+    {
+        out << "~g 0" << std::endl;
+    }
+
+    if (PHYSICS.IsDebugRenderOn())
+    {
+        out << "~d 1" << std::endl;
+    }
+    else
+    {
+        out << "~d 0" << std::endl;
+    }
+
     std::map<const Blok *, int> indexMap;
 
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
@@ -378,6 +398,29 @@ bool GameState::ReadGamestate(std::wstring wstrName)
     if (!in.is_open())
     {
         return false;
+    }
+
+    while (in.peek() == '~')
+    {
+        char tilda;
+        char setting;
+        int value;
+        in >> tilda >> setting >> value;
+        if (setting == 'g')
+        {
+            PHYSICS.ChangeGravity(value != 0 ? -10.0f : 0.0f);
+        }
+        else if (setting == 'd')
+        {
+            PHYSICS.SetDebugRender(value != 0);
+        }
+        else if (setting == 'c')
+        {
+            SetColorsForMenu(value);
+        }
+
+        // Clear trailing whitespace
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
     for (unsigned int ui = 0; ui < GAMESTATE.m_vpoBloks.size(); ui++)

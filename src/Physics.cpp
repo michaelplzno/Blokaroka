@@ -299,6 +299,11 @@ bool Physics::IsGravityOn()
     return m_gravity.y != 0.0f;
 }
 
+void Physics::SetDebugRender(bool bDebugRenderOn)
+{
+    m_bDebugRenderOn = bDebugRenderOn;
+}
+
 void Physics::ToggleDebugRender()
 {
     m_bDebugRenderOn = !m_bDebugRenderOn;

@@ -41,6 +41,7 @@ class Physics
     void ToggleGravity();
     bool IsGravityOn();
 
+    void SetDebugRender(bool bDebugRenderOn);
     void ToggleDebugRender();
     bool IsDebugRenderOn();
 
