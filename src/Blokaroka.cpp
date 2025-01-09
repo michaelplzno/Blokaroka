@@ -1,21 +1,24 @@
 #include "Blokaroka.h"
+#include "GameState.h"
+#include "Physics.h"
+#include "Renderer.h"
 
 // -- EXTERN DECLARATIONS ----------------------------------------------- //
 volatile bool g_bIsAppAlive = true;
 Config CONFIG;
 
-double g_dFrequency;   // ticks per second
-LARGE_INTEGER g_liLastFrame;   // counter tick of the last frame
-float g_fDeltaT;               // elapsed time between frames
+double g_dFrequency;         // ticks per second
+LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
+float g_fDeltaT;             // elapsed time between frames
 
 // -- MAIN -------------------------------------------------------------- //
-int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-    PSTR pstrCmdLine, int iCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pstrCmdLine, int iCmdShow)
 {
-    const char UniqueMutex[] = "one_Instance_only";
-    HANDLE hHandle = CreateMutex(NULL, TRUE, UniqueMutex);
 
-    if(ERROR_ALREADY_EXISTS == GetLastError())
+    const wchar_t UniqueMutex[] = L"one_instance_only_some_num_1982756";
+    HANDLE hHandle = CreateMutexW(NULL, TRUE, UniqueMutex);
+
+    if (ERROR_ALREADY_EXISTS == GetLastError())
     {
         return 1;
     }
@@ -24,8 +27,6 @@ int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     QueryPerformanceFrequency(&li);
 
     g_dFrequency = double(li.QuadPart);
-    
-
 
     // - - - Command Line- - - - - - - //
     if (gHandleCommandLineArgs(pstrCmdLine) == false)
@@ -36,7 +37,6 @@ int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     RENDER.InitRenderer(hInstance);
     PHYSICS.Init();
 
-
     // Try to read the gamestate from the best existing gamestate location.
     if (!GAMESTATE.ReadGamestate(gGetExistingSaveFilePath()))
     {
@@ -44,13 +44,14 @@ int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         GAMESTATE.GenerateBloks();
     }
 
-
     RENDER.RenderFrame();
     RENDER.PresentFrame();
 
-
     QueryPerformanceCounter(&g_liLastFrame);
-    while(g_bIsAppAlive)
+
+    // Main Game Loop, continue to loop while alive and Handle Windows, Update, Physics, Render, and Present, then sleep
+    // a bit to not hog the processor.
+    while (g_bIsAppAlive)
     {
         LARGE_INTEGER nextTime;
         QueryPerformanceCounter(&nextTime);
@@ -63,12 +64,14 @@ int WINAPI main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         PHYSICS.UpdateMouse();
         PHYSICS.Update();
         RENDER.RenderFrame();
+
         RENDER.PresentFrame();
+
         Sleep(1);
     }
 
     RENDER.Shutdown();
-    
+
     ReleaseMutex(hHandle);
     CloseHandle(hHandle);
 

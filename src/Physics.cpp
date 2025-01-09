@@ -1,327 +1,299 @@
 #include "Physics.h"
 
 Physics PHYSICS;
-//
-void Physics::DebugDraw::Create()
-{
+b2BodyId Physics::m_callbackBody;
 
+void Physics::DrawTransformedPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor color, void *context,
+                                     b2Transform t)
+{
+    for (int i = 0; i < vertexCount; i++)
+    {
+        Renderer::Pixel start(b2TransformPoint(t, vertices[i]));
+        Renderer::Pixel end(b2TransformPoint(t, vertices[(i + 1) % vertexCount]));
+
+        RENDER.Line(start, end, color, -10000, 1);
+    }
+    // OutputDebugString("DrawPolygon\n");
 }
 
-//
-void Physics::DebugDraw::Destroy()
+void Physics::DrawPolygon(const b2Vec2 *vertices, int vertexCount, b2HexColor color, void *context)
 {
+    for (int i = 0; i < vertexCount; i++)
+    {
+        Renderer::Pixel start(vertices[i]);
+        Renderer::Pixel end(vertices[(i + 1) % vertexCount]);
 
+        RENDER.Line(start, end, color, 0, 1);
+    }
+    // OutputDebugString("DrawPolygon\n");
 }
 
-//
-void Physics::DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+void Physics::DrawSolidPolygon(b2Transform transform, const b2Vec2 *vertices, int vertexCount, float radius,
+                               b2HexColor color, void *context)
 {
-	for (int i = 0; i < vertexCount; i++)
-	{
-		Renderer::Pixel start(vertices[i]);
-		Renderer::Pixel end(vertices[(i + 1) % vertexCount]);
-		RENDER.Line(start, end, RGB(color.r * 255, color.g * 255, color.b * 255), 0, color.a);
-	}
-	//OutputDebugString("DrawPolygon\n");
+    DrawTransformedPolygon(vertices, vertexCount, color, context, transform);
+
+    // OutputDebugString("DrawPolygon2\n");
 }
 
-//
-void Physics::DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
+void Physics::DrawCircle(b2Vec2 center, float radius, b2HexColor color, void *context)
 {
-	DrawPolygon(vertices, vertexCount, color);
+    MessageBoxW(NULL, L"DrawCircle is called", L"Info", MB_OK);
 
-	//OutputDebugString("DrawPolygon2\n");
+    Renderer::Pixel pix(center);
+    int r = (int)(radius * PHYSICS_TO_PIXELS);
+
+    RENDER.Circle(pix.m_iX, pix.m_iY, r, color, 0, 1);
 }
 
-//
-void Physics::DebugDraw::DrawCircle(const b2Vec2& center, float radius, const b2Color& color)
+void Physics::DrawSolidCircle(b2Transform transform, float radius, b2HexColor color, void *context)
 {
-	Renderer::Pixel pix(center);
-	int r = (int)(radius * PHYSICS_TO_PIXELS);
+    MessageBoxW(NULL, L"DrawSolidCircle is called", L"Info", MB_OK);
 
-	RENDER.Circle(pix.m_iX, pix.m_iY, r, RGB(color.r * 255, color.g * 255, color.b * 255), 0, color.a);
+    Renderer::Pixel pix(transform.p);
+    int r = (int)(radius * PHYSICS_TO_PIXELS);
+
+    RENDER.Circle(pix.m_iX, pix.m_iY, r, color, 0, 1);
 }
 
-//
-void Physics::DebugDraw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axis, const b2Color& color)
+void Physics::DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void *context)
 {
-	Renderer::Pixel pix(center);
-	int r = (int)(radius * PHYSICS_TO_PIXELS);
+    MessageBoxW(NULL, L"DrawSegment is called", L"Info", MB_OK);
 
-	RENDER.Circle(pix.m_iX, pix.m_iY, r, RGB(color.r * 255, color.g * 255, color.b * 255), 0, color.a);
+    Renderer::Pixel start(p1);
+    Renderer::Pixel end(p2);
+    RENDER.Line(start, end, color, 0, 1);
 }
 
-//
-void Physics::DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color)
+void Physics::DrawPoint(const b2Vec2 &p, float size, const b2HexColor &color)
 {
-	Renderer::Pixel start(p1);
-	Renderer::Pixel end(p2);
-	RENDER.Line(start, end, RGB(color.r * 255, color.g * 255, color.b * 255), 0, color.a);
-}
+    MessageBoxW(NULL, L"DrawPoint is called", L"Info", MB_OK);
 
-//
-void Physics::DebugDraw::DrawTransform(const b2Transform& xf)
-{
+    Renderer::Pixel pix(p);
+    int s = (int)(size); // *PHYSICS_TO_PIXELS);
 
-}
-
-//
-void Physics::DebugDraw::DrawPoint(const b2Vec2& p, float size, const b2Color& color)
-{
-
-	Renderer::Pixel pix(p);
-	int s = (int)(size);// *PHYSICS_TO_PIXELS);
-
-	RENDER.Rectangle(pix.m_iX - s, pix.m_iY - s, pix.m_iX + s, pix.m_iY + s, RGB(color.r * 255, color.g * 255, color.b * 255), 0, color.a);
-}
-
-//
-void Physics::DebugDraw::DrawString(int x, int y, const char* string, ...)
-{
-
-}
-
-//
-void Physics::DebugDraw::DrawString(const b2Vec2& pw, const char* string, ...)
-{
-
-}
-
-//
-void Physics::DebugDraw::DrawAABB(b2AABB* aabb, const b2Color& c)
-{
-	//OutputDebugString("DrawAABB\n");
+    RENDER.Rectangle(pix.m_iX - s, pix.m_iY - s, pix.m_iX + s, pix.m_iY + s, color, 0, 1);
 }
 
 void Physics::Init()
 {
-	b2Vec2 gravity;
-	gravity.Set(0.0f, -10.0f);
-	m_world = new b2World(gravity);
+    b2Vec2 gravity = {0.0f, 0.0f};
+    b2WorldDef worldDef = b2DefaultWorldDef();
+    worldDef.gravity = gravity;
 
-	m_debugDraw = new DebugDraw();
-	m_debugDraw->Create();
-	m_world->SetDebugDraw(m_debugDraw);
+    m_worldId = b2CreateWorld(&worldDef);
 
-	{
-		b2BodyDef bd;
-		m_groundBody = m_world->CreateBody(&bd);
+    m_debugDraw = b2DefaultDebugDraw();
+    m_debugDraw.DrawCircle = DrawCircle;
+    m_debugDraw.DrawSolidCircle = DrawSolidCircle;
+    m_debugDraw.DrawPolygon = DrawPolygon;
+    m_debugDraw.DrawSolidPolygon = DrawSolidPolygon;
+    m_debugDraw.DrawSegment = DrawSegment;
 
-		b2PolygonShape shape;
-		shape.SetAsBox(20, 2);// (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
-		m_groundBody->CreateFixture(&shape, 0.0f);
-		Renderer::Pixel pix(RENDER.GetWidth() / 2, RENDER.GetHeight() + 2 * PHYSICS_TO_PIXELS);
-		m_groundBody->SetTransform(pix.ToPhysics(), 0);
-	}
+    // Bottom Edge. TODO: Move this edge up the number of pixels the start menu is.
+    {
+        b2BodyDef bd = b2DefaultBodyDef();
+        bd.type = b2_staticBody;
 
-	{
-		b2BodyDef bd;
-		m_groundBody = m_world->CreateBody(&bd);
+        b2Polygon shape = b2MakeBox((RENDER.GetWidth() * .55f) * PIXELS_TO_PHYSICS, 2);
 
-		b2PolygonShape shape;
-		shape.SetAsBox(20, 2);// (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
-		m_groundBody->CreateFixture(&shape, 0.0f);
-		Renderer::Pixel pix(RENDER.GetWidth() / 2, RENDER.GetHeight() + 2 * PHYSICS_TO_PIXELS);
-		m_groundBody->SetTransform(pix.ToPhysics(), 0);
-	}
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.density = 1.0f;
+        shapeDef.friction = 0.3f;
 
-	{
-		b2BodyDef bd;
-		b2Body* ground = m_world->CreateBody(&bd);
+        // Set the ground body for the mouse joint.
+        b2BodyId bodyId = m_groundBody = b2CreateBody(m_worldId, &bd);
+        b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
+        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS, -2};
+        b2Body_SetTransform(bodyId, pos, b2Rot_identity);
+    }
 
-		b2PolygonShape shape;
-		shape.SetAsBox(20, 2);// (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
-		ground->CreateFixture(&shape, 0.0f);
-		Renderer::Pixel pix(RENDER.GetWidth() / 2,  -2 * PHYSICS_TO_PIXELS);
-		ground->SetTransform(pix.ToPhysics(), 0);
-	}
+    // Top Edge.
+    {
+        b2BodyDef bd = b2DefaultBodyDef();
+        bd.type = b2_staticBody;
 
-	{
-		b2BodyDef bd;
-		b2Body* ground = m_world->CreateBody(&bd);
+        b2Polygon shape = b2MakeBox((RENDER.GetWidth() * .55f) * PIXELS_TO_PHYSICS, 2);
 
-		b2PolygonShape shape;
-		shape.SetAsBox(2, RENDER.GetHeight() * PIXELS_TO_PHYSICS);// (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
-		ground->CreateFixture(&shape, 0.0f);
-		Renderer::Pixel pix(-2 * PHYSICS_TO_PIXELS, RENDER.GetHeight() * .5f);
-		ground->SetTransform(pix.ToPhysics(), 0);
-	}
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.density = 1.0f;
+        shapeDef.friction = 0.3f;
 
-	{
-		b2BodyDef bd;
-		b2Body* ground = m_world->CreateBody(&bd);
+        b2BodyId bodyId = b2CreateBody(m_worldId, &bd);
+        b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
+        b2Vec2 pos = {RENDER.GetWidth() * .5f * PIXELS_TO_PHYSICS, RENDER.GetHeight() * PIXELS_TO_PHYSICS + 2};
+        b2Body_SetTransform(bodyId, pos, b2Rot_identity);
+    }
 
-		b2PolygonShape shape;
-		shape.SetAsBox(2, RENDER.GetHeight() * PIXELS_TO_PHYSICS);// (b2Vec2(200.0f, 0.0f), b2Vec2(40.0f, 0.0f));
-		ground->CreateFixture(&shape, 0.0f);
-		Renderer::Pixel pix(RENDER.GetWidth() + 2 * PHYSICS_TO_PIXELS, RENDER.GetHeight() * .5f);
-		ground->SetTransform(pix.ToPhysics(), 0);
-	}
+    // Left Edge.
+    {
+        b2BodyDef bd = b2DefaultBodyDef();
+        bd.type = b2_staticBody;
 
-	/*b2BodyDef bd;
-	bd.type = b2_dynamicBody;
-	bd.position.Set(10.0f, 10.0f);
-	b2Body* body = m_world->CreateBody(&bd);
+        b2Polygon shape = b2MakeBox(2, (RENDER.GetHeight() * .55f) * PIXELS_TO_PHYSICS);
 
-	b2CircleShape shape;
-	shape.m_radius = .5f;
-	body->CreateFixture(&shape, 1.0f);
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.density = 1.0f;
+        shapeDef.friction = 0.3f;
 
-	bd.position.Set(10.0f, 15.0f);
-	body = m_world->CreateBody(&bd);
-	shape.m_radius = 2.5f;
-	body->CreateFixture(&shape, 1.0f);*/
+        b2BodyId bodyId = b2CreateBody(m_worldId, &bd);
+        b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
+        b2Vec2 pos = {-2, RENDER.GetHeight() * .5f * PIXELS_TO_PHYSICS};
+        b2Body_SetTransform(bodyId, pos, b2Rot_identity);
+    }
 
+    // Right Edge.
+    {
+        b2BodyDef bd = b2DefaultBodyDef();
+        bd.type = b2_staticBody;
+
+        b2Polygon shape = b2MakeBox(2, (RENDER.GetHeight() * .55f) * PIXELS_TO_PHYSICS);
+
+        b2ShapeDef shapeDef = b2DefaultShapeDef();
+        shapeDef.density = 1.0f;
+        shapeDef.friction = 0.3f;
+
+        b2BodyId bodyId = b2CreateBody(m_worldId, &bd);
+        b2ShapeId shapeId = b2CreatePolygonShape(bodyId, &shapeDef, &shape);
+        b2Vec2 pos = {RENDER.GetWidth() * PIXELS_TO_PHYSICS + 2, RENDER.GetHeight() * .5f * PIXELS_TO_PHYSICS};
+        b2Body_SetTransform(bodyId, pos, b2Rot_identity);
+    }
 }
 
 void Physics::Update()
 {
-	m_world->SetAllowSleeping(false);
-	m_world->SetWarmStarting(true);
-	m_world->SetContinuousPhysics(true);
-	m_world->SetSubStepping(true);
-	m_world->Step(g_fDeltaT, 10, 5);
+    b2World_EnableSleeping(m_worldId, true);
+    b2World_EnableWarmStarting(m_worldId, true);
+    b2World_EnableContinuous(m_worldId, true);
+    float cappedT = g_fDeltaT;
+    if (cappedT > 1.0f / 30.0f)
+    {
+        cappedT = 1.0f / 30.0f;
+    }
+    b2World_Step(m_worldId, cappedT, 4);
 }
-
 
 void Physics::Draw()
 {
-	return;
+    if (m_worldId.index1 != 0 && m_bDebugRenderOn)
+    {
+        m_debugDraw.drawShapes = true;
+        m_debugDraw.drawMass = true;
 
-	//OutputDebugString("Here\n");
-	if (m_world != NULL && m_debugDraw != NULL)
-	{
-		uint32 flags = 0;
-		flags += b2Draw::e_shapeBit;
-		flags += b2Draw::e_jointBit;
-		//flags += b2Draw::e_aabbBit;
-		flags += b2Draw::e_centerOfMassBit;
-		
-		m_debugDraw->SetFlags(flags);
-
-		//OutputDebugString("Here inner\n");
-		m_world->DebugDraw();
-	}
+        b2World_Draw(m_worldId, &m_debugDraw);
+    }
 }
 
-
-b2Body* Physics::GenerateBody()
+b2BodyId Physics::GenerateBody()
 {
-	b2BodyDef bd;
-	bd.type = b2_dynamicBody;
-	bd.fixedRotation = true;
-	//bd.position.Set(blok->GetX() * PIXELS_TO_PHYSICS, (RENDER.GetHeight() - blok->GetY()) * PIXELS_TO_PHYSICS);
-	b2Body* body = m_world->CreateBody(&bd);
+    b2BodyDef bd = b2DefaultBodyDef();
+    bd.type = b2_dynamicBody;
+    bd.fixedRotation = true;
+    // bd.position.Set(blok->GetX() * PIXELS_TO_PHYSICS, (RENDER.GetHeight() - blok->GetY()) * PIXELS_TO_PHYSICS);
 
-	return body;
+    b2BodyId body = b2CreateBody(m_worldId, &bd);
+
+    return body;
 }
 
-
-void Physics::DestroyBody(b2Body* body)
+void Physics::DestroyBody(b2BodyId body)
 {
-	m_world->DestroyBody(body);
+    b2DestroyBody(body);
 }
 
-class QueryCallback : public b2QueryCallback
+bool Physics::MouseTestCallback(b2ShapeId shape, void *context)
 {
-public:
-	QueryCallback(const b2Vec2& point)
-	{
-		m_point = point;
-		m_fixture = NULL;
-	}
+    m_callbackBody = b2Shape_GetBody(shape);
+    return true;
+}
 
-	bool ReportFixture(b2Fixture* fixture) override
-	{
-		b2Body* body = fixture->GetBody();
-		if (body->GetType() == b2_dynamicBody)
-		{
-			bool inside = fixture->TestPoint(m_point);
-			if (inside)
-			{
-				m_fixture = fixture;
-
-				// We are done, terminate the query.
-				return false;
-			}
-		}
-
-		// Continue the query.
-		return true;
-	}
-
-	b2Vec2 m_point;
-	b2Fixture* m_fixture;
-};
-
-Blok* Physics::OnMouseDown(b2Vec2 p)
+Blok *Physics::OnMouseDown(b2Vec2 p)
 {
-	if (m_mouseJoint != NULL)
-	{
-		return NULL;
-	}
+    if (m_mouseJoint.index1 != 0)
+    {
+        return NULL;
+    }
 
-	// Make a small box.
-	b2AABB aabb;
-	b2Vec2 d;
-	d.Set(0.001f, 0.001f);
-	aabb.lowerBound = p - d;
-	aabb.upperBound = p + d;
+    b2Transform xf = b2Transform_identity;
+    b2QueryFilter qf = b2DefaultQueryFilter();
+    qf.categoryBits = 0x0001;
+    qf.maskBits = 0xFFFF;
 
-	// Query the world for overlapping shapes.
-	QueryCallback callback(p);
-	m_world->QueryAABB(&callback, aabb);
+    m_callbackBody.index1 = 0;
+    // Query the world for shapes that touch this point.
+    b2World_OverlapPoint(m_worldId, p, xf, qf, MouseTestCallback, NULL);
 
-	if (callback.m_fixture)
-	{
-		b2Body* body = callback.m_fixture->GetBody();
-		b2MouseJointDef md;
-		md.bodyA = m_groundBody;
-		md.bodyB = body;
-		md.target = p;
-		md.maxForce = 1000.0f * body->GetMass();
-		//md.dampingRatio = 1;
-		//md.frequencyHz = 60;
-		m_mouseJoint = (b2MouseJoint*)m_world->CreateJoint(&md);
-		body->SetAwake(true);
-		return (Blok*)body->GetUserData();
-	}
+    if (m_callbackBody.index1 != 0 && b2Body_GetUserData(m_callbackBody))
+    {
 
-	return NULL;
+        b2MouseJointDef md = b2DefaultMouseJointDef();
+        md.bodyIdA = m_groundBody;
+        md.bodyIdB = m_callbackBody;
+        md.target = p;
+        md.maxForce = 1000.0f * b2Body_GetMass(m_callbackBody);
+        md.dampingRatio = 0.7f;
+        md.hertz = 5.0f;
+        m_mouseJoint = b2CreateMouseJoint(m_worldId, &md);
+        b2Body_SetAwake(m_callbackBody, true);
+
+        return (Blok *)b2Body_GetUserData(m_callbackBody);
+    }
+
+    return NULL;
 }
 
 void Physics::UpdateMouse()
 {
-	if (m_mouseJoint != NULL)
-	{
-		b2Vec2 target = m_mouseTarget;
-		b2Vec2 orgin = m_mouseJoint->GetAnchorB();
-		b2Vec2 delta = m_mouseTarget - orgin;
-		if (delta.Length() > 1.25f)
-		{
-			delta.Normalize();
-			delta *= 1.25f;
-			target = orgin + delta;
-		}
-		m_mouseJoint->SetTarget(target);
-	}
+    if (m_mouseJoint.index1 != 0)
+    {
+        b2Vec2 target = m_mouseTarget;
+        b2MouseJoint_SetTarget(m_mouseJoint, target);
+    }
 }
 void Physics::OnMouseMove(b2Vec2 p)
 {
-	m_mouseTarget = p;
+    m_mouseTarget = p;
 }
 
 void Physics::OnMouseUp()
 {
-	if (m_mouseJoint)
-	{
-		m_world->DestroyJoint(m_mouseJoint);
-		m_mouseJoint = NULL;
-	}
+    if (m_mouseJoint.index1 != 0)
+    {
+        b2DestroyJoint(m_mouseJoint);
+        m_mouseJoint.index1 = 0;
+    }
 }
 
-void Physics::changeGravity(float y_G)
+void Physics::ChangeGravity(float y_G)
 {
-	m_gravity.Set(0.00f, y_G);
-	m_world->SetGravity(m_gravity);
+    m_gravity = {0.00f, y_G};
+    b2World_SetGravity(m_worldId, m_gravity);
+}
+
+void Physics::ToggleGravity()
+{
+    if (m_gravity.y == 0.0f)
+    {
+        m_gravity.y = -10.0f;
+    }
+    else
+    {
+        m_gravity.y = 0.0f;
+    }
+    b2World_SetGravity(m_worldId, m_gravity);
+}
+
+bool Physics::IsGravityOn()
+{
+    return m_gravity.y != 0.0f;
+}
+
+void Physics::ToggleDebugRender()
+{
+    m_bDebugRenderOn = !m_bDebugRenderOn;
+}
+
+bool Physics::IsDebugRenderOn()
+{
+    return m_bDebugRenderOn;
 }

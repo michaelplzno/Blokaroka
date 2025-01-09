@@ -2,42 +2,40 @@
 
 GameState GAMESTATE;
 
-
-
 void GameState::GenerateBloks()
 {
-    for( int i = 0; i < 100; i++ )
+    for (int i = 0; i < 100; i++)
     {
         COLORREF color = RGB(0, 0, 0);
         int colorNum = rand() % 5;
-        if(colorNum == 0)
+        if (colorNum == 0)
         {
             color = COLOR_WHITE;
-        } 
-        else if(colorNum == 1)
+        }
+        else if (colorNum == 1)
         {
             color = COLOR_RED;
-        } 
-        else if(colorNum == 2)
+        }
+        else if (colorNum == 2)
         {
             color = COLOR_YELLOW;
         }
-        else if(colorNum == 3)
+        else if (colorNum == 3)
         {
             color = COLOR_GREEN;
         }
-        else if(colorNum == 4)
+        else if (colorNum == 4)
         {
             color = COLOR_BLUE;
         }
 
-        int width = rand()%3;
+        int width = rand() % 3;
 
         m_vpoBloks.push_back(new Blok(color, rand() % 1000, rand() % 768));
-        
-        for(int i = 0; i < pow(2.0f,width)- 1; i++)
+
+        for (int i = 0; i < pow(2.0f, width) - 1; i++)
         {
-            Blok* newLego = new Blok(color, rand() % 1000, rand() % 768);
+            Blok *newLego = new Blok(color, rand() % 1000, rand() % 768);
             m_vpoBloks.back()->AttachLeft(newLego);
             m_vpoBloks.push_back(newLego);
         }
@@ -46,22 +44,23 @@ void GameState::GenerateBloks()
 
 void GameState::Shutdown()
 {
-
 }
 
 void GameState::Update()
 {
     for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
     {
+
         if (!m_vpoBloks[i]->PhysicsInited())
         {
-            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(), m_vpoBloks[i]->GetY());
-
-            b2Body* body = PHYSICS.GenerateBody();
-            body->SetTransform(m_vpoBloks[i]->GetPhysicsPos(), 0);
-            body->SetUserData(m_vpoBloks[i]);
+            b2BodyId body = PHYSICS.GenerateBody();
+            b2Rot rot = b2Rot_identity;
+            b2Body_SetTransform(body, m_vpoBloks[i]->GetPhysicsPos(), rot);
+            b2Body_SetUserData(body, m_vpoBloks[i]);
 
             m_vpoBloks[i]->InitPhysics(body);
+
+            m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(), m_vpoBloks[i]->GetY());
         }
         else
         {
@@ -74,10 +73,10 @@ void GameState::ClearBloks()
 {
     for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
     {
-        std::set<b2Body*> toDestroy;
+        std::set<b2BodyId> toDestroy;
         m_vpoBloks[i]->ClearPhysics(&toDestroy);
 
-        for (std::set<b2Body*>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+        for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
         {
             PHYSICS.DestroyBody(*it);
         }
@@ -96,21 +95,21 @@ void GameState::RegenPhysics()
         {
             m_vpoBloks[i]->SetBlokRenderPosition(m_vpoBloks[i]->GetX(), m_vpoBloks[i]->GetY());
 
-            b2Body* body = PHYSICS.GenerateBody();
-            body->SetTransform(m_vpoBloks[i]->GetPhysicsPos(), 0);
-            body->SetUserData(m_vpoBloks[i]);
+            b2BodyId body = PHYSICS.GenerateBody();
+            b2Rot rot = b2Rot_identity;
+            b2Body_SetTransform(body, m_vpoBloks[i]->GetPhysicsPos(), rot);
+            b2Body_SetUserData(body, m_vpoBloks[i]);
 
             m_vpoBloks[i]->InitPhysics(body);
         }
     }
 }
 
-
 void GameState::SetState(int iNewState)
 {
     if (m_poSelectedBlok != NULL)
     {
-        m_poSelectedBlok->EnablePhysics();
+        m_poSelectedBlok->MarkEnabled();
     }
 
     if (iNewState == GS_Static)
@@ -121,10 +120,10 @@ void GameState::SetState(int iNewState)
 
             m_poSelectedBlok->Mate();
 
-            std::set<b2Body*> toDestroy;
+            std::set<b2BodyId> toDestroy;
             m_poSelectedBlok->ClearPhysics(&toDestroy);
 
-            for (std::set<b2Body*>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+            for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
             {
                 PHYSICS.DestroyBody(*it);
             }
@@ -133,19 +132,17 @@ void GameState::SetState(int iNewState)
         }
         m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
     }
-    else if( iNewState == GS_Drag_Free )
+    else if (iNewState == GS_Drag_Free)
     {
-
     }
     else if (iNewState == GS_Drag_Mating)
     {
         if (m_poSelectedBlok != NULL)
         {
-            m_poSelectedBlok->DisablePhysics();
+            m_poSelectedBlok->MarkDisabled();
         }
     }
 
-        
     m_iState = iNewState;
 }
 
@@ -154,42 +151,40 @@ int GameState::GetState()
     return m_iState;
 }
 
-void GameState::SetDragging(Blok* poDragged, int x, int y)
+void GameState::SetDragging(Blok *poDragged, int x, int y)
 {
     m_poSelectedBlok = poDragged;
     m_iXOffset = m_poSelectedBlok->GetX() - x;
     m_iYOffset = m_poSelectedBlok->GetY() - y;
     SetState(GS_Drag_Free);
     m_poSelectedBlok->SetRenderState(Blok::BRS_GLOW);
-    //m_poSelectedLego->CalculateWeights();
+    // m_poSelectedLego->CalculateWeights();
 }
 
-void GameState::SetSplitDragging(Blok* poDragged, int x, int y)
+void GameState::SetSplitDragging(Blok *poDragged, int x, int y)
 {
     m_poSelectedBlok = poDragged;
     m_iXOffset = m_poSelectedBlok->GetX() - x;
     m_iYOffset = m_poSelectedBlok->GetY() - y;
     SetState(GS_Drag_Splitting);
     m_poSelectedBlok->SetRenderState(Blok::BRS_NO_ATTACH);
-    //m_poSelectedLego->CalculateWeights();
+    // m_poSelectedLego->CalculateWeights();
 }
 
-void  GameState::MoveSelected(int x, int y)
+void GameState::MoveSelected(int x, int y)
 {
-
-    if (m_poSelectedBlok != NULL && !m_poSelectedBlok->PhysicsEnabled())
+    if (m_poSelectedBlok != NULL && !m_poSelectedBlok->MateEnabled())
     {
         m_poSelectedBlok->SetBlokPosition(m_iXOffset + x, m_iYOffset + y);
     }
 
-    //m_poSelectedLego->BreakStressedConnections();
+    // m_poSelectedLego->BreakStressedConnections();
 
-    float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) + 
-                               (y - m_iLastY) * (y - m_iLastY)));
+    float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) + (y - m_iLastY) * (y - m_iLastY)));
 
     m_iLastX = x;
     m_iLastY = y;
-    
+
     /*
     if(false)
     {
@@ -207,20 +202,22 @@ void  GameState::MoveSelected(int x, int y)
     }
     */
 
-    if(m_iState != GS_Drag_Splitting)
+    if (m_iState != GS_Drag_Splitting)
     {
-        if(m_poSelectedBlok->IntersectsAnyBlok())
+        if (m_poSelectedBlok->IntersectsAnyBlok())
         {
-            if(m_iState == GS_Drag_Mating)
+
+            if (m_iState == GS_Drag_Mating)
             {
+
                 PHYSICS.OnMouseUp();
 
                 m_poSelectedBlok->Mate();
 
-                std::set<b2Body*> toDestroy;
+                std::set<b2BodyId> toDestroy;
                 m_poSelectedBlok->ClearPhysics(&toDestroy);
 
-                for (std::set<b2Body*>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
+                for (std::set<b2BodyId>::iterator it = toDestroy.begin(); it != toDestroy.end(); ++it)
                 {
                     PHYSICS.DestroyBody(*it);
                 }
@@ -230,39 +227,39 @@ void  GameState::MoveSelected(int x, int y)
             }
             else
             {
-                //m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
         else
         {
             Blok *mate = m_poSelectedBlok->FindMate();
-            if(mate)
+            if (mate)
             {
                 SetState(GS_Drag_Mating);
             }
             else
             {
                 SetState(GS_Drag_Free);
-                //m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
             }
         }
     }
     else
     {
-        //m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
+        // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +  y);
     }
 }
 
-Blok* GameState::GetBlokAt(int x, int y)
+Blok *GameState::GetBlokAt(int x, int y)
 {
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
+    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
-        if (GAMESTATE.m_vpoBloks[i]->CursorIntersectsPoint(x,y))
+        if (GAMESTATE.m_vpoBloks[i]->CursorIntersectsPoint(x, y))
         {
             return GAMESTATE.m_vpoBloks[i];
         }
     }
-    
+
     return NULL;
 }
 
@@ -286,7 +283,6 @@ void GameState::PlayAttach()
         gPlaySound(IDR_ATTACH3);
     }
 }
-
 
 void GameState::PlayDetach()
 {
@@ -315,28 +311,24 @@ void GameState::DumpGamestate(std::wstring wstrName)
 
     std::ofstream out;
 
-    out.open(wstrName.c_str(), std::ofstream::out );
+    out.open(wstrName.c_str(), std::ofstream::out);
 
+    std::map<const Blok *, int> indexMap;
 
-    std::map<const Blok*, int> indexMap;
-
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
+    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
         indexMap[m_vpoBloks[i]] = i;
-        out << i << " " 
-            << m_vpoBloks[i]->GetX() << " " 
-            << m_vpoBloks[i]->GetY() << " "
-            << m_vpoBloks[i]->GetColor() << " "
-            << std::endl;
+        out << i << " " << m_vpoBloks[i]->GetX() << " " << m_vpoBloks[i]->GetY() << " " << m_vpoBloks[i]->GetColor()
+            << " " << std::endl;
     }
 
     out << "-1" << std::endl;
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
+    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
         out << i << " ";
 
-        if(m_vpoBloks[i]->HasLeft())
+        if (m_vpoBloks[i]->HasLeft())
         {
             out << indexMap[m_vpoBloks[i]->GetLeft()] << " ";
         }
@@ -345,7 +337,7 @@ void GameState::DumpGamestate(std::wstring wstrName)
             out << -1 << " ";
         }
 
-        if(m_vpoBloks[i]->HasTop())
+        if (m_vpoBloks[i]->HasTop())
         {
             out << indexMap[m_vpoBloks[i]->GetTop()] << " ";
         }
@@ -354,8 +346,7 @@ void GameState::DumpGamestate(std::wstring wstrName)
             out << -1 << " ";
         }
 
-
-        if(m_vpoBloks[i]->HasRight())
+        if (m_vpoBloks[i]->HasRight())
         {
             out << indexMap[m_vpoBloks[i]->GetRight()] << " ";
         }
@@ -364,8 +355,7 @@ void GameState::DumpGamestate(std::wstring wstrName)
             out << -1 << " ";
         }
 
-
-        if(m_vpoBloks[i]->HasBottom())
+        if (m_vpoBloks[i]->HasBottom())
         {
             out << indexMap[m_vpoBloks[i]->GetBottom()] << std::endl;
         }
@@ -373,26 +363,24 @@ void GameState::DumpGamestate(std::wstring wstrName)
         {
             out << -1 << std::endl;
         }
-
     }
 
     out.close();
 }
 
-
-bool GameState::ReadGamestate(std::wstring wstrName )
+bool GameState::ReadGamestate(std::wstring wstrName)
 {
 
     std::ifstream in;
 
-    in.open(wstrName, std::ofstream::in );
+    in.open(wstrName, std::ofstream::in);
 
-    if(!in.is_open())
+    if (!in.is_open())
     {
         return false;
     }
 
-    for( unsigned int ui = 0; ui < GAMESTATE.m_vpoBloks.size(); ui++ )
+    for (unsigned int ui = 0; ui < GAMESTATE.m_vpoBloks.size(); ui++)
     {
         delete m_vpoBloks[ui];
         m_vpoBloks[ui] = 0;
@@ -404,45 +392,42 @@ bool GameState::ReadGamestate(std::wstring wstrName )
     COLORREF color;
 
     in >> i;
-    while(i >= 0)
+    while (i >= 0)
     {
         in >> x >> y >> color;
-        Blok* temp = new Blok(color,x,y);
+        Blok *temp = new Blok(color, x, y);
 
         m_vpoBloks.push_back(temp);
 
         in >> i;
     }
 
-    
-
     int left, right, top, bottom;
 
-    while(in >> i >> left >> top >> right >> bottom)
+    while (in >> i >> left >> top >> right >> bottom)
     {
-        if(left >= 0)
+        if (left >= 0)
         {
             m_vpoBloks[i]->AttachLeft(m_vpoBloks[left], false);
         }
 
-        if(top >= 0)
+        if (top >= 0)
         {
             m_vpoBloks[i]->AttachTop(m_vpoBloks[top], false);
         }
 
-        if(bottom >= 0)
+        if (bottom >= 0)
         {
             m_vpoBloks[i]->AttachBottom(m_vpoBloks[bottom], false);
         }
 
-        if(right >= 0)
+        if (right >= 0)
         {
             m_vpoBloks[i]->AttachRight(m_vpoBloks[right], false);
         }
     }
     in.close();
     return true;
-
 }
 
 void GameState::SetColorsForMenu(int menu)

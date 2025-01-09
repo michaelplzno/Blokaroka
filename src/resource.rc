@@ -1,0 +1,15 @@
+#include "resource.h"
+
+// Icon resources
+IDI_ICON1 ICON "../blokarokaicon.ico"
+IDI_ICON2 ICON "../blokarokaicon-32.ico"
+
+// Sound resources
+IDR_ATTACH0 WAVE "../sounds/attach0.wav"
+IDR_DETACH0 WAVE "../sounds/detach0.wav"
+IDR_ATTACH1 WAVE "../sounds/attach1.wav"
+IDR_ATTACH2 WAVE "../sounds/attach2.wav"
+IDR_ATTACH3 WAVE "../sounds/attach3.wav"
+IDR_DETACH1 WAVE "../sounds/detach1.wav"
+IDR_DETACH2 WAVE "../sounds/detach2.wav"
+IDR_DETACH3 WAVE "../sounds/detach3.wav"

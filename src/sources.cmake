@@ -1,14 +1,21 @@
 list(APPEND library_headers
-    Blok.h
-    Blokaroka.h
-    GameState.h
-    Physics.h
-    Renderer.h
-    resource.h)
+    src/Blok.h
+    src/Blokaroka.h
+    src/GameState.h
+    src/Physics.h
+    src/Renderer.h
+    src/resource.h)
+
+file(GLOB_RECURSE box2d_headers "extern/box2d/include/box2d/*.h")
+list(APPEND library_headers ${box2d_headers})
 
 list(APPEND library_sources
-    Physics.cpp
-    GameState.cpp
-    Blokaroka.cpp
-    Blok.cpp
-    Renderer.cpp)
+    src/Physics.cpp
+    src/GameState.cpp
+    src/Blokaroka.cpp
+    src/Blok.cpp
+    src/Renderer.cpp)
+
+set(SOURCES
+    src/Blokaroka.cpp
+)

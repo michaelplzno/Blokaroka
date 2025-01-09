@@ -23,7 +23,7 @@
 #include <sstream>
 #include <set>
 
-#include "C:\Users\Daxel\OneDrive\Documents\coding\c++\Blokaroka\extern\box2d\include\box2d\box2d.h"
+#include <box2d\box2d.h>
 
 
 
@@ -54,6 +54,10 @@
 #define MENU_G_OFF      1009
 #define SUBMENU_GRAVITY 1010
 
+#define MENU_DEBUG_DRAW_ON 1011
+#define MENU_DEBUG_DRAW_OFF 1012
+#define SUBMENU_DEBUG_DRAW 1013
+
 inline void gPlaySound(int resource)
 {
     PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE|SND_ASYNC);
@@ -68,17 +72,17 @@ inline std::wstring gAppDataDirectory()
 
     if (SUCCEEDED(hr))
     {
-        OutputDebugString("Got Folder Path: ");
+        OutputDebugStringW(L"Got Folder Path: ");
 
         wss << knownPath << L"\\Blokaroka\\";
 
         OutputDebugStringW(wss.str().c_str());
-        OutputDebugString("\n");
+        OutputDebugStringW(L"\n");
     }
     else
     {
         wss << L".\\";
-        OutputDebugString("NO Folder Path\n");
+        OutputDebugStringW(L"NO Folder Path\n");
     }
 
     // Free the known path info.

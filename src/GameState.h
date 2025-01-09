@@ -3,6 +3,7 @@
 
 #include "Blokaroka.h"
 #include <map>
+#include <string>
 
 #define BLOK_WIDTH 15
 #define BLOK_HEIGHT 18

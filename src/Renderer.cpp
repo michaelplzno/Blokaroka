@@ -1,13 +1,11 @@
 #include "Renderer.h"
 #include <math.h>
 
-bool gravityOnOff = true;
-
 b2Vec2 Renderer::Pixel::ToPhysics()
 {
     b2Vec2 ret;
     ret.x = m_iX * PIXELS_TO_PHYSICS;
-    ret.y = (RENDER.GetHeight() - m_iY)* PIXELS_TO_PHYSICS;
+    ret.y = (RENDER.GetHeight() - m_iY) * PIXELS_TO_PHYSICS;
     return ret;
 }
 
@@ -22,55 +20,52 @@ void Renderer::Pixel::SetFromPhysics(b2Vec2 physicsPoint)
     m_iY = RENDER.GetHeight() - (int)(physicsPoint.y * PHYSICS_TO_PIXELS);
 }
 
-typedef LRESULT (__cdecl*hookFunc)(HWND, HWND);
+typedef LRESULT(__cdecl *hookFunc)(HWND, HWND);
 
-LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 
-
-    if( wParam == WM_LBUTTONUP )
-    { 
+    if (wParam == WM_LBUTTONUP)
+    {
         PHYSICS.OnMouseUp();
 
-        if(GAMESTATE.GetState() == GameState::GS_Drag_Free)
+        if (GAMESTATE.GetState() == GameState::GS_Drag_Free)
         {
             GAMESTATE.SetState(GameState::GS_Static);
             return 1;
         }
 
-        if(GAMESTATE.GetState() == GameState::GS_Drag_Mating)
+        if (GAMESTATE.GetState() == GameState::GS_Drag_Mating)
         {
             GAMESTATE.SetState(GameState::GS_Static);
             return 1;
         }
         return 0;
     }
-    else if( wParam == WM_RBUTTONUP )
-    { 
+    else if (wParam == WM_RBUTTONUP)
+    {
         PHYSICS.OnMouseUp();
 
-        if(GAMESTATE.GetState() != GameState::GS_Static)
+        if (GAMESTATE.GetState() != GameState::GS_Static)
         {
             RENDER.m_bRight = false;
             GAMESTATE.SetState(GameState::GS_Static);
             return 1;
         }
-        if(RENDER.m_bRight)
+        if (RENDER.m_bRight)
         {
             RENDER.m_bRight = false;
             return 1;
         }
         return 0;
     }
-    else if( wParam == WM_LBUTTONDOWN )
+    else if (wParam == WM_LBUTTONDOWN)
     {
 
-
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
-    
-        int xPos = hook.pt.x; 
-        int yPos = hook.pt.y; 
 
+        int xPos = hook.pt.x;
+        int yPos = hook.pt.y;
 
         tagPOINT result;
         GetPhysicalCursorPos(&result);
@@ -81,12 +76,11 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         PHYSICS.OnMouseMove(p.ToPhysics());
 
-
-        if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
+        if (GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
             Renderer::Pixel p(xPos, yPos);
 
-            Blok* poClicked = PHYSICS.OnMouseDown(p.ToPhysics());
+            Blok *poClicked = PHYSICS.OnMouseDown(p.ToPhysics());
             if (poClicked)
             {
                 GAMESTATE.SetDragging(poClicked, xPos, yPos);
@@ -98,19 +92,18 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
             if( poClicked )
             {
                 GAMESTATE.SetDragging(poClicked, xPos, yPos);
-                
+
                 return 1;
             }
             */
-
         }
         return 0;
     }
-    else if( wParam == WM_RBUTTONDOWN )
+    else if (wParam == WM_RBUTTONDOWN)
     {
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
-        int xPos = hook.pt.x; 
-        int yPos = hook.pt.y; 
+        int xPos = hook.pt.x;
+        int yPos = hook.pt.y;
 
         tagPOINT result;
         GetPhysicalCursorPos(&result);
@@ -121,9 +114,9 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
         PHYSICS.OnMouseMove(p.ToPhysics());
 
-        if(GAMESTATE.GetState() != GameState::GS_Drag_Free)
+        if (GAMESTATE.GetState() != GameState::GS_Drag_Free)
         {
-            Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
+            Blok *poClicked = GAMESTATE.GetBlokAt(xPos, yPos);
             int ret = 0;
             if (poClicked && poClicked->CanDetachUp())
             {
@@ -137,7 +130,7 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
                 ret = 1;
             }
-            else if(poClicked)
+            else if (poClicked)
             {
                 ret = 1;
             }
@@ -155,15 +148,13 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
 
                 return 1;
             }
-
         }
         return 0;
     }
-    else if( wParam == WM_MOUSEMOVE )
-    { 
-        if(GAMESTATE.GetState() == GameState::GS_Drag_Free || 
-           GAMESTATE.GetState() == GameState::GS_Drag_Mating ||
-           GAMESTATE.GetState() == GameState::GS_Drag_Splitting )
+    else if (wParam == WM_MOUSEMOVE)
+    {
+        if (GAMESTATE.GetState() == GameState::GS_Drag_Free || GAMESTATE.GetState() == GameState::GS_Drag_Mating ||
+            GAMESTATE.GetState() == GameState::GS_Drag_Splitting)
         {
             MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
 
@@ -175,12 +166,12 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
             Renderer::Pixel p(xPos, yPos);
 
             PHYSICS.OnMouseMove(p.ToPhysics());
-            
+
             GAMESTATE.MoveSelected(xPos, yPos);
 
             /*
 
-            
+
 
             RENDER.RenderFrame();
             RENDER.PresentFrame();*/
@@ -188,284 +179,277 @@ LRESULT CALLBACK MouseHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
         }
     }
 
-   /* if( wParam == WM_LBUTTONDOWN )
-    {
-        MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
+    /* if( wParam == WM_LBUTTONDOWN )
+     {
+         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
 
-        if( hook.pt.x > 200 && hook.pt.x < 500 &&
-            hook.pt.y > 3 && hook.pt.y < 500 )
-        {
-           RENDER.m_iThing = rand()  % 255;
-           return 1;
-        }
-        else
-        {
-           return 0;
-        }
-    }*/
-
+         if( hook.pt.x > 200 && hook.pt.x < 500 &&
+             hook.pt.y > 3 && hook.pt.y < 500 )
+         {
+            RENDER.m_iThing = rand()  % 255;
+            return 1;
+         }
+         else
+         {
+            return 0;
+         }
+     }*/
 
     // Call next hook
-    return CallNextHookEx( NULL, nCode, wParam, lParam );
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-
-LRESULT CALLBACK KeyHookWndProc( int nCode, WPARAM wParam, LPARAM lParam )
-{// WH_MOUSE hook procedure
+LRESULT CALLBACK KeyHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
+{ // WH_MOUSE hook procedure
 
     if (!(nCode < 0))
-    {// Process hook
+    { // Process hook
 
         KBDLLHOOKSTRUCT hook = *(PKBDLLHOOKSTRUCT)lParam;
 
         switch (wParam)
         {
-        case WM_KEYDOWN: 
-            { 
-                if( hook.vkCode == VK_ESCAPE ) 
-                {
-                    PostQuitMessage( 0 );
-                    g_bIsAppAlive = false;
+        case WM_KEYDOWN: {
+            if (hook.vkCode == VK_ESCAPE)
+            {
+                PostQuitMessage(0);
+                g_bIsAppAlive = false;
 
-
-                    return 1;
-                }
+                return 1;
             }
         }
-
-
+        }
     }
 
     // Call next hook
-    return CallNextHookEx( NULL, nCode, wParam, lParam );
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
-ITaskbarList3* pTaskbarList = nullptr;
+ITaskbarList3 *pTaskbarList = nullptr;
 
 // Windows protocal handler function.
-LRESULT CALLBACK WndProc( HWND hWnd, UINT uMessage, 
-                          WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
 
     // Switch the windows message to figure out what it is
-    switch( uMessage )
+    switch (uMessage)
     {
-        case WM_COMMAND: // User interacted with popup menu.
+    case WM_COMMAND: // User interacted with popup menu.
+    {
+        if (wParam == MENU_EXIT)
         {
-            if (wParam == MENU_EXIT)
+            g_bIsAppAlive = false;
+        }
+        else if (wParam == MENU_RESET)
+        {
+            int answer = MessageBoxW(0, L"Are you sure you want to reset your bloks? This cannot be undone.",
+                                     L"Reset Your Bloks?", MB_YESNO | MB_ICONQUESTION);
+            if (answer == IDYES)
             {
-                g_bIsAppAlive = false;
+                GAMESTATE.ClearBloks();
+                GAMESTATE.GenerateBloks();
+                RENDER.RenderFrame();
+                RENDER.PresentFrame();
             }
-            else if (wParam == MENU_RESET)
+        }
+        else if (wParam == MENU_SAVE)
+        {
+            OPENFILENAMEW ofn;       // common dialog box structure
+            wchar_t szFile[260];     // buffer for file name
+            HWND hwnd = RENDER.hWnd; // owner window
+
+            // Initialize OPENFILENAME
+            ZeroMemory(&ofn, sizeof(ofn));
+            ofn.lStructSize = sizeof(ofn);
+            ofn.hwndOwner = hwnd;
+            ofn.lpstrFile = szFile;
+            // Set lpstrFile[0] to '\0' so that GetOpenFileName does not
+            // use the contents of szFile to initialize itself.
+            ofn.lpstrFile[0] = '\0';
+            ofn.nMaxFile = sizeof(szFile);
+            ofn.lpstrFilter = L".blok";
+            ofn.lpstrDefExt = L"blok";
+            ofn.nFilterIndex = 0;
+            ofn.lpstrFileTitle = NULL;
+            ofn.nMaxFileTitle = 0;
+            ofn.lpstrInitialDir = NULL;
+            ofn.Flags = OFN_PATHMUSTEXIST; // | OFN_FILEMUSTEXIST;
+
+            // Display the Open dialog box.
+
+            if (GetSaveFileNameW(&ofn) == TRUE)
             {
-                int answer = MessageBox(0, "Are you sure you want to reset your bloks? This cannot be undone.", "Reset Your Bloks?", MB_YESNO | MB_ICONQUESTION);
+
+                int answer = IDYES;
+
+                WIN32_FIND_DATAW FindFileData;
+                HANDLE handle = FindFirstFileW(szFile, &FindFileData);
+
+                if (handle != INVALID_HANDLE_VALUE)
+                {
+                    MessageBoxW(0, L"This file already exists, are you sure you want to overwrite it?",
+                                L"Overwrite Save File?", MB_YESNO | MB_ICONQUESTION);
+                }
+
                 if (answer == IDYES)
-                {
-                    GAMESTATE.ClearBloks();
-                    GAMESTATE.GenerateBloks();
-                    RENDER.RenderFrame();
-                    RENDER.PresentFrame();
-                }
-            }
-            else if (wParam == MENU_SAVE)
-            {
-                OPENFILENAME ofn;       // common dialog box structure
-                char szFile[260];       // buffer for file name
-                HWND hwnd = RENDER.hWnd;// owner window
-
-                // Initialize OPENFILENAME
-                ZeroMemory(&ofn, sizeof(ofn));
-                ofn.lStructSize = sizeof(ofn);
-                ofn.hwndOwner = hwnd;
-                ofn.lpstrFile = szFile;
-                // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
-                // use the contents of szFile to initialize itself.
-                ofn.lpstrFile[0] = '\0';
-                ofn.nMaxFile = sizeof(szFile);
-                ofn.lpstrFilter = ".blok";
-                ofn.lpstrDefExt = "blok";
-                ofn.nFilterIndex = 0;
-                ofn.lpstrFileTitle = NULL;
-                ofn.nMaxFileTitle = 0;
-                ofn.lpstrInitialDir = NULL;
-                ofn.Flags = OFN_PATHMUSTEXIST;// | OFN_FILEMUSTEXIST;
-
-                // Display the Open dialog box. 
-
-                if (GetSaveFileName(&ofn) == TRUE)
-                {
-
-                    int answer = IDYES;
-                    
-                    WIN32_FIND_DATA FindFileData;
-                    HANDLE handle = FindFirstFile(szFile, &FindFileData);
-
-                    if (handle != INVALID_HANDLE_VALUE)
-                    {
-                        MessageBox(0, "This file already exists, are you sure you want to overwrite it?", "Overwrite Save File?", MB_YESNO | MB_ICONQUESTION);
-                    }
-
-                    if (answer == IDYES)
-                    {
-                        std::wstringstream wss;
-                        wss << szFile;
-                        GAMESTATE.DumpGamestate(wss.str());
-                    }
-
-
-                    
-                }
-            }
-            else if (wParam == MENU_LOAD)
-            {
-                OPENFILENAME ofn;       // common dialog box structure
-                char szFile[260];       // buffer for file name
-                HWND hwnd = RENDER.hWnd;// owner window
-
-                // Initialize OPENFILENAME
-                ZeroMemory(&ofn, sizeof(ofn));
-                ofn.lStructSize = sizeof(ofn);
-                ofn.hwndOwner = hwnd;
-                ofn.lpstrFile = szFile;
-                // Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
-                // use the contents of szFile to initialize itself.
-                ofn.lpstrFile[0] = '\0';
-                ofn.nMaxFile = sizeof(szFile);
-                ofn.lpstrFilter = "Blok\0*.blok\0Text\0*.TXT\0All\0*.*";
-                ofn.lpstrDefExt = "blok";
-                ofn.nFilterIndex = 1;
-                ofn.lpstrFileTitle = NULL;
-                ofn.nMaxFileTitle = 0;
-                ofn.lpstrInitialDir = NULL;
-                ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-                // Display the Open dialog box. 
-
-                if (GetOpenFileName(&ofn) == TRUE)
                 {
                     std::wstringstream wss;
                     wss << szFile;
-                    GAMESTATE.ClearBloks();
-                    GAMESTATE.ReadGamestate(wss.str());
+                    GAMESTATE.DumpGamestate(wss.str());
+                }
+            }
+        }
+        else if (wParam == MENU_LOAD)
+        {
+            OPENFILENAMEW ofn;       // common dialog box structure
+            wchar_t szFile[260];     // buffer for file name
+            HWND hwnd = RENDER.hWnd; // owner window
 
-                    RENDER.RenderFrame();
-                    RENDER.PresentFrame();
-                }
-            }
-            else if (wParam == MENU_BASIC || wParam == MENU_AMETHYST || wParam == MENU_TOPAZ || wParam == MENU_PERIDOT)
+            // Initialize OPENFILENAME
+            ZeroMemory(&ofn, sizeof(ofn));
+            ofn.lStructSize = sizeof(ofn);
+            ofn.hwndOwner = hwnd;
+            ofn.lpstrFile = szFile;
+            // Set lpstrFile[0] to '\0' so that GetOpenFileName does not
+            // use the contents of szFile to initialize itself.
+            ofn.lpstrFile[0] = '\0';
+            ofn.nMaxFile = sizeof(szFile);
+            ofn.lpstrFilter = L"Blok\0*.blok\0Text\0*.TXT\0All\0*.*";
+            ofn.lpstrDefExt = L"blok";
+            ofn.nFilterIndex = 1;
+            ofn.lpstrFileTitle = NULL;
+            ofn.nMaxFileTitle = 0;
+            ofn.lpstrInitialDir = NULL;
+            ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+            // Display the Open dialog box.
+
+            if (GetOpenFileNameW(&ofn) == TRUE)
             {
-                GAMESTATE.SetColorsForMenu(wParam);
+                std::wstringstream wss;
+                wss << szFile;
+                GAMESTATE.ClearBloks();
+                GAMESTATE.ReadGamestate(wss.str());
+
+                RENDER.RenderFrame();
+                RENDER.PresentFrame();
             }
-            else if (wParam == MENU_G_ON)
-            {
-                gravityOnOff = true;
-                PHYSICS.changeGravity(-10.0f);
-            }
-            else if (wParam == MENU_G_OFF)
-            {
-                gravityOnOff = false;
-                PHYSICS.changeGravity(0.0f);
-            }
-            else if (LOWORD(wParam) == SUBMENU_GRAVITY)
-            {
-                if (gravityOnOff)
-                {
-                    gravityOnOff = false;
-                    PHYSICS.changeGravity(0.0f);
-                }
-                else
-                {
-                    gravityOnOff = true;
-                    PHYSICS.changeGravity(-10.0f);
-                }
-            }
+        }
+        else if (wParam == MENU_BASIC || wParam == MENU_AMETHYST || wParam == MENU_TOPAZ || wParam == MENU_PERIDOT)
+        {
+            GAMESTATE.SetColorsForMenu(wParam);
+        }
+        else if (wParam == MENU_G_ON)
+        {
+            PHYSICS.ChangeGravity(-10.0f);
+        }
+        else if (wParam == MENU_G_OFF)
+        {
+            PHYSICS.ChangeGravity(0.0f);
+        }
+        else if (wParam == MENU_DEBUG_DRAW_ON)
+        {
+            PHYSICS.ToggleDebugRender();
+        }
+        else if (wParam == MENU_DEBUG_DRAW_OFF)
+        {
+            PHYSICS.ToggleDebugRender();
+        }
+        else if (LOWORD(wParam) == SUBMENU_GRAVITY)
+        {
+            PHYSICS.ToggleGravity();
+        }
+        else
+        {
+            // This case should never be reached.
+            std::stringstream ss;
+            ss << "You pressed option:" << wParam;
+            std::string s = ss.str();
+            std::wstring ws(s.begin(), s.end());
+            MessageBoxW(NULL, ws.c_str(), L"Blockaroka Alert", MB_OK);
+        }
+
+        return 0;
+    }
+
+    case WM_TRAY_MESSAGE: // User interacted with the tray icon.
+    {
+        if (LOWORD(lParam) == WM_LBUTTONUP ||
+            LOWORD(lParam) == WM_RBUTTONUP) // User left or right clicked the tray icon.
+        {
+            // Generate a popup menu to ask the user what to do.
+            RENDER.m_hPopupMenu = CreatePopupMenu();
+
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_BASIC, L"Basic Colors");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_AMETHYST, L"Amethyst");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_TOPAZ, L"Topaz");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT, L"Peridot");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
+            if (PHYSICS.IsGravityOn())
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF, L"Turn Gravity OFF");
             else
-            {
-                // This case should never be reached.
-                std::stringstream ss;
-                ss << "You pressed option:" << wParam;
-                MessageBox(NULL, ss.str().c_str(), "Blockaroka Alert", MB_OK);
-            }
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_G_ON, L"Turn Gravity ON");
+            if (PHYSICS.IsDebugRenderOn())
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_DEBUG_DRAW_OFF, L"Turn Debug Draw OFF");
+            else
+                AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_DEBUG_DRAW_ON, L"Turn Debug Draw ON");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_RESET, L"Reset");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_SAVE, L"Save");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_LOAD, L"Load");
+            AppendMenuW(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
+            AppendMenuW(RENDER.m_hPopupMenu, MF_STRING, MENU_EXIT, L"Exit");
 
-            return 0;
+            // Popup where the mouse is.
+            tagPOINT pt;
+            GetPhysicalCursorPos(&pt);
+
+            // Display the popup.
+            TrackPopupMenu(RENDER.m_hPopupMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, 0, hWnd, NULL);
+
+            DestroyMenu(RENDER.m_hPopupMenu);
         }
+        return 0;
+    }
 
-        case WM_TRAY_MESSAGE: // User interacted with the tray icon.
+    case WM_KEYDOWN: // User pressed a key.
+    {
+        if (wParam == VK_ESCAPE) // Terminate program when ESC is pressed.
         {
-            if (LOWORD(lParam) == WM_LBUTTONUP || LOWORD(lParam) == WM_RBUTTONUP) // User left or right clicked the tray icon.
-            {
-                // Generate a popup menu to ask the user what to do.
-                RENDER.m_hPopupMenu = CreatePopupMenu(); 
-            
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_BASIC, "Basic Colors");
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_AMETHYST, "Amethyst");
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_TOPAZ, "Topaz");
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_PERIDOT, "Peridot");
-                AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
-                if (gravityOnOff) AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_G_OFF, "Gravity OFF");
-                else AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_G_ON, "Gravity ON");
-                AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_RESET, "Reset");
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_SAVE, "Save");
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_LOAD, "Load");
-                AppendMenu(RENDER.m_hPopupMenu, MF_SEPARATOR, 0, NULL);
-                AppendMenu(RENDER.m_hPopupMenu, MF_STRING, MENU_EXIT, "Exit");
-
-                // Popup where the mouse is.
-                tagPOINT pt;
-                GetPhysicalCursorPos(&pt);
-                
-                // Display the popup.
-                TrackPopupMenu(RENDER.m_hPopupMenu,
-                               TPM_LEFTALIGN | TPM_RIGHTBUTTON,
-                                pt.x, pt.y, 0, hWnd, NULL);
-                
-                DestroyMenu(RENDER.m_hPopupMenu);
-            }
-            return 0;
-        }
-
-        case WM_KEYDOWN: // User pressed a key.
-        {
-            if( wParam == VK_ESCAPE ) // Terminate program when ESC is pressed.
-            {
-                g_bIsAppAlive = false;
-                return 1;
-            }
-
-            return 0;
-        }
-
-        case WM_PAINT:
-        {
-            return 0;
-        }
-
-        case WM_DESTROY: // The window is about to be closed
-            // Clean up Taskbar interface
-            if (pTaskbarList) {
-                pTaskbarList->Release();
-                pTaskbarList = nullptr;
-            }
-            PostQuitMessage(0);
-        case WM_CLOSE: 
-        {  
-            // Our main window is closing.  This means we want our app to exit.
             g_bIsAppAlive = false;
-            return 0;
+            return 1;
         }
 
+        return 0;
+    }
 
-        default: // Some other message
+    case WM_PAINT: {
+        return 0;
+    }
+
+    case WM_DESTROY: // The window is about to be closed
+        // Clean up Taskbar interface
+        if (pTaskbarList)
         {
-            // Let windows handle this message
-            return DefWindowProc( hWnd, uMessage, wParam, lParam );
+            pTaskbarList->Release();
+            pTaskbarList = nullptr;
         }
+        PostQuitMessage(0);
+    case WM_CLOSE: {
+        // Our main window is closing.  This means we want our app to exit.
+        g_bIsAppAlive = false;
+        return 0;
+    }
+
+    default: // Some other message
+    {
+        // Let windows handle this message
+        return DefWindowProc(hWnd, uMessage, wParam, lParam);
+    }
     }
 }
 
 Renderer RENDER;
-
 
 void Renderer::HandleWindows()
 {
@@ -480,27 +464,27 @@ void Renderer::HandleWindows()
         }
 
         // Change the format of certain messages
-        TranslateMessage( &msg );
+        TranslateMessage(&msg);
         // Pass the message to WndProc() for processing
-        DispatchMessage( &msg );
+        DispatchMessage(&msg);
     }
 }
 
 void Renderer::RenderFrame(void)
 {
-    //HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
-    //HPEN NewPen = CreatePen(PS_SOLID, 3, CLEAR_COLOR);
+    // HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
+    // HPEN NewPen = CreatePen(PS_SOLID, 3, CLEAR_COLOR);
 
     BYTE *pPixel = NULL;
 
     if (m_Image.width * 4 == m_Image.pitch)
     {
         /* This is a special case. When the image width is already a multiple
-        * of 4 the image does not require any padding bytes at the end of each
-        * scan line. Consequently we do not need to address each scan line
-        * separately. This is much faster than the below case where the image
-        * width is not a multiple of 4.
-        */
+         * of 4 the image does not require any padding bytes at the end of each
+         * scan line. Consequently we do not need to address each scan line
+         * separately. This is much faster than the below case where the image
+         * width is not a multiple of 4.
+         */
 
         int i = 0;
         int totalBytes = m_Image.width * m_Image.height * 4;
@@ -517,10 +501,10 @@ void Renderer::RenderFrame(void)
     else
     {
         /* Width of the image is not a multiple of 4. So padding bytes have
-        * been included in the DIB's pixel data. Need to address each scan
-        * line separately. This is much slower than the above case where the
-        * width of the image is already a multiple of 4.
-        */
+         * been included in the DIB's pixel data. Need to address each scan
+         * line separately. This is much slower than the above case where the
+         * width of the image is already a multiple of 4.
+         */
 
         int x = 0;
         int y = 0;
@@ -538,8 +522,8 @@ void Renderer::RenderFrame(void)
         }
     }
 
-    //DeleteObject(NewPen);
-    //DeleteObject(NewBrush);
+    // DeleteObject(NewPen);
+    // DeleteObject(NewBrush);
 
     /*
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
@@ -567,7 +551,7 @@ void Renderer::RenderFrame(void)
     }
     */
 
-    for( unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++ )
+    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
     {
         GAMESTATE.m_vpoBloks[i]->DrawBlok(m_HDC);
     }
@@ -587,27 +571,27 @@ void Renderer::PresentFrame()
     hPrevObj = SelectObject(m_Image.hdc, m_Image.hBitmap);
     ClientToScreen(hWnd, &ptDest);
 
-    if( UpdateLayeredWindow(hWnd, GetDC(hWnd), &ptDest, &client, 
-                            m_Image.hdc, &ptSrc, 0, &blendFunc, ULW_ALPHA) == 0)
+    if (UpdateLayeredWindow(hWnd, GetDC(hWnd), &ptDest, &client, m_Image.hdc, &ptSrc, 0, &blendFunc, ULW_ALPHA) == 0)
     {
         char buff[300];
         sprintf_s(buff, 300, "Failed to update window: 0x%x", GetLastError());
 
-        MessageBox(NULL, buff, "Error", MB_OK);
+        wchar_t wbuff[300];
+        size_t convertedChars = 0;
+        mbstowcs_s(&convertedChars, wbuff, buff, 300);
+        MessageBoxW(NULL, wbuff, L"Error", MB_OK);
     }
 
     SelectObject(m_Image.hdc, hPrevObj);
 
     // clear zbufer;
 
-    for(unsigned int i = 0; i < (unsigned int)(m_Width * m_Height); i++)
+    for (unsigned int i = 0; i < (unsigned int)(m_Width * m_Height); i++)
     {
         m_ausZBuffer[i] = 0;
     }
 
-
-    //SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, m_Width, m_Height, SWP_SHOWWINDOW);
-
+    // SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, m_Width, m_Height, SWP_SHOWWINDOW);
 
     /*
     POINT windowPosition;
@@ -632,8 +616,6 @@ void Renderer::PresentFrame()
     }*/
 }
 
-
-
 void Renderer::InitRenderer(HINSTANCE hInstance)
 {
     m_hInstance = hInstance;
@@ -643,84 +625,81 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 
     m_bRight = false;
 
-    WNDCLASSEX wc;    // The window class used to create our window
+    WNDCLASSEXW wc; // The window class used to create our window
 
     // The name of our class and also the title to our window
-    char* strAppName = "Blokaroka" ;
+    LPCWSTR strAppName = L"Blokaroka";
 
     // Fill in the window class with the attributes for our main window
 
     // The size of this struture in bytes
-    wc.cbSize            = sizeof( WNDCLASSEX ); 
+    wc.cbSize = sizeof(WNDCLASSEX);
 
     //  The style of the window.
-    wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     // Useless information.  Just set to zero.
-    wc.cbClsExtra        = 0;
+    wc.cbClsExtra = 0;
     // Useless information.  Just set to zero.
-    wc.cbWndExtra        = 0;
+    wc.cbWndExtra = 0;
     // The name of our event handler
-    wc.lpfnWndProc        = WndProc;
+    wc.lpfnWndProc = WndProc;
     // A handle to the applications instance
-    wc.hInstance        = hInstance;
+    wc.hInstance = hInstance;
     // The handle to the brush to use for the window background
-    wc.hbrBackground    = CreateSolidBrush(CLEAR_COLOR);
+    wc.hbrBackground = CreateSolidBrush(CLEAR_COLOR);
     // A handle to the icon to use for the window
-    wc.hIcon            = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
     // A handle to a smaller version of the apps icon
-    wc.hIconSm            = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+    wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
     // A handle to the cursor to use while the mouse is over our window
-    wc.hCursor            = LoadCursor( NULL, IDC_HAND );
+    wc.hCursor = LoadCursor(NULL, IDC_HAND);
     // A handle to the resource to use as our menu
-    wc.lpszMenuName        = NULL;
+    wc.lpszMenuName = NULL;
     // The human readable name for this class
-    wc.lpszClassName    = strAppName;
+    wc.lpszClassName = strAppName;
 
     // Register the class with windows
-    RegisterClassEx( &wc );
+    RegisterClassExW(&wc);
 
     // make sure the window is created with the correct game area as opposed to correct outer
     // size
     int xAdd, yAdd;
     xAdd = yAdd = 0;
-    DWORD winType = WS_POPUP|WS_VISIBLE;
-    DWORD exWinType = WS_EX_LAYERED|WS_EX_TOPMOST;
+    DWORD winType = WS_POPUP | WS_VISIBLE;
+    DWORD exWinType = WS_EX_LAYERED | WS_EX_TOPMOST;
 
+    // Create the window based on the previous class
+    hWnd = CreateWindowExW(exWinType | WS_EX_APPWINDOW, // Advanced style settings
+                           strAppName,                  // The name of the class
+                           strAppName,                  // The window caption
+                           winType,                     // The window style
+                           0,                           // The initial x position
+                           0,                           // The initial y position
+                           1280,
+                           1000,      // The initial width / height
+                           NULL,      // Handle to parent window
+                           NULL,      // Handle to the menu
+                           hInstance, // Handle to the apps instance
+                           NULL);     // Advanced context
 
-    // Create the window based on the previous class    
-    hWnd = CreateWindowEx(  
-                            exWinType | WS_EX_APPWINDOW,   // Advanced style settings 
-                            strAppName,             // The name of the class
-                            strAppName,             // The window caption
-                            winType,                // The window style
-                            0,                        // The initial x position 
-                            0,                      // The initial y position
-                            1280,
-                            1000,                   // The initial width / height
-                            NULL,                    // Handle to parent window                        
-                            NULL,                    // Handle to the menu
-                            hInstance,                // Handle to the apps instance
-                            NULL );                    // Advanced context
-
-
-
-    if (SetWindowsHookEx( 13, KeyHookWndProc, GetModuleHandle(NULL), NULL ) == NULL)
+    if (SetWindowsHookEx(13, KeyHookWndProc, GetModuleHandle(NULL), NULL) == NULL)
     {
-        MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK );
+        MessageBox(NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK);
         g_bIsAppAlive = false;
         return;
     }
 
-    if (SetWindowsHookEx( 14, MouseHookWndProc, GetModuleHandle(NULL), NULL ) == NULL)
+    if (SetWindowsHookEx(14, MouseHookWndProc, GetModuleHandle(NULL), NULL) == NULL)
     {
-        MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK );
+        MessageBox(NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK);
         g_bIsAppAlive = false;
         return;
     }
 
     // Create the Taskbar interface
     HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pTaskbarList));
-    if (FAILED(hr) || FAILED(pTaskbarList->HrInit())) {
+    if (FAILED(hr) || FAILED(pTaskbarList->HrInit()))
+    {
         MessageBox(hWnd, TEXT("Failed to initialize Taskbar interface"), TEXT("Error"), MB_ICONERROR);
         return;
     }
@@ -738,58 +717,57 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 
     // Add the button to the taskbar thumbnail toolbar
     hr = pTaskbarList->ThumbBarAddButtons(hWnd, 1, &thumbButton);
-    if (FAILED(hr)) {
+    if (FAILED(hr))
+    {
         MessageBox(hWnd, TEXT("Failed to add Taskbar button"), TEXT("Error"), MB_ICONERROR);
     }
 
-/* 
-    HOOKPROC hkprcSysMsg; 
-    static HINSTANCE hinstDLL; 
-    static HHOOK hhookSysMsg; 
-    hookFunc SetHook = NULL;
+    /*
+        HOOKPROC hkprcSysMsg;
+        static HINSTANCE hinstDLL;
+        static HHOOK hhookSysMsg;
+        hookFunc SetHook = NULL;
 
-    hinstDLL = LoadLibrary("Hooks.dll"); 
-    if(!hinstDLL)
-    {
-        MessageBox(GetDesktopWindow(), "Could Not Load DLL", "Error", MB_OK);
-    }
-    
-    SetHook = (hookFunc)GetProcAddress((HMODULE)hinstDLL, "SetHook");
-    if(SetHook == NULL)
-    {
-        MessageBox(NULL, "Failed to load SetHook", "Error", MB_OK);
-        g_bIsAppAlive = false;
-        return;
-    }
+        hinstDLL = LoadLibrary("Hooks.dll");
+        if(!hinstDLL)
+        {
+            MessageBox(GetDesktopWindow(), "Could Not Load DLL", "Error", MB_OK);
+        }
 
-    int r = SetHook(GetDesktopWindow(), hWnd);
-    if( r < 0 )
-        MessageBox(GetDesktopWindow(), "Failed to install hook", "Error", MB_OK);
+        SetHook = (hookFunc)GetProcAddress((HMODULE)hinstDLL, "SetHook");
+        if(SetHook == NULL)
+        {
+            MessageBox(NULL, "Failed to load SetHook", "Error", MB_OK);
+            g_bIsAppAlive = false;
+            return;
+        }
 
-       hkprcSysMsg = (HOOKPROC)GetProcAddress((HMODULE)hinstDLL, (LPTSTR)"CallWndProc");
-    
+        int r = SetHook(GetDesktopWindow(), hWnd);
+        if( r < 0 )
+            MessageBox(GetDesktopWindow(), "Failed to install hook", "Error", MB_OK);
 
-    hhookSysMsg = SetWindowsHookEx(WH_CALLWNDPROC,hkprcSysMsg,hinstDLL,0); 
+           hkprcSysMsg = (HOOKPROC)GetProcAddress((HMODULE)hinstDLL, (LPTSTR)"CallWndProc");
 
-    SetHook(hhookSysMsg);
 
-    if ( hkprcSysMsg == NULL || hhookSysMsg == NULL)
-    {
-        MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK );
-        g_bIsAppAlive = false;
-        return;
-    }*/
+        hhookSysMsg = SetWindowsHookEx(WH_CALLWNDPROC,hkprcSysMsg,hinstDLL,0);
+
+        SetHook(hhookSysMsg);
+
+        if ( hkprcSysMsg == NULL || hhookSysMsg == NULL)
+        {
+            MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."), MB_OK );
+            g_bIsAppAlive = false;
+            return;
+        }*/
+
     // Display the window we just created
-    ShowWindow( hWnd, SW_SHOWDEFAULT );
+    ShowWindow(hWnd, SW_SHOWDEFAULT);
     // Draw the window contents for the first time
 
     m_HDC = GetDC(hWnd);
 
-
-
     RECT r;
-    GetClipBox(GetDC(NULL),&r);
-
+    GetClipBox(GetDC(NULL), &r);
 
     RECT desktop;
     // Get a handle to the desktop window
@@ -799,25 +777,24 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     // The top left corner will have coordinates (0,0)
     // and the bottom right corner will have coordinates
     // (horizontal, vertical)
-    //horizontal = desktop.right;
-    //vertical = desktop.bottom;
+    // horizontal = desktop.right;
+    // vertical = desktop.bottom;
 
-    /*SetWindowLong(hWnd, 
-        GWL_EXSTYLE, 
+    /*SetWindowLong(hWnd,
+        GWL_EXSTYLE,
         GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);*/
 
     // Make this window 70% alpha
-    //SetLayeredWindowAttributes(hWnd, CLEAR_COLOR, 255, LWA_COLORKEY);
+    // SetLayeredWindowAttributes(hWnd, CLEAR_COLOR, 255, LWA_COLORKEY);
 
-
-    m_Width = desktop.right;// r.right - r.left;
-    m_Height = desktop.bottom;// r.bottom - r.top;
+    m_Width = desktop.right;   // r.right - r.left;
+    m_Height = desktop.bottom; // r.bottom - r.top;
 
     m_ausZBuffer = new unsigned int[m_Width * m_Height];
 
     if (!ImageCreate(&m_Image, m_Width, m_Height))
     {
-        MessageBox(NULL, "Failed CreateCompatibleBitmap", "Error", MB_OK);
+        MessageBoxW(NULL, L"Failed CreateCompatibleBitmap", L"Error", MB_OK);
         return;
     }
 
@@ -831,94 +808,89 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     m_tnd.uCallbackMessage = WM_TRAY_MESSAGE;
     m_tnd.dwState = NIS_SHAREDICON;
     m_tnd.uVersion = NOTIFYICON_VERSION_4;
-    strcpy_s(m_tnd.szTip, 128, strAppName);
+    wcscpy_s((wchar_t *)m_tnd.szTip, 128, strAppName);
     m_tnd.hIcon = wc.hIconSm;
 
     Shell_NotifyIcon(NIM_ADD, &m_tnd);
 }
 
-void Renderer::SetPixel( int x, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/, float fSourceBlend )
+void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/, float fSourceBlend)
 {
-    if(x >= m_Image.width || x < 0 ||
-       y >= m_Image.height || y <= 0)
+    if (x >= m_Image.width || x < 0 || y >= m_Image.height || y <= 0)
     {
         return;
     }
 
-    if(m_ausZBuffer[y*m_Width + x] > depth)
+    if (m_ausZBuffer[y * m_Width + x] > depth)
     {
         return;
     }
-
-    
 
     BYTE *pPixel = NULL;
 
-    //if(fAlpha == 1.0f)
+    // if(fAlpha == 1.0f)
     {
-        m_ausZBuffer[y*m_Width + x] = depth;
+        m_ausZBuffer[y * m_Width + x] = depth;
         if (m_Image.width * 4 == m_Image.pitch)
         {
             /* This is a special case. When the image width is already a multiple
-            * of 4 the image does not require any padding bytes at the end of each
-            * scan line. Consequently we do not need to address each scan line
-            * separately. This is much faster than the below case where the image
-            * width is not a multiple of 4.
-            */
+             * of 4 the image does not require any padding bytes at the end of each
+             * scan line. Consequently we do not need to address each scan line
+             * separately. This is much faster than the below case where the image
+             * width is not a multiple of 4.
+             */
 
             int i = 0;
             int totalBytes = m_Image.width * m_Image.height * 4;
 
-
-            pPixel = &m_Image.pPixels[x*4+y*m_Image.width*4];
-            pPixel[0] = (BYTE)(GetBValue(color) * fAlpha);// * (BYTE)((float)pPixel[3] / 255.0f);
+            pPixel = &m_Image.pPixels[x * 4 + y * m_Image.width * 4];
+            pPixel[0] = (BYTE)(GetBValue(color) * fAlpha); // * (BYTE)((float)pPixel[3] / 255.0f);
             pPixel[1] = (BYTE)(GetGValue(color) * fAlpha);
             pPixel[2] = (BYTE)(GetRValue(color) * fAlpha);
             pPixel[3] = (BYTE)(255 * fAlpha);
-
         }
         else
         {
             /* Width of the image is not a multiple of 4. So padding bytes have
-            * been included in the DIB's pixel data. Need to address each scan
-            * line separately. This is much slower than the above case where the
-            * width of the image is already a multiple of 4.
-            */
+             * been included in the DIB's pixel data. Need to address each scan
+             * line separately. This is much slower than the above case where the
+             * width of the image is already a multiple of 4.
+             */
 
             pPixel = &m_Image.pPixels[(y * m_Image.pitch) + (x * 4)];
-            pPixel[0] = (BYTE)(GetBValue(color) * fAlpha);// * (BYTE)((float)pPixel[3] / 255.0f);
+            pPixel[0] = (BYTE)(GetBValue(color) * fAlpha); // * (BYTE)((float)pPixel[3] / 255.0f);
             pPixel[1] = (BYTE)(GetGValue(color) * fAlpha);
             pPixel[2] = (BYTE)(GetRValue(color) * fAlpha);
             pPixel[3] = (BYTE)(255 * fAlpha);
-
         }
     }
 }
 
-void Renderer::Rectangle( int left, int top, int right, int bottom, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/ )
+void Renderer::Rectangle(int left, int top, int right, int bottom, COLORREF color, unsigned int depth,
+                         float fAlpha /*= 1.0f*/)
 {
-    for(int x = left; x <= right; x++)
+    for (int x = left; x <= right; x++)
     {
-        for(int y = top; y <= bottom; y++)
+        for (int y = top; y <= bottom; y++)
         {
-            SetPixel(x,y,color, depth, fAlpha);
+            SetPixel(x, y, color, depth, fAlpha);
         }
     }
 }
 
-void Renderer::HorizontalLine( int left, int right, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/ )
+void Renderer::HorizontalLine(int left, int right, int y, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/)
 {
-    for(int x = left; x <= right; x++)
+    for (int x = left; x <= right; x++)
     {
-        SetPixel(x,y,color, depth, fAlpha);
+        SetPixel(x, y, color, depth, fAlpha);
     }
 }
 
-void Renderer::VerticalLine( int top, int bottom, int x, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/ )
+void Renderer::VerticalLine(int top, int bottom, int x, COLORREF color, unsigned int depth, float fAlpha /*= 1.0f*/)
 {
-    for(int y = top; y <= bottom; y++)
+    for (int y = top; y <= bottom; y++)
     {
-        SetPixel(x,y,color, depth, fAlpha);
+        SetPixel(x, y, color, depth, fAlpha);
     }
 }
 
@@ -929,16 +901,16 @@ void Renderer::Line(Renderer::Pixel start, Renderer::Pixel end, COLORREF color, 
 
 void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color, unsigned int depth, float alpha)
 {
-   /* if (x1 < x0)
-    {
-        int temp = x1;
-        x1 = x0;
-        x0 = temp;
+    /* if (x1 < x0)
+     {
+         int temp = x1;
+         x1 = x0;
+         x0 = temp;
 
-        temp = y1;
-        y1 = y0;
-        y0 = temp;
-    }*/
+         temp = y1;
+         y1 = y0;
+         y0 = temp;
+     }*/
 
     int dx = abs(x1 - x0);
     int sx = x0 < x1 ? 1 : -1;
@@ -960,56 +932,65 @@ void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color, unsigned int
             err += dy; /* e_xy+e_x > 0 */
             x0 += sx;
         }
-        
+
         if (e2 <= dx) /* e_xy+e_y < 0 */
         {
             err += dx;
             y0 += sy;
         }
     }
-
 }
 
-void Renderer::Circle( int xCenter, int yCenter, int radius, COLORREF c, unsigned int depth /*= 0*/, float fAlpha /*= 1.0f*/ )
+void Renderer::Circle(int xCenter, int yCenter, int radius, COLORREF c, unsigned int depth /*= 0*/,
+                      float fAlpha /*= 1.0f*/)
 {
     int x = 0;
     int y = radius;
-    int p = (5 - radius*4)/4;
+    int p = (5 - radius * 4) / 4;
 
     circlePoints(xCenter, yCenter, x, y, c, depth, fAlpha);
-    while (x < y) {
+    while (x < y)
+    {
         x++;
-        if (p < 0) {
-            p += 2*x+1;
-        } else {
+        if (p < 0)
+        {
+            p += 2 * x + 1;
+        }
+        else
+        {
             y--;
-            p += 2*(x-y)+1;
+            p += 2 * (x - y) + 1;
         }
         circlePoints(xCenter, yCenter, x, y, c, depth, fAlpha);
     }
 }
 
-void Renderer::circlePoints( int cx, int cy, int x, int y, COLORREF color, unsigned int depth, float alpha )
+void Renderer::circlePoints(int cx, int cy, int x, int y, COLORREF color, unsigned int depth, float alpha)
 {
-    if (x == 0) {
-        SetPixel(cx, cy + y,color,depth,alpha);
-        SetPixel(cx, cy - y,color,depth,alpha);
-        SetPixel(cx + y, cy,color,depth,alpha);
-        SetPixel(cx - y, cy,color,depth,alpha);
-    } else if (x == y) {
-        SetPixel(cx + x, cy + y,color,depth,alpha);
-        SetPixel(cx - x, cy + y,color,depth,alpha);
-        SetPixel(cx + x, cy - y,color,depth,alpha);
-        SetPixel(cx - x, cy - y,color,depth,alpha);
-    } else if (x < y) {
-        SetPixel(cx + x, cy + y,color,depth,alpha);
-        SetPixel(cx - x, cy + y,color,depth,alpha);
-        SetPixel(cx + x, cy - y,color,depth,alpha);
-        SetPixel(cx - x, cy - y,color,depth,alpha);
-        SetPixel(cx + y, cy + x,color,depth,alpha);
-        SetPixel(cx - y, cy + x,color,depth,alpha);
-        SetPixel(cx + y, cy - x,color,depth,alpha);
-        SetPixel(cx - y, cy - x,color,depth,alpha);
+    if (x == 0)
+    {
+        SetPixel(cx, cy + y, color, depth, alpha);
+        SetPixel(cx, cy - y, color, depth, alpha);
+        SetPixel(cx + y, cy, color, depth, alpha);
+        SetPixel(cx - y, cy, color, depth, alpha);
+    }
+    else if (x == y)
+    {
+        SetPixel(cx + x, cy + y, color, depth, alpha);
+        SetPixel(cx - x, cy + y, color, depth, alpha);
+        SetPixel(cx + x, cy - y, color, depth, alpha);
+        SetPixel(cx - x, cy - y, color, depth, alpha);
+    }
+    else if (x < y)
+    {
+        SetPixel(cx + x, cy + y, color, depth, alpha);
+        SetPixel(cx - x, cy + y, color, depth, alpha);
+        SetPixel(cx + x, cy - y, color, depth, alpha);
+        SetPixel(cx - x, cy - y, color, depth, alpha);
+        SetPixel(cx + y, cy + x, color, depth, alpha);
+        SetPixel(cx - y, cy + x, color, depth, alpha);
+        SetPixel(cx + y, cy - x, color, depth, alpha);
+        SetPixel(cx - y, cy - x, color, depth, alpha);
     }
 }
 

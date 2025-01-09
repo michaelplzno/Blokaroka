@@ -13,7 +13,7 @@
 #define IDR_DETACH2                     113
 #define IDR_DETACH3                     114
 #define IDI_ICON2                       117
-#define GRAVITY							120
+#define GRAVITY                         120
 
 // Next default values for new objects
 // 
