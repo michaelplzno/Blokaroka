@@ -15,3 +15,12 @@ This project is now officially Open Source under GPL V2.0, It is my hope that we
 
 "Let this be a kiss to the whole world!"
 
+Overhaul 1/9/2025 v0.2.0 -
+1) Build now works with version 3.1.0 of Box2D
+2) Add cmake files, you may need to install cmake to build but you can now build with visual studio code.
+3) Rename icons that were spelled wrong.
+4) add .vscode files for launching and building.
+5) add resource.rc which was missing.
+6) Fix small issues with turning gravity on and off.
+7) Add debug drawing of physics and option to enable it in menu.
+8) Fix small bug with how bottom bloks are attached.
