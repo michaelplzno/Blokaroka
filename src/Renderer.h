@@ -45,10 +45,11 @@ class Renderer
 
     Renderer()
         : hWnd(NULL), m_HDC(NULL), m_bRight(false), m_Width(0), m_Height(0),
-          m_ausZBuffer(NULL)
+          m_ausZBuffer(NULL), m_iLastMouseX(0), m_iLastMouseY(0),
+          m_fLastMessageTime(-100.0f)
     {
-        // init singleton
-    }
+        m_lastMessage[0] = '\0';
+    };
 
     void InitRenderer(HINSTANCE hInstance);
 
@@ -76,6 +77,8 @@ class Renderer
     void PresentFrame();
     void HandleWindows();
 
+    void ShowInfoMessage(const char *format, ...);
+
     int GetHeight() const
     {
         return m_Height;
@@ -95,15 +98,22 @@ class Renderer
 
     bool m_bRight;
 
+    int m_iLastMouseX;
+    int m_iLastMouseY;
+
   private:
     int m_Width;
     int m_Height;
+
     Image m_Image;
 
     unsigned int *m_ausZBuffer;
 
     void circlePoints(int cx, int cy, int x, int y, COLORREF color,
                       unsigned int depth, float alpha);
+
+    char m_lastMessage[1024];
+    float m_fLastMessageTime;
 };
 
 inline void ImageDestroy(Image *pImage)

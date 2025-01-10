@@ -1,5 +1,4 @@
 #include "Blokaroka.h"
-
 #include "GameState.h"
 #include "Physics.h"
 #include "Renderer.h"
@@ -11,6 +10,7 @@ Config CONFIG;
 double g_dFrequency;         // ticks per second
 LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
 float g_fDeltaT;             // elapsed time between frames
+float g_fElapsedTime = 0.0f; // total elapsed time since start
 
 // -- MAIN -------------------------------------------------------------- //
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -61,6 +61,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         g_fDeltaT = (float)((nextTime.QuadPart - g_liLastFrame.QuadPart) /
                             g_dFrequency);
         g_liLastFrame = nextTime;
+
+        g_fElapsedTime += g_fDeltaT; // update elapsed time
 
         RENDER.HandleWindows();
         GAMESTATE.Update();

@@ -16,7 +16,7 @@ class Blok
           m_poBottom(NULL), m_fBottomWeightHeld(-1.0f), m_fTopWeightHeld(-1.0f),
           m_iDistance(-1), m_iRenderState(BRS_SOLID), m_fBlockWeight(0),
           m_poTopDesiredMate(NULL), m_poBottomDesiredMate(NULL), m_iGroup(0),
-          m_physicsBodyId() {};
+          m_physicsBodyId(), m_bMateEnabled(false) {};
 
     ~Blok();
 
@@ -51,20 +51,20 @@ class Blok
     bool CanMateWithBlok(
         Blok *poOther); // Tests the size of the gap between this Blok and
                         // poOther to see if a connection can be made.
-    Blok *FindMate(); // Recursively iterates over this structure to look for
-                      // any potential prick that this Blok can connect to.
+    Blok *FindMate();   // Recursively iterates over this structure to look for
+                        // any potential prick that this Blok can connect to.
     void Mate(); // Connect this Blok with the stored m_poTopDesiredMate or
                  // m_poBottomDesiredMate
 
     bool CanDetachUp(); // Recursivly iterates over this structure to see if
                         // detaching the Bloks above will free a new sub
                         // structure.
-    void DetachUp(); // Detach all the top Bloks connected to this Blok.
+    void DetachUp();    // Detach all the top Bloks connected to this Blok.
 
     bool CanDetachDown(); // Recursivly iterate over this structure to see if
                           // detaching the Bloks below will free a new sub
                           // structure.
-    void DetachDown(); // Detach all the bottom Bloks connected to this Blok.
+    void DetachDown();    // Detach all the bottom Bloks connected to this Blok.
 
     void SetBlokPosition(int x, int y); // Set the actual position of the Blok,
                                         // used in physics computations.
@@ -153,7 +153,7 @@ class Blok
         m_iGroup = group;
     };
 
-    // ----- Basic Has Functions -------------------------------------- // 
+    // ----- Basic Has Functions -------------------------------------- //
     bool HasLeft() const
     {
         return m_poLeft != NULL;
@@ -176,10 +176,12 @@ class Blok
     void ClearPhysics(std::set<b2BodyId> *pBodies);
     void SetPosFromPhysics();
     b2Vec2 GetPhysicsPos();
-    void MarkDisabled();
-    void MarkEnabled();
-    bool MateEnabled();
+    void MarkMateDisabled();
+    void MarkMateEnabled();
+    bool IsMateEnabled();
     bool PhysicsEnabled();
+
+    void SetStatic(bool bStatic);
 
   private:
     void RecursiveFixNeighbors(int x, int y);
@@ -214,7 +216,7 @@ class Blok
     int m_iMark; // This is used for recursion in various ways, usually it
                  // stores if this Blok has been visited.
 
-    bool m_bEnabled; // Used to disable blocks for mating.
+    bool m_bMateEnabled; // Used to disable blocks for mating.
 
     int m_iRenderState; // This can be set to make the Bloks glow or
                         // transparent.

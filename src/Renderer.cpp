@@ -1,5 +1,4 @@
 #include "Renderer.h"
-#include <math.h>
 
 b2Vec2 Renderer::Pixel::ToPhysics()
 {
@@ -153,31 +152,29 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
     else if (wParam == WM_MOUSEMOVE)
     {
+        tagPOINT result;
+        GetPhysicalCursorPos(&result);
+        int xPos = result.x;
+        int yPos = result.y;
+
         if (GAMESTATE.GetState() == GameState::GS_Drag_Free ||
             GAMESTATE.GetState() == GameState::GS_Drag_Mating ||
             GAMESTATE.GetState() == GameState::GS_Drag_Splitting)
         {
             MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
 
-            tagPOINT result;
-            GetPhysicalCursorPos(&result);
-            int xPos = result.x;
-            int yPos = result.y;
-
             Renderer::Pixel p(xPos, yPos);
 
             PHYSICS.OnMouseMove(p.ToPhysics());
 
-            GAMESTATE.MoveSelected(xPos, yPos);
-
-            /*
-
-
-
-            RENDER.RenderFrame();
-            RENDER.PresentFrame();*/
-            return 0;
+            GAMESTATE.MoveSelected(xPos, yPos, xPos - RENDER.m_iLastMouseX,
+                                   yPos - RENDER.m_iLastMouseY);
         }
+
+        RENDER.m_iLastMouseX = xPos;
+        RENDER.m_iLastMouseY = yPos;
+
+        return 0;
     }
 
     /* if( wParam == WM_LBUTTONDOWN )
@@ -645,7 +642,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     WNDCLASSEXW wc; // The window class used to create our window
 
     // The name of our class and also the title to our window
-    LPCWSTR strAppName = L"Blokaroka";
+    LPCWSTR strAppName = L"Blokaroka";          // App Name
+    WCHAR strAppNameBuffer[128] = L"Blokaroka"; // Tooltip text.
 
     // Fill in the window class with the attributes for our main window
 
@@ -737,7 +735,10 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     thumbButton.dwMask = THB_ICON | THB_TOOLTIP | THB_FLAGS;
     thumbButton.iId = SUBMENU_GRAVITY;
     thumbButton.hIcon = hIcon;
-    wcscpy_s(thumbButton.szTip, L"Toggle Gravity");
+    for (int i = 0; i < 128; i++)
+    {
+        thumbButton.szTip[i] = (WCHAR)strAppName[i];
+    }
     thumbButton.dwFlags = THBF_ENABLED;
 
     // Add the button to the taskbar thumbnail toolbar
@@ -836,7 +837,10 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     m_tnd.uCallbackMessage = WM_TRAY_MESSAGE;
     m_tnd.dwState = NIS_SHAREDICON;
     m_tnd.uVersion = NOTIFYICON_VERSION_4;
-    wcscpy_s((wchar_t *)m_tnd.szTip, 128, strAppName);
+    for (int i = 0; i < 128; i++)
+    {
+        m_tnd.szTip[i] = strAppNameBuffer[i];
+    }
     m_tnd.hIcon = wc.hIconSm;
 
     Shell_NotifyIcon(NIM_ADD, &m_tnd);
@@ -1034,4 +1038,24 @@ void Renderer::circlePoints(int cx, int cy, int x, int y, COLORREF color,
 void Renderer::Shutdown()
 {
     Shell_NotifyIcon(NIM_DELETE, &m_tnd);
+}
+
+void Renderer::ShowInfoMessage(const char *format, ...)
+{
+    char buffer[1024];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    if (strcmp(buffer, m_lastMessage) == 0 &&
+        (g_fElapsedTime - m_fLastMessageTime) < 5.0f)
+    {
+        return;
+    }
+
+    strcpy_s(m_lastMessage, buffer);
+    m_fLastMessageTime = g_fElapsedTime;
+
+    MessageBoxA(NULL, buffer, "INFO", MB_OK | MB_ICONINFORMATION);
 }

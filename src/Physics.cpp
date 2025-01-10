@@ -43,8 +43,6 @@ void Physics::DrawSolidPolygon(b2Transform transform, const b2Vec2 *vertices,
 void Physics::DrawCircle(b2Vec2 center, float radius, b2HexColor color,
                          void *context)
 {
-    MessageBoxW(NULL, L"DrawCircle is called", L"Info", MB_OK);
-
     Renderer::Pixel pix(center);
     int r = (int)(radius * PHYSICS_TO_PIXELS);
 
@@ -54,8 +52,6 @@ void Physics::DrawCircle(b2Vec2 center, float radius, b2HexColor color,
 void Physics::DrawSolidCircle(b2Transform transform, float radius,
                               b2HexColor color, void *context)
 {
-    MessageBoxW(NULL, L"DrawSolidCircle is called", L"Info", MB_OK);
-
     Renderer::Pixel pix(transform.p);
     int r = (int)(radius * PHYSICS_TO_PIXELS);
 
@@ -64,7 +60,6 @@ void Physics::DrawSolidCircle(b2Transform transform, float radius,
 
 void Physics::DrawSegment(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void *context)
 {
-    MessageBoxW(NULL, L"DrawSegment is called", L"Info", MB_OK);
 
     Renderer::Pixel start(p1);
     Renderer::Pixel end(p2);
@@ -101,7 +96,7 @@ void Physics::Init()
     {
         // Get the height of the taskbar
         RECT taskbarRect;
-        HWND taskbar = FindWindow("Shell_TrayWnd", NULL);
+        HWND taskbar = FindWindowW(L"Shell_TrayWnd", NULL);
         int taskbarHeight = 0;
         if (taskbar && GetWindowRect(taskbar, &taskbarRect))
         {

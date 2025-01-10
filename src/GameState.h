@@ -5,8 +5,8 @@
  * The game state is largley a list of the current game objects and their data.
  * It contains a list of Bloks (Blok.cpp) and manages their interactions.
  *
- * The GameState is a singleton that can be accessed with GAMESTATE. There should
- * be only one GameState in existence ever.
+ * The GameState is a singleton that can be accessed with GAMESTATE. There
+ * should be only one GameState in existence ever.
  */
 
 #ifndef __GameState_H__
@@ -66,10 +66,12 @@ class GameState
      * The game is in a state where an object is being freely dragged.
      *
      * @var GS_Drag_Mating
-     * The game is in a state where an object is being dragged for mating purposes.
+     * The game is in a state where an object is being dragged for mating
+     * purposes.
      *
      * @var GS_Drag_Splitting
-     * The game is in a state where an object is being dragged for splitting purposes.
+     * The game is in a state where an object is being dragged for splitting
+     * purposes.
      */
     enum
     {
@@ -85,24 +87,27 @@ class GameState
      * This constructor initializes the GameState object.
      */
     GameState()
-        : m_iLastX(0), m_iLastY(0), m_iState(0), m_poMovingMate(NULL),
+        : m_iMateDeltaX(0), m_iMateDeltaY(0), m_iState(0), m_poMovingMate(NULL),
           m_poStaticMate(NULL), m_poSelectedBlok(NULL), m_vpoBloks(NULL)
     {
     }
 
-    void GenerateRandomBloks(); // Generate a random gamestate at the beginning of a run
-                                // or on reset.
-    void Update(); // Call this every frame to update Bolk positions from physics engine.
+    void GenerateRandomBloks(); // Generate a random gamestate at the beginning
+                                // of a run or on reset.
+    void Update();       // Call this every frame to update Bolk positions from
+                         // physics engine.
     void Draw(HDC hdc);  // Draw the current gamestate to the screen.
-    void ClearBloks();   // Delete the entire list of Bloks and destroy their physics
-                         // entities.
-    void RegenPhysics(); // Find any Blok without a physics entity and create it.
+    void ClearBloks();   // Delete the entire list of Bloks and destroy their
+                         // physics entities.
+    void RegenPhysics(); // Find any Blok without a physics entity and create
+                         // it.
 
-    void SetState(int iNewState); // Use one of the GS_ enums to set the game state.
-    int GetState();               // Get the current game state.
+    void SetState(
+        int iNewState); // Use one of the GS_ enums to set the game state.
+    int GetState();     // Get the current game state.
 
     void SetDragging(Blok *poDragged, int x, int y);
-    void MoveSelected(int x, int y);
+    void MoveSelected(int x, int y, int deltaX, int deltaY);
     void SetSplitDragging(Blok *poDragged, int x, int y);
 
     Blok *GetBlokAt(int x, int y);
@@ -110,7 +115,8 @@ class GameState
     void PlayAttach(); // Play a random attach sound.
     void PlayDetach(); // Play a random detach sound.
 
-    void DumpGamestate(std::wstring cstrName); // Write the current gamestate to a file.
+    void DumpGamestate(
+        std::wstring cstrName); // Write the current gamestate to a file.
     bool ReadGamestate(std::wstring cstrName); // Read a gamestate from a file.
 
     void SetColorsForMenu(
@@ -126,19 +132,26 @@ class GameState
         return m_poStaticMate;
     }
 
+    void SetMateUp(bool bUp)
+    {
+        m_bMateUp = bUp;
+    }
+
     Blok *MateSearch(Blok *poBlok);
 
     std::vector<Blok *> m_vpoBloks;
 
   private:
+    bool m_bMateUp;
+
     Blok *m_poMovingMate;
     Blok *m_poStaticMate;
     Blok *m_poSelectedBlok;
 
     int m_iState;
 
-    int m_iLastX;
-    int m_iLastY;
+    int m_iMateDeltaX;
+    int m_iMateDeltaY;
 };
 
 extern GameState GAMESTATE;

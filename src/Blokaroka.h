@@ -12,6 +12,7 @@
 #define __BLOKAROKA_H__
 
 #include <box2d\box2d.h>
+#include <limits>
 #include <math.h>
 #include <stdio.h>
 #include <time.h>
@@ -171,6 +172,7 @@ extern Config CONFIG;
 extern LARGE_INTEGER g_liFrequency; // ticks per second
 extern LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
 extern float g_fDeltaT;             // elapsed time between frames
+extern float g_fElapsedTime;        // total elapsed time since start
 
 // -- GLOBAL FUNCTIONS -------------------------------------------------- //
 bool gHandleCommandLineArgs(PSTR pstrCmdLine);

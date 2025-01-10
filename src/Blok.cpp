@@ -438,6 +438,7 @@ bool Blok::CanMateWithBlok(Blok *poOther)
             m_iX > poOther->m_iX - BLOK_WIDTH / 2.0f &&
             m_iX < poOther->m_iX + BLOK_WIDTH / 2.0f)
         {
+            GAMESTATE.SetMateUp(false);
             return true;
         }
     }
@@ -449,6 +450,7 @@ bool Blok::CanMateWithBlok(Blok *poOther)
             m_iX > poOther->m_iX - BLOK_WIDTH / 2.0f &&
             m_iX < poOther->m_iX + BLOK_WIDTH / 2.0f)
         {
+            GAMESTATE.SetMateUp(true);
             return true;
         }
     }
@@ -1849,7 +1851,7 @@ void Blok::ClearPhysics(std::set<b2BodyId> *pBodies)
 
 void Blok::SetPosFromPhysics()
 {
-    if (PhysicsEnabled())
+    if (PhysicsEnabled() && !IsMateEnabled())
     {
         Renderer::Pixel p(b2Body_GetPosition(m_physicsBodyId) + m_shapePos);
         m_iRenderX = m_iX = (int)(p.m_iX); // -BLOK_WIDTH * .25f;
@@ -1865,51 +1867,51 @@ b2Vec2 Blok::GetPhysicsPos()
     return pos;
 }
 
-bool Blok::MateEnabled()
+bool Blok::IsMateEnabled()
 {
     if (PhysicsInited())
     {
         Blok *b = (Blok *)b2Body_GetUserData(m_physicsBodyId);
         if (b && b == this)
         {
-            return m_bEnabled;
+            return m_bMateEnabled;
         }
         else if (b)
         {
-            return b->MateEnabled();
+            return b->IsMateEnabled();
         }
     }
     return false;
 }
 
-void Blok::MarkDisabled()
+void Blok::MarkMateDisabled()
 {
     if (PhysicsInited())
     {
         Blok *b = (Blok *)b2Body_GetUserData(m_physicsBodyId);
         if (b && b == this)
         {
-            m_bEnabled = false;
+            m_bMateEnabled = false;
         }
         else if (b)
         {
-            b->MarkDisabled();
+            b->MarkMateDisabled();
         }
     }
 }
 
-void Blok::MarkEnabled()
+void Blok::MarkMateEnabled()
 {
     if (PhysicsInited())
     {
         Blok *b = (Blok *)b2Body_GetUserData(m_physicsBodyId);
         if (b && b == this)
         {
-            m_bEnabled = true;
+            m_bMateEnabled = true;
         }
         else if (b)
         {
-            b->MarkEnabled();
+            b->MarkMateEnabled();
         }
     }
 }
@@ -1921,4 +1923,14 @@ bool Blok::PhysicsEnabled()
         return b2Body_IsEnabled(m_physicsBodyId);
     }
     return false;
+}
+
+void Blok::SetStatic(bool bStatic)
+{
+    if (PhysicsInited())
+    {
+        b2Body_SetAwake(m_physicsBodyId, true);
+        b2Body_SetType(m_physicsBodyId,
+                       bStatic ? b2_staticBody : b2_dynamicBody);
+    }
 }

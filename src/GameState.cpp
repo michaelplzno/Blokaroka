@@ -1,6 +1,5 @@
 #define NOMINMAX
 #include "GameState.h"
-#include <limits>
 
 GameState GAMESTATE;
 
@@ -108,9 +107,15 @@ void GameState::RegenPhysics()
 
 void GameState::SetState(int iNewState)
 {
+
+    if (iNewState == m_iState)
+    {
+        return;
+    }
+
     if (m_poSelectedBlok != NULL)
     {
-        m_poSelectedBlok->MarkEnabled();
+        m_poSelectedBlok->MarkMateDisabled();
     }
 
     if (iNewState == GS_Static)
@@ -119,29 +124,49 @@ void GameState::SetState(int iNewState)
         {
             PHYSICS.OnMouseUp();
 
-            m_poSelectedBlok->Mate();
-
-            std::set<b2BodyId> toDestroy;
-            m_poSelectedBlok->ClearPhysics(&toDestroy);
-
-            for (std::set<b2BodyId>::iterator it = toDestroy.begin();
-                 it != toDestroy.end(); ++it)
+            if (m_poSelectedBlok != NULL)
             {
-                PHYSICS.DestroyBody(*it);
-            }
+                m_poSelectedBlok->Mate();
 
-            m_poSelectedBlok->SetMarks(0);
+                std::set<b2BodyId> toDestroy;
+                m_poSelectedBlok->ClearPhysics(&toDestroy);
+                if (m_poStaticMate != NULL)
+                {
+                    m_poStaticMate->ClearPhysics(&toDestroy);
+                }
+
+                for (std::set<b2BodyId>::iterator it = toDestroy.begin();
+                     it != toDestroy.end(); ++it)
+                {
+                    PHYSICS.DestroyBody(*it);
+                }
+
+                m_poSelectedBlok->SetMarks(0);
+            }
         }
-        m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
+
+        if (m_poSelectedBlok != NULL)
+        {
+            m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
+        }
+        m_poSelectedBlok = NULL;
+        m_poStaticMate = NULL;
+        m_iMateDeltaX = m_iMateDeltaY = 0;
     }
     else if (iNewState == GS_Drag_Free)
     {
+        if (m_poStaticMate != NULL)
+        {
+            m_poStaticMate->SetStatic(false);
+            m_poStaticMate->MarkMateDisabled();
+            m_poStaticMate = NULL;
+        }
     }
     else if (iNewState == GS_Drag_Mating)
     {
         if (m_poSelectedBlok != NULL)
         {
-            m_poSelectedBlok->MarkDisabled();
+            m_poSelectedBlok->MarkMateEnabled();
         }
     }
 
@@ -169,66 +194,37 @@ void GameState::SetSplitDragging(Blok *poDragged, int x, int y)
     // m_poSelectedLego->CalculateWeights();
 }
 
-void GameState::MoveSelected(int x, int y)
+void GameState::MoveSelected(int x, int y, int deltaX, int deltaY)
 {
-
-    // m_poSelectedLego->BreakStressedConnections();
-
-    float delta = sqrt((float)((x - m_iLastX) * (x - m_iLastX) +
-                               (y - m_iLastY) * (y - m_iLastY)));
-
-    m_iLastX = x;
-    m_iLastY = y;
-
-    /*
-    if(false)
+    if (m_iState == GS_Drag_Mating)
     {
-        if(m_iState == GS_Drag_Mating && m_poSelectedBlok->IntersectsAnyBlok())
+        m_iMateDeltaX += deltaX;
+        m_iMateDeltaY += deltaY;
+
+        if ((m_iMateDeltaY < -BLOK_MATE_LENGTH * .5f && m_bMateUp) ||
+            (m_iMateDeltaY > BLOK_MATE_LENGTH * .5f && !m_bMateUp))
+
         {
-            m_poSelectedBlok->Mate();
-            m_iState = GS_Static;
+            PHYSICS.OnMouseUp();
+
+            SetState(GS_Static);
         }
-        else
+        else if (std::abs(m_iMateDeltaX) > 1.5f * BLOK_MATE_LENGTH ||
+                 std::abs(m_iMateDeltaY) > 0.6f * BLOK_MATE_LENGTH)
         {
+            m_poStaticMate->SetStatic(false);
+            m_poStaticMate->MarkMateDisabled();
+            m_poSelectedBlok->MarkMateDisabled();
+
             SetState(GS_Drag_Free);
-            m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +
-    y);
         }
-        return;
     }
-    */
-
-    if (m_iState != GS_Drag_Splitting)
+    else
     {
-        if (m_poSelectedBlok->IntersectsAnyBlok())
-        {
+        m_iMateDeltaX = 0;
+        m_iMateDeltaY = 0;
 
-            if (m_iState == GS_Drag_Mating)
-            {
-
-                PHYSICS.OnMouseUp();
-
-                m_poSelectedBlok->Mate();
-
-                std::set<b2BodyId> toDestroy;
-                m_poSelectedBlok->ClearPhysics(&toDestroy);
-
-                for (std::set<b2BodyId>::iterator it = toDestroy.begin();
-                     it != toDestroy.end(); ++it)
-                {
-                    PHYSICS.DestroyBody(*it);
-                }
-
-                m_poSelectedBlok->SetRenderState(Blok::BRS_SOLID);
-                m_iState = GS_Static;
-            }
-            else
-            {
-                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x,
-                // m_iYOffset + y);
-            }
-        }
-        else
+        if (m_iState != GS_Drag_Splitting && m_poSelectedBlok)
         {
             Blok *mate = m_poSelectedBlok->FindMate();
             if (mate)
@@ -238,15 +234,8 @@ void GameState::MoveSelected(int x, int y)
             else
             {
                 SetState(GS_Drag_Free);
-                // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x,
-                // m_iYOffset + y);
             }
         }
-    }
-    else
-    {
-        // m_poSelectedBlok->SetBlokRenderPosition(m_iXOffset + x, m_iYOffset +
-        // y);
     }
 }
 
@@ -492,6 +481,8 @@ Blok *GameState::MateSearch(Blok *poBlok)
         {
             m_poMovingMate = poBlok;
             m_poStaticMate = m_vpoBloks[i];
+
+            m_poStaticMate->SetStatic(true);
 
             return m_vpoBloks[i];
         }
