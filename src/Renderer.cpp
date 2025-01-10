@@ -642,8 +642,8 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     WNDCLASSEXW wc; // The window class used to create our window
 
     // The name of our class and also the title to our window
-    LPCWSTR strAppName = L"Blokaroka";          // App Name
-    WCHAR strAppNameBuffer[128] = L"Blokaroka"; // Tooltip text.
+    LPCWSTR strAppName = L"Blokaroka";        // App Name
+    char strAppNameBuffer[128] = "Blokaroka"; // Tooltip text.
 
     // Fill in the window class with the attributes for our main window
 
@@ -737,7 +737,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     thumbButton.hIcon = hIcon;
     for (int i = 0; i < 128; i++)
     {
-        thumbButton.szTip[i] = (WCHAR)strAppName[i];
+        thumbButton.szTip[i] = strAppNameBuffer[i];
     }
     thumbButton.dwFlags = THBF_ENABLED;
 
