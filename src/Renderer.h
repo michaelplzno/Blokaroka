@@ -1,3 +1,14 @@
+/**
+ * @file Renderer.h
+ * @brief This file contains the definition of the Renderer singleton.
+ *
+ * The renderer handles draw functions and windows messages from the window.
+ * It is responsible for drawing the gamestate to the screen.
+ *
+ * The Renderer is a singleton that can be accessed with RENDER. There
+ * should be only one Renderer in existence ever.
+ */
+
 #ifndef __RENDERER_H__
 #define __RENDERER_H__
 
@@ -90,6 +101,7 @@ class Renderer
 
     int m_iThing;
 
+    // Windows message handling and instance handles.
     HINSTANCE m_hInstance;
     HWND hWnd;
     HDC m_HDC;
@@ -98,22 +110,27 @@ class Renderer
 
     bool m_bRight;
 
-    int m_iLastMouseX;
-    int m_iLastMouseY;
+    int m_iLastMouseX; // Use to calculate how much the mouse moved this
+                       // frame (X)
+    int m_iLastMouseY; // Use to calculate how much the mouse moved this
+                       // frame (Y)
 
   private:
-    int m_Width;
-    int m_Height;
+
+    int m_Width;    // Size of the window.
+    int m_Height;   // Size of the window.
 
     Image m_Image;
 
+    // With the ZBuffer we can handle blocks that overlap more correctly.
     unsigned int *m_ausZBuffer;
 
+    // Helper function for drawing circles.
     void circlePoints(int cx, int cy, int x, int y, COLORREF color,
                       unsigned int depth, float alpha);
 
-    char m_lastMessage[1024];
-    float m_fLastMessageTime;
+    char m_lastMessage[1024]; // Used to see if we are spamming the same message.
+    float m_fLastMessageTime; // Used to see how long the last message was sent.
 };
 
 inline void ImageDestroy(Image *pImage)

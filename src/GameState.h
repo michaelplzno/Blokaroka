@@ -52,33 +52,16 @@
 class GameState
 {
   public:
-    /**
-     * @enum GameState
-     * @brief Enumeration of the different game states.
-     *
-     * This enumeration defines the various states that the game can be in.
-     * It is used to manage the game's state transitions and behavior.
-     *
-     * @var GS_Static
-     * The game is in a static state, with no active interactions.
-     *
-     * @var GS_Drag_Free
-     * The game is in a state where an object is being freely dragged.
-     *
-     * @var GS_Drag_Mating
-     * The game is in a state where an object is being dragged for mating
-     * purposes.
-     *
-     * @var GS_Drag_Splitting
-     * The game is in a state where an object is being dragged for splitting
-     * purposes.
-     */
+
+    // Game state for what the global status of the game is.
     enum
     {
-        GS_Static,
-        GS_Drag_Free,
-        GS_Drag_Mating,
-        GS_Drag_Splitting
+        GS_Static, // Bloks are not being interacted with, but due to phyics may still be moving.
+        GS_Drag_Free, // Bloks are being dragged around freely.
+        GS_Drag_Mating, // Bloks are being dragged for mating, and will snap to
+                        // the nearest mate.
+        GS_Drag_Splitting // When bloks have just been split, they are in this
+                          // state.
     };
 
     /**
@@ -139,19 +122,19 @@ class GameState
 
     Blok *MateSearch(Blok *poBlok);
 
-    std::vector<Blok *> m_vpoBloks;
+    std::vector<Blok *> m_vpoBloks; // List of all Bloks in the game.
 
   private:
-    bool m_bMateUp;
+    bool m_bMateUp; // True if the mate is above the current blok.
 
-    Blok *m_poMovingMate;
-    Blok *m_poStaticMate;
-    Blok *m_poSelectedBlok;
+    Blok *m_poMovingMate; // Blok that is currently being dragged.
+    Blok *m_poStaticMate; // Blok that is currently being mated with.
+    Blok *m_poSelectedBlok; // Blok that is currently selected.
 
-    int m_iState;
+    int m_iState; // Current game state, usually GS_Static.
 
-    int m_iMateDeltaX;
-    int m_iMateDeltaY;
+    int m_iMateDeltaX; // Amount the mouse has moved (X) since mating started.
+    int m_iMateDeltaY; // Amount the mouse has moved (Y) since mating started.
 };
 
 extern GameState GAMESTATE;

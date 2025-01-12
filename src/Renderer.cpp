@@ -21,10 +21,10 @@ void Renderer::Pixel::SetFromPhysics(b2Vec2 physicsPoint)
 
 typedef LRESULT(__cdecl *hookFunc)(HWND, HWND);
 
+// Called every time the mouse is changed, moved or clicked.
 LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-
-    if (wParam == WM_LBUTTONUP)
+    if (wParam == WM_LBUTTONUP)     // Left mouse button up
     {
         PHYSICS.OnMouseUp();
 
@@ -41,7 +41,7 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         return 0;
     }
-    else if (wParam == WM_RBUTTONUP)
+    else if (wParam == WM_RBUTTONUP)    // Right mouse button up
     {
         PHYSICS.OnMouseUp();
 
@@ -58,7 +58,7 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         return 0;
     }
-    else if (wParam == WM_LBUTTONDOWN)
+    else if (wParam == WM_LBUTTONDOWN)  // Left mouse button down
     {
 
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
@@ -85,20 +85,10 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
                 GAMESTATE.SetDragging(poClicked, xPos, yPos);
                 return 1;
             }
-
-            /*
-            Blok * poClicked = GAMESTATE.GetBlokAt(xPos,yPos);
-            if( poClicked )
-            {
-                GAMESTATE.SetDragging(poClicked, xPos, yPos);
-
-                return 1;
-            }
-            */
         }
         return 0;
     }
-    else if (wParam == WM_RBUTTONDOWN)
+    else if (wParam == WM_RBUTTONDOWN) // Right mouse button down
     {
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
         int xPos = hook.pt.x;
@@ -150,7 +140,7 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         return 0;
     }
-    else if (wParam == WM_MOUSEMOVE)
+    else if (wParam == WM_MOUSEMOVE) // Mouse moved
     {
         tagPOINT result;
         GetPhysicalCursorPos(&result);
@@ -176,22 +166,6 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 
         return 0;
     }
-
-    /* if( wParam == WM_LBUTTONDOWN )
-     {
-         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
-
-         if( hook.pt.x > 200 && hook.pt.x < 500 &&
-             hook.pt.y > 3 && hook.pt.y < 500 )
-         {
-            RENDER.m_iThing = rand()  % 255;
-            return 1;
-         }
-         else
-         {
-            return 0;
-         }
-     }*/
 
     // Call next hook
     return CallNextHookEx(NULL, nCode, wParam, lParam);
@@ -228,7 +202,6 @@ ITaskbarList3 *pTaskbarList = nullptr;
 // Windows protocal handler function.
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
 {
-
     // Switch the windows message to figure out what it is
     switch (uMessage)
     {
@@ -274,7 +247,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
             ofn.lpstrFileTitle = NULL;
             ofn.nMaxFileTitle = 0;
             ofn.lpstrInitialDir = NULL;
-            ofn.Flags = OFN_PATHMUSTEXIST; // | OFN_FILEMUSTEXIST;
+            ofn.Flags = OFN_PATHMUSTEXIST;
 
             // Display the Open dialog box.
 
@@ -486,9 +459,6 @@ void Renderer::HandleWindows()
 
 void Renderer::RenderFrame(void)
 {
-    // HBRUSH NewBrush = CreateSolidBrush(CLEAR_COLOR);
-    // HPEN NewPen = CreatePen(PS_SOLID, 3, CLEAR_COLOR);
-
     BYTE *pPixel = NULL;
 
     if (m_Image.width * 4 == m_Image.pitch)
@@ -499,7 +469,6 @@ void Renderer::RenderFrame(void)
          * separately. This is much faster than the below case where the image
          * width is not a multiple of 4.
          */
-
         int i = 0;
         int totalBytes = m_Image.width * m_Image.height * 4;
 
@@ -519,7 +488,6 @@ void Renderer::RenderFrame(void)
          * line separately. This is much slower than the above case where the
          * width of the image is already a multiple of 4.
          */
-
         int x = 0;
         int y = 0;
 
@@ -535,36 +503,6 @@ void Renderer::RenderFrame(void)
             }
         }
     }
-
-    // DeleteObject(NewPen);
-    // DeleteObject(NewBrush);
-
-    /*
-    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
-    {
-        GAMESTATE.m_vpoBloks[i]->SetGroup(-1);
-    }
-
-    int index = 1;
-    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
-    {
-        if (GAMESTATE.m_vpoBloks[i]->GetRenderState() == Blok::BRS_SOLID &&
-    GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
-        {
-            GAMESTATE.m_vpoBloks[i]->RecursiveSetGroup(index);
-            index++;
-        }
-    }
-
-    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); i++)
-    {
-        if (GAMESTATE.m_vpoBloks[i]->GetGroup() == -1)
-        {
-            GAMESTATE.m_vpoBloks[i]->RecursiveSetGroup(index);
-            index++;
-        }
-    }
-    */
 
     GAMESTATE.Draw(m_HDC);
 
@@ -598,36 +536,10 @@ void Renderer::PresentFrame()
     SelectObject(m_Image.hdc, hPrevObj);
 
     // clear zbufer;
-
     for (unsigned int i = 0; i < (unsigned int)(m_Width * m_Height); i++)
     {
         m_ausZBuffer[i] = 0;
     }
-
-    // SetWindowPos(hWnd, HWND_BOTTOM, 0, 0, m_Width, m_Height, SWP_SHOWWINDOW);
-
-    /*
-    POINT windowPosition;
-    windowPosition.x = windowPosition.y = 0;
-    POINT layerPosition = {0, 0};
-
-    SIZE size;
-    size.cx = m_Width;
-    size.cy = m_Height;
-
-
-    BLENDFUNCTION blendFunction= {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
-
-
-    if (UpdateLayeredWindow( hWnd, NULL,  &windowPosition,
-        &size, m_HDC, &layerPosition, CLEAR_COLOR, &blendFunction, ULW_COLORKEY)
-    == 0)
-    {
-        char buff[300];
-        sprintf(buff, "Failed to update window: 0x%x", GetLastError());
-
-        MessageBox(NULL, buff, "Error", MB_OK);
-    }*/
 }
 
 void Renderer::InitRenderer(HINSTANCE hInstance)
@@ -749,46 +661,6 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
                    MB_ICONERROR);
     }
 
-    /*
-        HOOKPROC hkprcSysMsg;
-        static HINSTANCE hinstDLL;
-        static HHOOK hhookSysMsg;
-        hookFunc SetHook = NULL;
-
-        hinstDLL = LoadLibrary("Hooks.dll");
-        if(!hinstDLL)
-        {
-            MessageBox(GetDesktopWindow(), "Could Not Load DLL", "Error",
-       MB_OK);
-        }
-
-        SetHook = (hookFunc)GetProcAddress((HMODULE)hinstDLL, "SetHook");
-        if(SetHook == NULL)
-        {
-            MessageBox(NULL, "Failed to load SetHook", "Error", MB_OK);
-            g_bIsAppAlive = false;
-            return;
-        }
-
-        int r = SetHook(GetDesktopWindow(), hWnd);
-        if( r < 0 )
-            MessageBox(GetDesktopWindow(), "Failed to install hook", "Error",
-       MB_OK);
-
-           hkprcSysMsg = (HOOKPROC)GetProcAddress((HMODULE)hinstDLL,
-       (LPTSTR)"CallWndProc");
-
-
-        hhookSysMsg = SetWindowsHookEx(WH_CALLWNDPROC,hkprcSysMsg,hinstDLL,0);
-
-        SetHook(hhookSysMsg);
-
-        if ( hkprcSysMsg == NULL || hhookSysMsg == NULL)
-        {
-            MessageBox( NULL, TEXT("ok"), TEXT("Unable to load function(s)."),
-       MB_OK ); g_bIsAppAlive = false; return;
-        }*/
-
     // Display the window we just created
     ShowWindow(hWnd, SW_SHOWDEFAULT);
     // Draw the window contents for the first time
@@ -808,13 +680,6 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
     // (horizontal, vertical)
     // horizontal = desktop.right;
     // vertical = desktop.bottom;
-
-    /*SetWindowLong(hWnd,
-        GWL_EXSTYLE,
-        GetWindowLong(hWnd, GWL_EXSTYLE) | WS_EX_LAYERED);*/
-
-    // Make this window 70% alpha
-    // SetLayeredWindowAttributes(hWnd, CLEAR_COLOR, 255, LWA_COLORKEY);
 
     m_Width = desktop.right;   // r.right - r.left;
     m_Height = desktop.bottom; // r.bottom - r.top;
