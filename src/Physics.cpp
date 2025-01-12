@@ -257,7 +257,10 @@ Blok *Physics::OnMouseDown(b2Vec2 p)
         b2Joint_SetCollideConnected(m_mouseJoint, true);
         b2Body_SetAwake(m_callbackBody, true);
 
-        return (Blok *)b2Body_GetUserData(m_callbackBody);
+        Blok *blok = (Blok *)b2Body_GetUserData(m_callbackBody);
+        blok->SetStatic(false);
+
+        return blok;
     }
 
     return NULL;
