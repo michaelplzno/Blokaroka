@@ -1,4 +1,4 @@
-# Current Build v0.2.00 Downloadable Here: [Blokaroka](https://blokaroka.com)
+# Current Build v0.2.02 Downloadable Here: [Blokaroka](https://blokaroka.com)
 One of my first projects: an attempt to make bricks appear on top of the UI in Windows. This will help you pass the time while your program compiles in the background, or if you are at work and need to keep your brain active during a dull stretch. Playing with blocks improves creativity and dynamic thinking, so having this app running might even make you more effective at work, or help you cut your stress!
 
 If the project catches on, hopefully we can work together to make it a popular app.
@@ -15,7 +15,7 @@ This project is now officially Open Source under GPL V2.0, It is my hope that we
 
 "Let this be a kiss to the whole world!"
 
-Overhaul 1/9/2025 v0.2.0 -
+# Overhaul 1/9/2025 v0.2.0 -
 1) Build now works with version 3.1.0 of Box2D
 2) Add cmake files, you may need to install cmake to build but you can now build with visual studio code.
 3) Rename icons that were spelled wrong.
@@ -24,3 +24,6 @@ Overhaul 1/9/2025 v0.2.0 -
 6) Fix small issues with turning gravity on and off.
 7) Add debug drawing of physics and option to enable it in menu.
 8) Fix small bug with how bottom bloks are attached.
+
+# 1/18/2025 v0.2.02 - 
+Small fixes to brick attaching.
