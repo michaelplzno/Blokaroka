@@ -9,7 +9,7 @@ Hit the ESC key to terminate the program, or right click the icon in the start b
 
 When the program is working correctly it will spawn a bunch of little bricks on the desktop you can play with virtually by dragging them and connecting them. Also it will save the layout of the bricks into a gamestate so if you run it again your setup will be reloaded. 
 
-Check the issues section for a list of current known issues, and let me know if you would like to fix them. Thanks to our first contributor the game compiles on Visual Studio 2019, but there are more issues on the list! If you would like to contribute, just let me know!
+Check the issues section for a list of current known issues, and let me know if you would like to fix them. Feel free to add issues to the list! If you would like to contribute, just let me know!
 
 This project is now officially Open Source under GPL V2.0, It is my hope that we can build this up into something bigger, maybe even an open source engine for games played on top of the operating system UI. 
 
@@ -27,3 +27,6 @@ This project is now officially Open Source under GPL V2.0, It is my hope that we
 
 # 1/18/2025 v0.2.02 - 
 Small fixes to brick attaching.
+
+# Compiling Guide -
+The current build process is to use VSCode and to compile with the Visual Studio C++ Compiler (I think the "Clang" is involved somewhere in there.) I will make a detailed guide on what needs to be installed for a fresh compile soon!
