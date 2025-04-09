@@ -348,3 +348,6 @@ Makefile
 
 # Ignore Box2D files
 /extern/box2d/
+CMakeSettings.json
+
+out/build/

@@ -46,9 +46,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         GAMESTATE.GenerateRandomBloks();
     }
 
-    RENDER.RenderFrame();
-    RENDER.PresentFrame();
-
     QueryPerformanceCounter(&g_liLastFrame);
 
     bloksPopping();
@@ -98,8 +95,8 @@ bool gHandleCommandLineArgs(PSTR pstrCmdLine)
 
 void bloksPopping()
 {
-    //setting every bloks size to minimum
-    for(unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+    // setting every bloks size to minimum
+    for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
     {
         GAMESTATE.m_vpoBloks[i]->SetWidth(1);
         GAMESTATE.m_vpoBloks[i]->SetHeight(4);
@@ -108,21 +105,21 @@ void bloksPopping()
     RENDER.RenderFrame();
     RENDER.PresentFrame();
 
-    for(int size = 1; size < 15; ++size)
+    for (int size = 1; size < 15; ++size)
     {
-        //adding 1 to width and height of ever blok
-        for(unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+        // adding 1 to width and height of ever blok
+        for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
         {
-            GAMESTATE.m_vpoBloks[i]->
-            SetWidth(GAMESTATE.m_vpoBloks[i]->GetWidth() + 1);
+            GAMESTATE.m_vpoBloks[i]->SetWidth(
+                GAMESTATE.m_vpoBloks[i]->GetWidth() + 1);
 
-            GAMESTATE.m_vpoBloks[i]->
-            SetHeight(GAMESTATE.m_vpoBloks[i]->GetHeight() + 1);
-        }  
+            GAMESTATE.m_vpoBloks[i]->SetHeight(
+                GAMESTATE.m_vpoBloks[i]->GetHeight() + 1);
+        }
 
         RENDER.RenderFrame();
         RENDER.PresentFrame();
-        //sleep, so we can see the animation
-        Sleep(1);
+        // sleep, so we can see the animation
+        Sleep(15);
     }
 }
