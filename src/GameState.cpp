@@ -497,3 +497,12 @@ void GameState::Draw(HDC hdc)
         m_vpoBloks[i]->DrawBlok(hdc);
     }
 }
+
+void GameState::ResetPhysics()
+{
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    {
+        m_vpoBloks[i]->SetStatic(true);
+        m_vpoBloks[i]->SetStatic(false);
+    }
+}

@@ -292,6 +292,7 @@ void Physics::ChangeGravity(float y_G)
 {
     m_gravity = {0.00f, y_G};
     b2World_SetGravity(m_worldId, m_gravity);
+    GAMESTATE.ResetPhysics();
 }
 
 void Physics::ToggleGravity()

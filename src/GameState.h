@@ -120,6 +120,8 @@ class GameState
         m_bMateUp = bUp;
     }
 
+    void ResetPhysics();
+
     Blok *MateSearch(Blok *poBlok);
 
     std::vector<Blok *> m_vpoBloks; // List of all Bloks in the game.
