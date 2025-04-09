@@ -3,6 +3,7 @@
 #ifndef __BLOK_H__
 #define __BLOK_H__
 
+
 #include <box2d/box2d.h>
 
 #include "Blokaroka.h"
@@ -16,10 +17,14 @@ class Blok
           m_poBottom(NULL), m_fBottomWeightHeld(-1.0f), m_fTopWeightHeld(-1.0f),
           m_iDistance(-1), m_iRenderState(BRS_SOLID), m_fBlockWeight(0),
           m_poTopDesiredMate(NULL), m_poBottomDesiredMate(NULL), m_iGroup(0),
-          m_physicsBodyId(), m_bMateEnabled(false) {};
+          m_physicsBodyId(), m_bMateEnabled(false), m_width(15), m_height(18){};
 
     ~Blok();
-
+    //Getters and setters for width and height
+    int GetWidth();
+    int GetHeight();
+    void SetWidth(int newWidth);
+    void SetHeight(int newHeight);
     // Blok Render states:
     enum
     {
@@ -34,8 +39,8 @@ class Blok
 
     void ClearBlok(HDC hdc); /* Designed to clear the area this Blok occupies
                                 for redrawing, WIP: not used. */
-    void DrawBlok(HDC hdc);  /* Renders this Blok at its current location color
-                                and state. */
+    void Blok::DrawBlok(HDC hdc); /* Renders this Blok at its current
+          location color and state. */
 
     bool CursorIntersectsPoint(
         int x,
@@ -212,7 +217,7 @@ class Blok
     int m_iRenderX,
         m_iRenderY; // Display position used to line up Bloks to show potential
                     // connections.
-
+    int m_width, m_height; //width and height used for bloks popping
     int m_iMark; // This is used for recursion in various ways, usually it
                  // stores if this Blok has been visited.
 

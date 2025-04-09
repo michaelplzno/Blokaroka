@@ -51,6 +51,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     QueryPerformanceCounter(&g_liLastFrame);
 
+    bloksPopping();
+
     // Main Game Loop, continue to loop while alive and Handle Windows, Update,
     // Physics, Render, and Present, then sleep a bit to not hog the processor.
     while (g_bIsAppAlive)
@@ -92,4 +94,35 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 bool gHandleCommandLineArgs(PSTR pstrCmdLine)
 {
     return true;
+}
+
+void bloksPopping()
+{
+    //setting every bloks size to minimum
+    for(unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+    {
+        GAMESTATE.m_vpoBloks[i]->SetWidth(1);
+        GAMESTATE.m_vpoBloks[i]->SetHeight(4);
+    }
+
+    RENDER.RenderFrame();
+    RENDER.PresentFrame();
+
+    for(int size = 1; size < 15; ++size)
+    {
+        //adding 1 to width and height of ever blok
+        for(unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+        {
+            GAMESTATE.m_vpoBloks[i]->
+            SetWidth(GAMESTATE.m_vpoBloks[i]->GetWidth() + 1);
+
+            GAMESTATE.m_vpoBloks[i]->
+            SetHeight(GAMESTATE.m_vpoBloks[i]->GetHeight() + 1);
+        }  
+
+        RENDER.RenderFrame();
+        RENDER.PresentFrame();
+        //sleep, so we can see the animation
+        Sleep(1);
+    }
 }
