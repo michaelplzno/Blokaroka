@@ -8,6 +8,23 @@ Blok::~Blok()
      }*/
 }
 
+int Blok::GetWidth()
+{
+    return m_width;
+}
+int Blok::GetHeight()
+{
+    return m_height;
+}
+void Blok::SetWidth(int newWidth)
+{
+    m_width = newWidth;
+}
+void Blok::SetHeight(int newHeight)
+{
+    m_height = newHeight;
+}
+
 int Blok::GetColorID()
 {
     if (m_wColor == COLOR_WHITE)
@@ -130,43 +147,43 @@ void Blok::DrawBlok(HDC hdc)
     unsigned int depth =
         ComputeDepth(); // RENDER.GetWidth() * ((RENDER.GetHeight() -
                         // m_iRenderY) + RENDER.GetWidth() - m_iRenderX);
-    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + BLOK_WIDTH,
-                     m_iRenderY + BLOK_HEIGHT, normal, depth, fAlpha);
+    RENDER.Rectangle(m_iRenderX, m_iRenderY, m_iRenderX + m_width,
+                     m_iRenderY + m_height, normal, depth, fAlpha);
 
-    for (int i = 0; i < BLOK_WIDTH / 2; i++)
+    for (int i = 0; i < m_width / 2; i++)
     {
-        if (i + 1 >= BLOK_WIDTH / 2)
+        if (i + 1 >= m_width / 2)
         {
-            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i,
+            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + m_height - i,
                                 m_iRenderX - i, 0, depth, fAlpha);
-            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i,
+            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + m_width - i,
                                   m_iRenderY - i, 0, depth, fAlpha);
         }
         else
         {
-            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + BLOK_HEIGHT - i,
+            RENDER.VerticalLine(m_iRenderY - i, m_iRenderY + m_height - i,
                                 m_iRenderX - i, darker, depth, fAlpha);
-            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + BLOK_WIDTH - i,
+            RENDER.HorizontalLine(m_iRenderX - i, m_iRenderX + m_width - i,
                                   m_iRenderY - i, brighter, depth, fAlpha);
         }
 
-        RENDER.SetPixel(m_iRenderX - i, m_iRenderY + BLOK_HEIGHT - i, 0, depth,
+        RENDER.SetPixel(m_iRenderX - i, m_iRenderY + m_height - i, 0, depth,
                         fAlpha);
 
         if (m_poRight == NULL)
         {
-            RENDER.SetPixel(m_iRenderX + BLOK_WIDTH - i, m_iRenderY - i, 0,
+            RENDER.SetPixel(m_iRenderX + m_width - i, m_iRenderY - i, 0,
                             depth, fAlpha);
         }
     }
 
-    RENDER.HorizontalLine(m_iRenderX, m_iRenderX + BLOK_WIDTH,
-                          m_iRenderY + BLOK_HEIGHT, 0, depth, fAlpha);
+    RENDER.HorizontalLine(m_iRenderX, m_iRenderX + m_width,
+                          m_iRenderY + m_height, 0, depth, fAlpha);
 
     if (m_poRight == NULL)
     {
-        RENDER.VerticalLine(m_iRenderY, m_iRenderY + BLOK_HEIGHT,
-                            m_iRenderX + BLOK_WIDTH, 0, depth, fAlpha);
+        RENDER.VerticalLine(m_iRenderY, m_iRenderY + m_height,
+                            m_iRenderX + m_width, 0, depth, fAlpha);
     }
 
     if (m_poTop == NULL && m_iRenderState != BRS_NO_ATTACH)
@@ -178,17 +195,17 @@ void Blok::DrawBlok(HDC hdc)
         // LEGO_WIDTH/4.0f, LEGO_WIDTH
         // * .3f, darker, depth);
 
-        int start = (int)(m_iRenderX + BLOK_WIDTH * .15f);
-        int end = (int)(m_iRenderX + BLOK_WIDTH * .85f);
-        int mid = (int)(m_iRenderX + BLOK_WIDTH * .5f);
+        int start = (int)(m_iRenderX + m_width * .15f);
+        int end = (int)(m_iRenderX + m_width * .85f);
+        int mid = (int)(m_iRenderX + m_width * .5f);
 
-        int height = (int)(BLOK_HEIGHT * .25f);
-        int radius = (int)(BLOK_WIDTH * .35f);
+        int height = (int)(m_height * .25f);
+        int radius = (int)(m_width * .35f);
 
         for (int i = start; i <= end; i++)
         {
-            int baseY = m_iRenderY - BLOK_WIDTH / 4;
-            int baseX = i - BLOK_WIDTH / 4;
+            int baseY = m_iRenderY - m_width / 4;
+            int baseX = i - m_width / 4;
 
             float realHeight = (.5f * sqrt((float)(radius * radius) -
                                            (float)((i - mid) * (i - mid))));
@@ -246,7 +263,7 @@ void Blok::DrawBlok(HDC hdc)
             if (i != start && i != end)
             {
                 RENDER.VerticalLine(
-                    baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) -
+                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) -
                         height,
                     baseY - height, baseX, brighter, depth);
             }
@@ -266,14 +283,14 @@ void Blok::DrawBlok(HDC hdc)
 
                 RENDER.SetPixel(
                     baseX,
-                    baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) -
+                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) -
                         height,
                     RGB(newR * (1.0f - AA), newG * (1.0f - AA),
                         newB * (1.0f - AA)),
                     depth, fAlpha);
                 RENDER.SetPixel(
                     baseX,
-                    baseY - 2 * (baseY - (m_iRenderY - BLOK_WIDTH / 4)) -
+                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) -
                         height - 1,
                     0, depth, (1.0f - AA) * fAlpha);
             }

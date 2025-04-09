@@ -57,6 +57,8 @@
 #define MENU_DEBUG_DRAW_OFF 1012
 #define SUBMENU_DEBUG_DRAW 1013
 
+void bloksPopping(); //bloks popping at the beggining
+
 inline void gPlaySound(int resource)
 {
     PlaySound(MAKEINTRESOURCE(resource), NULL, SND_RESOURCE | SND_ASYNC);
@@ -182,7 +184,7 @@ class GameState;
 class Blok;
 
 #include "Blok.h"
-#include "Gamestate.h"
+#include "GameState.h"
 #include "Physics.h"
 #include "Renderer.h"
 
