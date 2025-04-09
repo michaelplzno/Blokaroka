@@ -346,6 +346,7 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 out/build/
+out/build/x64-Debug/
 
 # Ignore Box2D files
 /extern/box2d/
