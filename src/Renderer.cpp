@@ -224,6 +224,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
                 GAMESTATE.GenerateRandomBloks();
                 RENDER.RenderFrame();
                 RENDER.PresentFrame();
+                bloksPopping();
             }
         }
         else if (wParam == MENU_SAVE)

@@ -32,6 +32,7 @@ class Blok
         BRS_GLOW,
         BRS_NO_ATTACH
     };
+    friend void subtractAllOffsets(int offset); 
 
     int GetColorID();               // Return an index into the color pallate.
     void SetColorForMenu(int menu); /* Based on ColorID set this to the pallate
@@ -189,6 +190,12 @@ class Blok
     void SetStatic(bool bStatic);
 
   private:
+    
+    void SubtractOffsetX(int offset);/* recursevelly subtract offset from every
+                                     right blok*/ 
+    void SubtractOffsetY(int offset);/* recursevelly subtract offset from every
+                                     down blok */
+
     void RecursiveFixNeighbors(int x, int y);
     bool RecursiveIntersectsAnyBlok();
     void ClearMates();

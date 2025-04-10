@@ -92,7 +92,6 @@ bool gHandleCommandLineArgs(PSTR pstrCmdLine)
 {
     return true;
 }
-
 void bloksPopping()
 {
     // setting every bloks size to minimum
@@ -105,21 +104,52 @@ void bloksPopping()
     RENDER.RenderFrame();
     RENDER.PresentFrame();
 
-    for (int size = 1; size < 15; ++size)
+    subtractAllOffsets(BLOK_WIDTH - 1); //subtract offsets
+
+    for (int size = 1; size < BLOK_WIDTH + 5; ++size)
     {
+        
         // adding 1 to width and height of ever blok
         for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
         {
+            
             GAMESTATE.m_vpoBloks[i]->SetWidth(
                 GAMESTATE.m_vpoBloks[i]->GetWidth() + 1);
 
             GAMESTATE.m_vpoBloks[i]->SetHeight(
                 GAMESTATE.m_vpoBloks[i]->GetHeight() + 1);
+                
+            
+        }
+        
+        RENDER.RenderFrame();
+        RENDER.PresentFrame();
+        subtractAllOffsets(-1); //add 1-sized offsets, because bloks increased
+        // sleep, so we can see the animation
+        Sleep(15); 
+    }
+    for(int size = BLOK_WIDTH + 5; size > BLOK_WIDTH; --size)
+    {
+        // subtract 1 from width and height of ever blok
+        for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+        {
+            GAMESTATE.m_vpoBloks[i]->SetWidth(
+                GAMESTATE.m_vpoBloks[i]->GetWidth() - 1);
+
+            GAMESTATE.m_vpoBloks[i]->SetHeight(
+                GAMESTATE.m_vpoBloks[i]->GetHeight() - 1);
         }
 
         RENDER.RenderFrame();
         RENDER.PresentFrame();
+        subtractAllOffsets(1); /*subtract 1-sized offsets, because bloks 
+                               decreased*/
         // sleep, so we can see the animation
         Sleep(15);
     }
+
+    
+    
 }
+
+

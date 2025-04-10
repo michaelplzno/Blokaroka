@@ -8,6 +8,35 @@ Blok::~Blok()
      }*/
 }
 
+void Blok::SubtractOffsetX(int offset)
+{
+    m_iRenderX += offset;
+    if(m_poLeft != NULL) m_poLeft->SubtractOffsetX(offset); //if there left 
+                                                            //bloks, go there
+}
+
+void Blok::SubtractOffsetY(int offset)
+{
+    m_iRenderY += offset;
+    //if there left bloks, go there
+    if(m_poLeft != NULL) m_poLeft->SubtractOffsetX(offset); 
+
+    //if there bottom bloks, go there
+    if(m_poBottom != NULL) m_poBottom->SubtractOffsetX(offset); 
+    
+}
+
+void subtractAllOffsets(int offset)
+{
+    // We're looking for the rightest bloks 
+    for(int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+        if(GAMESTATE.m_vpoBloks[i]->HasLeft())
+        GAMESTATE.m_vpoBloks[i]->m_poLeft->SubtractOffsetX(offset);
+
+    // We're looking for the rightest top bloks
+}
+
+
 int Blok::GetWidth()
 {
     return m_width;
