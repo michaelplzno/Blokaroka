@@ -8,6 +8,44 @@ Blok::~Blok()
      }*/
 }
 
+void Blok::Group(std::map<Blok*, bool>& used) 
+{
+    used[this] = 1; // mark, that we were here
+    int offset = BLOK_WIDTH - m_width;
+
+    //check if there top blok and if we weren't here
+    if(HasTop() && !used[m_poTop]){
+        m_poTop->m_iRenderX = m_iRenderX;
+        m_poTop->m_iRenderY = m_iRenderY - m_height;
+        m_poTop->Group(used);
+    }
+
+    if(HasLeft() && !used[m_poLeft]){
+        m_poLeft->m_iRenderX = m_iRenderX - m_width;
+        m_poLeft->m_iRenderY = m_iRenderY;
+        m_poLeft->Group(used);
+    }
+
+    if(HasBottom() && !used[m_poBottom]){
+        m_poBottom->m_iRenderX = m_iRenderX;
+        m_poBottom->m_iRenderY = m_iRenderY + m_height;
+        m_poBottom->Group(used);
+    }
+
+    if(HasRight() && !used[m_poRight]){
+        m_poRight->m_iRenderX = m_iRenderX + m_width;
+        m_poRight->m_iRenderY = m_iRenderY;
+        m_poRight->Group(used);
+    }
+}
+void subtractAllOffsets()
+{
+    std::map<Blok*, bool> used;//map for marking bloks where we already were
+    for(int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
+        if(!used[GAMESTATE.m_vpoBloks[i]])GAMESTATE.m_vpoBloks[i]->Group(used);
+}
+
+
 int Blok::GetWidth()
 {
     return m_width;

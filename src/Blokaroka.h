@@ -57,6 +57,8 @@
 #define MENU_DEBUG_DRAW_OFF 1012
 #define SUBMENU_DEBUG_DRAW 1013
 
+void subtractAllOffsets();
+
 void bloksPopping(); //bloks popping at the beggining
 
 inline void gPlaySound(int resource)
