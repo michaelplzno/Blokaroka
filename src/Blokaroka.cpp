@@ -101,10 +101,9 @@ void bloksPopping()
         GAMESTATE.m_vpoBloks[i]->SetHeight(4);
     }
 
+    subtractAllOffsets(); 
     RENDER.RenderFrame();
     RENDER.PresentFrame();
-
-    subtractAllOffsets(BLOK_WIDTH - 1); //subtract offsets
 
     for (int size = 1; size < BLOK_WIDTH + 5; ++size)
     {
@@ -121,10 +120,11 @@ void bloksPopping()
                 
             
         }
-        
+
+        subtractAllOffsets();
         RENDER.RenderFrame();
         RENDER.PresentFrame();
-        subtractAllOffsets(-1); //add 1-sized offsets, because bloks increased
+        
         // sleep, so we can see the animation
         Sleep(15); 
     }
@@ -139,17 +139,13 @@ void bloksPopping()
             GAMESTATE.m_vpoBloks[i]->SetHeight(
                 GAMESTATE.m_vpoBloks[i]->GetHeight() - 1);
         }
-
+        
+        subtractAllOffsets(); 
         RENDER.RenderFrame();
         RENDER.PresentFrame();
-        subtractAllOffsets(1); /*subtract 1-sized offsets, because bloks 
-                               decreased*/
+        
+
         // sleep, so we can see the animation
         Sleep(15);
     }
-
-    
-    
 }
-
-

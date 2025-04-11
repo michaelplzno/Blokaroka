@@ -8,32 +8,41 @@ Blok::~Blok()
      }*/
 }
 
-void Blok::SubtractOffsetX(int offset)
+void Blok::Group(std::map<Blok*, bool>& used) 
 {
-    m_iRenderX += offset;
-    if(m_poLeft != NULL) m_poLeft->SubtractOffsetX(offset); //if there left 
-                                                            //bloks, go there
+    used[this] = 1; // mark, that we were here
+    int offset = BLOK_WIDTH - m_width;
+
+    //check if there top blok and if we weren't here
+    if(HasTop() && !used[m_poTop]){
+        m_poTop->m_iRenderX = m_iRenderX;
+        m_poTop->m_iRenderY = m_iRenderY - m_height;
+        m_poTop->Group(used);
+    }
+
+    if(HasLeft() && !used[m_poLeft]){
+        m_poLeft->m_iRenderX = m_iRenderX - m_width;
+        m_poLeft->m_iRenderY = m_iRenderY;
+        m_poLeft->Group(used);
+    }
+
+    if(HasBottom() && !used[m_poBottom]){
+        m_poBottom->m_iRenderX = m_iRenderX;
+        m_poBottom->m_iRenderY = m_iRenderY + m_height;
+        m_poBottom->Group(used);
+    }
+
+    if(HasRight() && !used[m_poRight]){
+        m_poRight->m_iRenderX = m_iRenderX + m_width;
+        m_poRight->m_iRenderY = m_iRenderY;
+        m_poRight->Group(used);
+    }
 }
-
-void Blok::SubtractOffsetY(int offset)
+void subtractAllOffsets()
 {
-    m_iRenderY += offset;
-    //if there left bloks, go there
-    if(m_poLeft != NULL) m_poLeft->SubtractOffsetX(offset); 
-
-    //if there bottom bloks, go there
-    if(m_poBottom != NULL) m_poBottom->SubtractOffsetX(offset); 
-    
-}
-
-void subtractAllOffsets(int offset)
-{
-    // We're looking for the rightest bloks 
+    std::map<Blok*, bool> used;//map for marking bloks where we already were
     for(int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
-        if(GAMESTATE.m_vpoBloks[i]->HasLeft())
-        GAMESTATE.m_vpoBloks[i]->m_poLeft->SubtractOffsetX(offset);
-
-    // We're looking for the rightest top bloks
+        if(!used[GAMESTATE.m_vpoBloks[i]])GAMESTATE.m_vpoBloks[i]->Group(used);
 }
 
 
