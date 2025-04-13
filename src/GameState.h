@@ -52,12 +52,12 @@
 class GameState
 {
   public:
-
     // Game state for what the global status of the game is.
     enum
     {
-        GS_Static, // Bloks are not being interacted with, but due to phyics may still be moving.
-        GS_Drag_Free, // Bloks are being dragged around freely.
+        GS_Static, // Bloks are not being interacted with, but due to phyics may
+                   // still be moving.
+        GS_Drag_Free,   // Bloks are being dragged around freely.
         GS_Drag_Mating, // Bloks are being dragged for mating, and will snap to
                         // the nearest mate.
         GS_Drag_Splitting // When bloks have just been split, they are in this
@@ -124,13 +124,15 @@ class GameState
 
     Blok *MateSearch(Blok *poBlok);
 
+    void SubtractAllOffsets();
+
     std::vector<Blok *> m_vpoBloks; // List of all Bloks in the game.
 
   private:
     bool m_bMateUp; // True if the mate is above the current blok.
 
-    Blok *m_poMovingMate; // Blok that is currently being dragged.
-    Blok *m_poStaticMate; // Blok that is currently being mated with.
+    Blok *m_poMovingMate;   // Blok that is currently being dragged.
+    Blok *m_poStaticMate;   // Blok that is currently being mated with.
     Blok *m_poSelectedBlok; // Blok that is currently selected.
 
     int m_iState; // Current game state, usually GS_Static.

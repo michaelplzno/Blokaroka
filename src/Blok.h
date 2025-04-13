@@ -3,7 +3,6 @@
 #ifndef __BLOK_H__
 #define __BLOK_H__
 
-
 #include <box2d/box2d.h>
 #include <map>
 
@@ -18,10 +17,11 @@ class Blok
           m_poBottom(NULL), m_fBottomWeightHeld(-1.0f), m_fTopWeightHeld(-1.0f),
           m_iDistance(-1), m_iRenderState(BRS_SOLID), m_fBlockWeight(0),
           m_poTopDesiredMate(NULL), m_poBottomDesiredMate(NULL), m_iGroup(0),
-          m_physicsBodyId(), m_bMateEnabled(false), m_width(15), m_height(18){};
+          m_physicsBodyId(), m_bMateEnabled(false), m_width(15),
+          m_height(18) {};
 
     ~Blok();
-    //Getters and setters for width and height
+    // Getters and setters for width and height
     int GetWidth();
     int GetHeight();
     void SetWidth(int newWidth);
@@ -33,7 +33,6 @@ class Blok
         BRS_GLOW,
         BRS_NO_ATTACH
     };
-    friend void subtractAllOffsets(); 
 
     int GetColorID();               // Return an index into the color pallate.
     void SetColorForMenu(int menu); /* Based on ColorID set this to the pallate
@@ -190,11 +189,12 @@ class Blok
 
     void SetStatic(bool bStatic);
 
-  private:
-    
-    //deletes offsets in group of bloks 
-    void Group(std::map<Blok*, bool>& used);
+    void Regroup(std::map<Blok *, int> &used,
+                 int currentGroup); // Reset the grouping of the blocks so that
+                                    // All the blocks that are connected are
+                                    // grouped together.
 
+  private:
     void RecursiveFixNeighbors(int x, int y);
     bool RecursiveIntersectsAnyBlok();
     void ClearMates();
@@ -223,15 +223,17 @@ class Blok
     int m_iRenderX,
         m_iRenderY; // Display position used to line up Bloks to show potential
                     // connections.
-    int m_width, m_height; //width and height used for bloks popping
+    int m_width, m_height; // width and height used for bloks popping
     int m_iMark; // This is used for recursion in various ways, usually it
                  // stores if this Blok has been visited.
 
     bool m_bMateEnabled; // Used to disable blocks for mating.
 
-    int m_iRenderState; // This can be set to make the Bloks glow or
-                        // transparent.
-    int m_iGroup;       // Used for Blok depth calculations - WIP.
+    int m_iRenderState;    // This can be set to make the Bloks glow or
+                           // transparent.
+    int m_iGroup;          // Used for Blok depth calculations.
+    int m_iGroupZ;         // Used for Blok depth calculations.
+    Blok *m_poGroupLeader; // Upper Left Blok in Group.
 
     COLORREF m_wColor; // Render color.
 

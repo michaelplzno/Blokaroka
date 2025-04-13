@@ -506,3 +506,18 @@ void GameState::ResetPhysics()
         m_vpoBloks[i]->SetStatic(false);
     }
 }
+
+void GameState::SubtractAllOffsets()
+{
+    int currentGroup = 1; // current group of bloks
+
+    std::map<Blok *, int> used; // map for marking bloks where we already were
+    for (int i = 0; i < m_vpoBloks.size(); ++i)
+    {
+        if (used[m_vpoBloks[i]] == 0)
+        {
+            m_vpoBloks[i]->Regroup(used, currentGroup);
+            currentGroup++;
+        }
+    }
+}

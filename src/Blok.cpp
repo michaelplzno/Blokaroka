@@ -8,43 +8,42 @@ Blok::~Blok()
      }*/
 }
 
-void Blok::Group(std::map<Blok*, bool>& used) 
+void Blok::Regroup(std::map<Blok *, int> &used, int currentGroup)
 {
-    used[this] = 1; // mark, that we were here
+    m_iGroup = used[this] = currentGroup; // mark that we were here
+
     int offset = BLOK_WIDTH - m_width;
 
-    //check if there top blok and if we weren't here
-    if(HasTop() && !used[m_poTop]){
+    // check if there top blok and if we weren't here
+    if (HasTop() && !used[m_poTop])
+    {
         m_poTop->m_iRenderX = m_iRenderX;
         m_poTop->m_iRenderY = m_iRenderY - m_height;
-        m_poTop->Group(used);
+        m_poTop->Regroup(used, currentGroup);
     }
 
-    if(HasLeft() && !used[m_poLeft]){
+    if (HasLeft() && !used[m_poLeft])
+    {
         m_poLeft->m_iRenderX = m_iRenderX - m_width;
         m_poLeft->m_iRenderY = m_iRenderY;
-        m_poLeft->Group(used);
+        m_poLeft->Regroup(used, currentGroup);
     }
 
-    if(HasBottom() && !used[m_poBottom]){
+    if (HasBottom() && !used[m_poBottom])
+    {
         m_poBottom->m_iRenderX = m_iRenderX;
         m_poBottom->m_iRenderY = m_iRenderY + m_height;
-        m_poBottom->Group(used);
+        m_poBottom->Regroup(used, currentGroup);
     }
 
-    if(HasRight() && !used[m_poRight]){
+    if (HasRight() && !used[m_poRight])
+    {
         m_poRight->m_iRenderX = m_iRenderX + m_width;
         m_poRight->m_iRenderY = m_iRenderY;
-        m_poRight->Group(used);
+        m_poRight->Regroup(used, currentGroup);
     }
 }
 
-void subtractAllOffsets()
-{
-    std::map<Blok*, bool> used;//map for marking bloks where we already were
-    for(int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
-        if(!used[GAMESTATE.m_vpoBloks[i]])GAMESTATE.m_vpoBloks[i]->Group(used);
-}
 
 
 int Blok::GetWidth()
@@ -211,8 +210,8 @@ void Blok::DrawBlok(HDC hdc)
 
         if (m_poRight == NULL)
         {
-            RENDER.SetPixel(m_iRenderX + m_width - i, m_iRenderY - i, 0,
-                            depth, fAlpha);
+            RENDER.SetPixel(m_iRenderX + m_width - i, m_iRenderY - i, 0, depth,
+                            fAlpha);
         }
     }
 
@@ -278,7 +277,7 @@ void Blok::DrawBlok(HDC hdc)
                              GetRValue(brightest) * PercentDone;
                 float newG = GetGValue(normal) * (1.0f - PercentDone) +
                              GetGValue(brightest) * PercentDone;
-                float newB = GetGValue(normal) * (1.0f - PercentDone) +
+                float newB = GetBValue(normal) * (1.0f - PercentDone) +
                              GetBValue(brightest) * PercentDone;
 
                 myColor = RGB(newR, newG, newB);
@@ -302,8 +301,7 @@ void Blok::DrawBlok(HDC hdc)
             if (i != start && i != end)
             {
                 RENDER.VerticalLine(
-                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) -
-                        height,
+                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) - height,
                     baseY - height, baseX, brighter, depth);
             }
 
@@ -322,16 +320,15 @@ void Blok::DrawBlok(HDC hdc)
 
                 RENDER.SetPixel(
                     baseX,
-                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) -
-                        height,
+                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) - height,
                     RGB(newR * (1.0f - AA), newG * (1.0f - AA),
                         newB * (1.0f - AA)),
                     depth, fAlpha);
-                RENDER.SetPixel(
-                    baseX,
-                    baseY - 2 * (baseY - (m_iRenderY - m_width / 4)) -
-                        height - 1,
-                    0, depth, (1.0f - AA) * fAlpha);
+                RENDER.SetPixel(baseX,
+                                baseY -
+                                    2 * (baseY - (m_iRenderY - m_width / 4)) -
+                                    height - 1,
+                                0, depth, (1.0f - AA) * fAlpha);
             }
             newR = GetRValue(myColor) * (1.0f - AA) + GetRValue(brighter) * AA;
             newG = GetGValue(myColor) * (1.0f - AA) + GetGValue(brighter) * AA;
