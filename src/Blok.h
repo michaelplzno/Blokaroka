@@ -59,7 +59,7 @@ class Blok
         Blok *poOther); // Tests the size of the gap between this Blok and
                         // poOther to see if a connection can be made.
     Blok *FindMate();   // Recursively iterates over this structure to look for
-                        // any potential prick that this Blok can connect to.
+                        // any potential Blok that this Blok can connect to.
     void Mate(); // Connect this Blok with the stored m_poTopDesiredMate or
                  // m_poBottomDesiredMate
 

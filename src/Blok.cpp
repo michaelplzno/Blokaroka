@@ -38,6 +38,7 @@ void Blok::Group(std::map<Blok*, bool>& used)
         m_poRight->Group(used);
     }
 }
+
 void subtractAllOffsets()
 {
     std::map<Blok*, bool> used;//map for marking bloks where we already were
@@ -1020,7 +1021,9 @@ void Blok::RecursiveMate()
     {
         m_poTop = m_poTopDesiredMate;
         m_poTop->m_poBottom = this;
+
         m_poTopDesiredMate = NULL;
+        m_poBottomDesiredMate = NULL;
     }
 
     if (m_poBottomDesiredMate)
@@ -1028,12 +1031,12 @@ void Blok::RecursiveMate()
         m_poBottom = m_poBottomDesiredMate;
         m_poBottom->m_poTop = this;
         m_poBottomDesiredMate = NULL;
+        m_poTopDesiredMate = NULL;
     }
 }
 
 void Blok::Mate()
 {
-
     std::set<b2BodyId> toDestroy;
     ClearPhysics(&toDestroy);
     GAMESTATE.GetStaticMate()->ClearPhysics(&toDestroy);
