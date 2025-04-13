@@ -24,7 +24,7 @@ typedef LRESULT(__cdecl *hookFunc)(HWND, HWND);
 // Called every time the mouse is changed, moved or clicked.
 LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (wParam == WM_LBUTTONUP)     // Left mouse button up
+    if (wParam == WM_LBUTTONUP) // Left mouse button up
     {
         PHYSICS.OnMouseUp();
 
@@ -41,7 +41,7 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         return 0;
     }
-    else if (wParam == WM_RBUTTONUP)    // Right mouse button up
+    else if (wParam == WM_RBUTTONUP) // Right mouse button up
     {
         PHYSICS.OnMouseUp();
 
@@ -58,7 +58,7 @@ LRESULT CALLBACK MouseHookWndProc(int nCode, WPARAM wParam, LPARAM lParam)
         }
         return 0;
     }
-    else if (wParam == WM_LBUTTONDOWN)  // Left mouse button down
+    else if (wParam == WM_LBUTTONDOWN) // Left mouse button down
     {
 
         MSLLHOOKSTRUCT hook = *(PMSLLHOOKSTRUCT)lParam;
@@ -222,9 +222,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMessage, WPARAM wParam, LPARAM lParam)
             {
                 GAMESTATE.ClearBloks();
                 GAMESTATE.GenerateRandomBloks();
-                RENDER.RenderFrame();
-                RENDER.PresentFrame();
-                bloksPopping();
+                RENDER.m_bNeedsPop = true;
             }
         }
         else if (wParam == MENU_SAVE)
@@ -715,7 +713,7 @@ void Renderer::InitRenderer(HINSTANCE hInstance)
 void Renderer::SetPixel(int x, int y, COLORREF color, unsigned int depth,
                         float fAlpha /*= 1.0f*/, float fSourceBlend)
 {
-    if (x >= m_Image.width || x < 0 || y >= m_Image.height || y <= 0)
+    if (x >= m_Image.width - 10 || x <= 10 || y >= m_Image.height || y <= 10)
     {
         return;
     }
@@ -771,6 +769,20 @@ void Renderer::Rectangle(int left, int top, int right, int bottom,
                          COLORREF color, unsigned int depth,
                          float fAlpha /*= 1.0f*/)
 {
+    if (left > right)
+    {
+        int temp = left;
+        left = right;
+        right = temp;
+    }
+
+    if (top > bottom)
+    {
+        int temp = top;
+        top = bottom;
+        bottom = temp;
+    }
+
     for (int x = left; x <= right; x++)
     {
         for (int y = top; y <= bottom; y++)
@@ -783,6 +795,13 @@ void Renderer::Rectangle(int left, int top, int right, int bottom,
 void Renderer::HorizontalLine(int left, int right, int y, COLORREF color,
                               unsigned int depth, float fAlpha /*= 1.0f*/)
 {
+    if (left > right)
+    {
+        int temp = left;
+        left = right;
+        right = temp;
+    }
+
     for (int x = left; x <= right; x++)
     {
         SetPixel(x, y, color, depth, fAlpha);
@@ -792,6 +811,13 @@ void Renderer::HorizontalLine(int left, int right, int y, COLORREF color,
 void Renderer::VerticalLine(int top, int bottom, int x, COLORREF color,
                             unsigned int depth, float fAlpha /*= 1.0f*/)
 {
+    if (top > bottom)
+    {
+        int temp = top;
+        top = bottom;
+        bottom = temp;
+    }
+
     for (int y = top; y <= bottom; y++)
     {
         SetPixel(x, y, color, depth, fAlpha);
@@ -824,7 +850,8 @@ void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color,
     int sy = y0 < y1 ? 1 : -1;
     int err = dx + dy;
 
-    while (true)
+    int sanityBreak = 20000;
+    while (sanityBreak > 0)
     {
         SetPixel(x0, y0, color, depth, alpha);
         if (x0 == x1 && y0 == y1)
@@ -843,6 +870,13 @@ void Renderer::Line(int x0, int y0, int x1, int y1, COLORREF color,
         {
             err += dx;
             y0 += sy;
+        }
+
+        sanityBreak--;
+        if (sanityBreak == 0)
+        {
+            ShowInfoMessage("Infinite loop in line drawing. (%d, %d) (%d, %d)",
+                            x0, y0, x1, y1);
         }
     }
 }

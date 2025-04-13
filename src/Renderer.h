@@ -115,10 +115,11 @@ class Renderer
     int m_iLastMouseY; // Use to calculate how much the mouse moved this
                        // frame (Y)
 
-  private:
+    bool m_bNeedsPop;
 
-    int m_Width;    // Size of the window.
-    int m_Height;   // Size of the window.
+  private:
+    int m_Width;  // Size of the window.
+    int m_Height; // Size of the window.
 
     Image m_Image;
 
@@ -129,7 +130,8 @@ class Renderer
     void circlePoints(int cx, int cy, int x, int y, COLORREF color,
                       unsigned int depth, float alpha);
 
-    char m_lastMessage[1024]; // Used to see if we are spamming the same message.
+    char
+        m_lastMessage[1024]; // Used to see if we are spamming the same message.
     float m_fLastMessageTime; // Used to see how long the last message was sent.
 };
 

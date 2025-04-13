@@ -57,7 +57,37 @@
 #define MENU_DEBUG_DRAW_OFF 1012
 #define SUBMENU_DEBUG_DRAW 1013
 
-void bloksPopping(); //bloks popping at the beggining
+// -- COMMAND LINE ARGUMENTS -------------------------------------------- //
+class Config
+{
+  public:
+    unsigned int m_uiWindowWidth;  // width of window
+    unsigned int m_uiWindowHeight; // height of window
+    unsigned int m_uiRandomSeed;   // random number generator seed
+    bool m_bWindowedMode;          // windowed or not
+    bool m_bRenderBackgroundGradient;
+    bool m_bUseAlpha;  // For pseudo transparent objects
+    bool m_bUseAA;     // Anti-Aliasing
+    bool m_bVSyncLock; // Lock FPS to VSync
+
+    Config()
+        : m_uiWindowWidth(1024), m_uiWindowHeight(768), m_uiRandomSeed(1),
+          m_bWindowedMode(true), m_bRenderBackgroundGradient(true),
+          m_bUseAlpha(true), m_bUseAA(false), m_bVSyncLock(false) {};
+};
+
+extern volatile bool g_bIsAppAlive;
+extern Config CONFIG;
+
+extern LARGE_INTEGER g_liFrequency; // ticks per second
+extern LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
+extern float g_fDeltaT;             // elapsed time between frames
+extern float g_fElapsedTime;        // total elapsed time since start
+
+// -- GLOBAL FUNCTIONS -------------------------------------------------- //
+bool gHandleCommandLineArgs(PSTR pstrCmdLine);
+void gPopBloks();   // bloks popping at the beggining
+void gUpdateTime(); // update the time between frames
 
 inline void gPlaySound(int resource)
 {
@@ -148,36 +178,6 @@ inline std::wstring gGetExistingSaveFilePath()
     // return the default case since no file was found.
     return path1;
 }
-
-// -- COMMAND LINE ARGUMENTS -------------------------------------------- //
-class Config
-{
-  public:
-    unsigned int m_uiWindowWidth;  // width of window
-    unsigned int m_uiWindowHeight; // height of window
-    unsigned int m_uiRandomSeed;   // random number generator seed
-    bool m_bWindowedMode;          // windowed or not
-    bool m_bRenderBackgroundGradient;
-    bool m_bUseAlpha;  // For pseudo transparent objects
-    bool m_bUseAA;     // Anti-Aliasing
-    bool m_bVSyncLock; // Lock FPS to VSync
-
-    Config()
-        : m_uiWindowWidth(1024), m_uiWindowHeight(768), m_uiRandomSeed(1),
-          m_bWindowedMode(true), m_bRenderBackgroundGradient(true),
-          m_bUseAlpha(true), m_bUseAA(false), m_bVSyncLock(false) {};
-};
-
-extern volatile bool g_bIsAppAlive;
-extern Config CONFIG;
-
-extern LARGE_INTEGER g_liFrequency; // ticks per second
-extern LARGE_INTEGER g_liLastFrame; // counter tick of the last frame
-extern float g_fDeltaT;             // elapsed time between frames
-extern float g_fElapsedTime;        // total elapsed time since start
-
-// -- GLOBAL FUNCTIONS -------------------------------------------------- //
-bool gHandleCommandLineArgs(PSTR pstrCmdLine);
 
 // -- Project Classes --------------------------------------------------- //
 class GameState;

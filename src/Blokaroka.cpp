@@ -2,6 +2,8 @@
 #include "GameState.h"
 #include "Physics.h"
 #include "Renderer.h"
+#include <intrin.h> // Include for __debugbreak()
+#include <iostream> // Include for logging
 
 // -- EXTERN DECLARATIONS ----------------------------------------------- //
 volatile bool g_bIsAppAlive = true;
@@ -16,6 +18,8 @@ float g_fElapsedTime = 0.0f; // total elapsed time since start
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                    PSTR pstrCmdLine, int iCmdShow)
 {
+    // srand(static_cast<unsigned int>(time(nullptr))); // Set random seed
+
     const wchar_t UniqueMutex[] = L"one_instance_only_some_num_1982756";
     HANDLE hHandle = CreateMutexW(NULL, TRUE, UniqueMutex);
 
@@ -48,20 +52,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     QueryPerformanceCounter(&g_liLastFrame);
 
-    bloksPopping();
+    RENDER.m_bNeedsPop = true; // set to true to pop the bloks
 
     // Main Game Loop, continue to loop while alive and Handle Windows, Update,
     // Physics, Render, and Present, then sleep a bit to not hog the processor.
     while (g_bIsAppAlive)
     {
-        LARGE_INTEGER nextTime;
-        QueryPerformanceCounter(&nextTime);
+        if (RENDER.m_bNeedsPop)
+        {
+            gPopBloks();
+            RENDER.m_bNeedsPop = false;
+        }
 
-        g_fDeltaT = (float)((nextTime.QuadPart - g_liLastFrame.QuadPart) /
-                            g_dFrequency);
-        g_liLastFrame = nextTime;
-
-        g_fElapsedTime += g_fDeltaT; // update elapsed time
+        gUpdateTime();
 
         RENDER.HandleWindows();
         GAMESTATE.Update();
@@ -86,6 +89,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     return 0;
 }
 
+void gUpdateTime()
+{
+    LARGE_INTEGER nextTime;
+    QueryPerformanceCounter(&nextTime);
+
+    g_fDeltaT =
+        (float)((nextTime.QuadPart - g_liLastFrame.QuadPart) / g_dFrequency);
+    g_liLastFrame = nextTime;
+
+    g_fElapsedTime += g_fDeltaT; // update elapsed time
+}
+
 // -- handleCommandLineArgs --------------------------------------------- //
 /* Command Line Argument Handling (Loop and look for args that matter)    */
 bool gHandleCommandLineArgs(PSTR pstrCmdLine)
@@ -93,7 +108,7 @@ bool gHandleCommandLineArgs(PSTR pstrCmdLine)
     return true;
 }
 
-void bloksPopping()
+void gPopBloks()
 {
     // setting every bloks size to minimum
     for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
@@ -102,13 +117,14 @@ void bloksPopping()
         GAMESTATE.m_vpoBloks[i]->SetHeight(4);
     }
 
-    GAMESTATE.RegroupBloks();
+    gUpdateTime();
+
+    RENDER.HandleWindows();
     RENDER.RenderFrame();
     RENDER.PresentFrame();
 
     for (int size = 1; size < BLOK_WIDTH + 5; ++size)
     {
-
         // adding 1 to width and height of ever blok
         for (unsigned int i = 0; i < GAMESTATE.m_vpoBloks.size(); ++i)
         {
@@ -120,13 +136,16 @@ void bloksPopping()
                 GAMESTATE.m_vpoBloks[i]->GetHeight() + 1);
         }
 
-        GAMESTATE.RegroupBloks();
+        gUpdateTime();
+
+        RENDER.HandleWindows();
         RENDER.RenderFrame();
         RENDER.PresentFrame();
-        RENDER.HandleWindows();
+
         // sleep, so we can see the animation
         Sleep(1);
     }
+
     for (int size = BLOK_WIDTH + 5; size > BLOK_WIDTH; --size)
     {
         // subtract 1 from width and height of ever blok
@@ -139,10 +158,11 @@ void bloksPopping()
                 GAMESTATE.m_vpoBloks[i]->GetHeight() - 1);
         }
 
-        GAMESTATE.RegroupBloks();
+        gUpdateTime();
+
+        RENDER.HandleWindows();
         RENDER.RenderFrame();
         RENDER.PresentFrame();
-        RENDER.HandleWindows();
 
         // sleep, so we can see the animation
         Sleep(1);

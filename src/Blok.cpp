@@ -44,8 +44,6 @@ void Blok::Regroup(std::map<Blok *, int> &used, int currentGroup)
     }
 }
 
-
-
 int Blok::GetWidth()
 {
     return m_width;
@@ -1813,26 +1811,27 @@ void Blok::InitPhysics(b2BodyId newBody, float offsetX, float offsetY)
     // m_b2v2FixturePos.x -= BLOK_WIDTH * .75f * PIXELS_TO_PHYSICS;
     // m_b2v2FixturePos.y -= BLOK_WIDTH * .75f * PIXELS_TO_PHYSICS;
 
+    float shrinkage = 0.9f;
     std::vector<b2Vec2> vertices;
     b2Vec2 point = {
         ((BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) * PIXELS_TO_PHYSICS,
         (BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
-    vertices.push_back(m_shapePos + point);
+    vertices.push_back(m_shapePos + point * shrinkage);
 
     point = {((BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) *
                  PIXELS_TO_PHYSICS,
              -(BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
-    vertices.push_back(m_shapePos + point);
+    vertices.push_back(m_shapePos + point * shrinkage);
 
     point = {(-(BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) *
                  PIXELS_TO_PHYSICS,
              -(BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
-    vertices.push_back(m_shapePos + point);
+    vertices.push_back(m_shapePos + point * shrinkage);
 
     point = {(-(BLOK_WIDTH * 1.4f) * .5f + (BLOK_WIDTH * .2f)) *
                  PIXELS_TO_PHYSICS,
              (BLOK_WIDTH * .25f + BLOK_HEIGHT * .5f) * PIXELS_TO_PHYSICS};
-    vertices.push_back(m_shapePos + point);
+    vertices.push_back(m_shapePos + point * shrinkage);
 
     b2Hull hull = b2ComputeHull(vertices.data(), vertices.size());
 
