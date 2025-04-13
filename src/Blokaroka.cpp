@@ -102,7 +102,7 @@ void bloksPopping()
         GAMESTATE.m_vpoBloks[i]->SetHeight(4);
     }
 
-    GAMESTATE.SubtractAllOffsets();
+    GAMESTATE.RegroupBloks();
     RENDER.RenderFrame();
     RENDER.PresentFrame();
 
@@ -120,7 +120,7 @@ void bloksPopping()
                 GAMESTATE.m_vpoBloks[i]->GetHeight() + 1);
         }
 
-        GAMESTATE.SubtractAllOffsets();
+        GAMESTATE.RegroupBloks();
         RENDER.RenderFrame();
         RENDER.PresentFrame();
         RENDER.HandleWindows();
@@ -139,7 +139,7 @@ void bloksPopping()
                 GAMESTATE.m_vpoBloks[i]->GetHeight() - 1);
         }
 
-        GAMESTATE.SubtractAllOffsets();
+        GAMESTATE.RegroupBloks();
         RENDER.RenderFrame();
         RENDER.PresentFrame();
         RENDER.HandleWindows();

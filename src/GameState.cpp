@@ -377,7 +377,6 @@ void GameState::DumpGamestate(std::wstring wstrName)
 
 bool GameState::ReadGamestate(std::wstring wstrName)
 {
-
     std::ifstream in;
 
     in.open(wstrName, std::ofstream::in);
@@ -492,9 +491,23 @@ Blok *GameState::MateSearch(Blok *poBlok)
 
 void GameState::Draw(HDC hdc)
 {
-    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+    RegroupBloks();
+
+    std::set<Blok *> drawnBloks; // Temporary set to track drawn Bloks
+    int currentGroup = 0;
+
+    // Draw the Bloks in groups
+    while (drawnBloks.size() < m_vpoBloks.size())
     {
-        m_vpoBloks[i]->DrawBlok(hdc);
+        for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
+        {
+            if (m_vpoBloks[i]->GetGroup() == currentGroup)
+            {
+                m_vpoBloks[i]->DrawBlok(hdc);
+                drawnBloks.insert(m_vpoBloks[i]); // Add to the set
+            }
+        }
+        currentGroup++;
     }
 }
 
@@ -507,12 +520,12 @@ void GameState::ResetPhysics()
     }
 }
 
-void GameState::SubtractAllOffsets()
+void GameState::RegroupBloks()
 {
     int currentGroup = 1; // current group of bloks
 
     std::map<Blok *, int> used; // map for marking bloks where we already were
-    for (int i = 0; i < m_vpoBloks.size(); ++i)
+    for (unsigned int i = 0; i < m_vpoBloks.size(); i++)
     {
         if (used[m_vpoBloks[i]] == 0)
         {

@@ -124,7 +124,7 @@ class GameState
 
     Blok *MateSearch(Blok *poBlok);
 
-    void SubtractAllOffsets();
+    void RegroupBloks();
 
     std::vector<Blok *> m_vpoBloks; // List of all Bloks in the game.
 
